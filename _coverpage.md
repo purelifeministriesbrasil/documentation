@@ -1,15 +1,19 @@
 # Pure Life Ministries Brasil
 
-> Ecossistema Digital Canónico, Seguro e de Alta Performance
+> Conduzindo cristãos à pureza e maturidade espiritual desde 1986
 
-[![Architecture](https://img.shields.io/badge/Architecture-Specification%20v5.0-044A82.svg)](./architecture/system-overview.md)
-[![Security Policy](https://img.shields.io/badge/Security-AES--256--GCM%20%2B%20AAD-059669.svg)](./compliance/lgpd-compliance.md)
-[![Compliance](https://img.shields.io/badge/LGPD-Art.%2011%20Compliant-blue.svg)](./compliance/lgpd-compliance.md)
-[![Zero-JS](https://img.shields.io/badge/Frontend-Astro%20v5%20SSG-orange.svg)](./adrs/ADR-001-astro-ssg.md)
+<p class="cover-badges">
+  <img src="https://img.shields.io/badge/Arquitetura-Especificação%20v5.0-044A82.svg?style=flat-square" alt="Arquitetura v5.0">
+  <img src="https://img.shields.io/badge/Segurança-AES--256--GCM%20%2B%20AAD-059669.svg?style=flat-square" alt="Criptografia AES-GCM">
+  <img src="https://img.shields.io/badge/Privacidade-LGPD%20Art.%2011-blue.svg?style=flat-square" alt="Conformidade LGPD">
+  <img src="https://img.shields.io/badge/Frontend-Astro%20v5%20Zero--JS-d97706.svg?style=flat-square" alt="Astro SSG">
+</p>
 
-Documentação técnica oficial para engenheiros de software, arquitetos de soluções, especialistas em AppSec e liderança pastoral. Desenvolvido sob rigorosa arquitetura multirepo, com isolamento absoluto entre conteúdo editorial público e registros confidenciais eclesiásticos.
+Portal oficial de arquitetura de software, especificações canónicas, governança de dados e runbooks operacionais do ecossistema digital da Pure Life Ministries Brasil.
 
-- [Iniciar pelo Guia do Desenvolvedor](#/guides/developer-quickstart)
-- [Explorar Arquitetura do Sistema](#/architecture/system-overview)
-- [Especificação de Requisitos (SRS)](#/requirements/especificacao-requisitos-ecossistema)
-- [Organização no GitHub](https://github.com/purelifeministriesbrasil)
+<div class="cover-actions">
+  <a href="#/guides/developer-quickstart" class="btn-primary">Iniciar pelo Quickstart</a>
+  <a href="#/architecture/system-overview" class="btn-secondary">Arquitetura do Sistema</a>
+  <a href="#/requirements/especificacao-requisitos-ecossistema" class="btn-secondary">Requisitos (SRS)</a>
+  <a href="https://github.com/purelifeministriesbrasil" target="_blank" rel="noopener noreferrer" class="btn-secondary">GitHub</a>
+</div>

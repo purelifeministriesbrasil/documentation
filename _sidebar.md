@@ -28,8 +28,15 @@
   * [Recuperação de Desastres (DR)](runbooks/disaster-recovery.md)
   * [Guia de Deployment](deployment/deployment-guide.md)
 
+* **Repositórios do Ecossistema**
+  * [Frontend Web (Astro SSG)](https://github.com/purelifeministriesbrasil/frontend)
+  * [Backend API (Worker)](https://github.com/purelifeministriesbrasil/backend)
+  * [CMS Editorial (Sanity)](https://github.com/purelifeministriesbrasil/cms)
+  * [Contratos TypeScript](https://github.com/purelifeministriesbrasil/contracts)
+  * [Infraestrutura Terraform](https://github.com/purelifeministriesbrasil/infra)
+
 * **Governança do Repositório**
   * [Código de Conduta](CODE_OF_CONDUCT.md)
   * [Guia de Contribuição](CONTRIBUTING.md)
   * [Política de Segurança](SECURITY.md)
-  * [Licença MIT](LICENSE)
+  * [Licença MIT](LICENSE.md)
