@@ -2,66 +2,310 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Pure Life Ministries Brasil — Documentação Canónica</title>
+  <title>Pure Life Ministries Brasil — Portal Canónico de Documentação e Engenharia</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Documentação Canónica, ADRs, Requisitos do Sistema, Runbooks e Especificações Técnicas do ecossistema Pure Life Ministries Brasil">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --theme-color: #044A82;
+      --theme-color-dark: #032D50;
+      --text-color-base: #1E293B;
+      --heading-color: #0F172A;
+      --bg-sidebar: #F8FAFC;
+      --border-color: #E2E8F0;
+      --accent-gold: #C99A45;
+      --code-bg: #0F172A;
+      --code-color: #F8FAFC;
     }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-color-base);
+      line-height: 1.65;
+    }
+
     .sidebar {
-      background-color: #F5F2EC;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
     }
+
     .app-name-link {
-      font-weight: bold;
-      color: #044A82 !important;
+      font-weight: 700;
+      color: var(--theme-color) !important;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
     }
-    .markdown-section pre>code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    .sidebar ul li a {
+      color: #475569;
+      font-weight: 500;
+      transition: color 0.15s ease, border-left-color 0.15s ease;
+    }
+
+    .sidebar ul li.active > a {
+      color: var(--theme-color);
+      font-weight: 600;
+      border-left: 2.5px solid var(--theme-color);
+    }
+
+    /* Typography Polish */
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3 {
+      color: var(--heading-color);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .markdown-section h1 {
+      font-size: 2.15rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .markdown-section h2 {
+      font-size: 1.55rem;
+      margin-top: 2rem;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 0.35rem;
+    }
+
+    .markdown-section h3 {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Enhanced Code Snippets */
+    .markdown-section pre {
+      background-color: var(--code-bg) !important;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      border: 1px solid #1E293B;
+      padding: 1rem 1.2rem;
+    }
+
+    .markdown-section pre > code {
+      font-family: 'JetBrains Mono', ui-monospace, Menlo, Monaco, Consolas, monospace !important;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--code-color) !important;
+    }
+
+    .markdown-section code:not(pre code) {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.86em;
+      background-color: #F1F5F9;
+      color: #032D50;
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      border: 1px solid #E2E8F0;
+      font-weight: 500;
+    }
+
+    /* Modern Table Styling */
+    .markdown-section table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 0.92rem;
+    }
+
+    .markdown-section th {
+      background-color: #F1F5F9;
+      color: #0F172A;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    .markdown-section td {
+      border: 1px solid var(--border-color);
+      padding: 0.65rem 1rem;
+    }
+
+    .markdown-section tr:nth-child(even) {
+      background-color: #F8FAFC;
+    }
+
+    /* Structured Callout Blocks */
+    .markdown-section blockquote {
+      border-left: 4px solid var(--theme-color);
+      background-color: #F0F7FF;
+      color: #1E3A8A;
+      padding: 0.85rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .markdown-section blockquote p {
+      margin: 0;
+    }
+
+    /* Coverpage Customization */
+    section.cover {
+      background: linear-gradient(135deg, #032D50 0%, #044A82 100%) !important;
+      color: #FFFFFF !important;
+    }
+
+    section.cover h1 {
+      color: #FFFFFF !important;
+      font-size: 2.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    section.cover blockquote {
+      background: transparent !important;
+      border-left: none !important;
+      color: #E2E8F0 !important;
+      font-size: 1.25rem !important;
+      font-weight: 400;
+    }
+
+    section.cover a.anchor {
+      display: none;
+    }
+
+    section.cover .cover-main a {
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      padding: 0.65rem 1.4rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin: 0.35rem;
+      transition: all 0.2s ease;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    section.cover .cover-main a:hover {
+      background: #FFFFFF;
+      color: var(--theme-color) !important;
+      border-color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Navbar Styling */
+    .app-nav {
+      position: fixed;
+      top: 0;
+      right: 25px;
+      z-index: 100;
+    }
+
+    .app-nav a {
+      color: #475569;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .app-nav a:hover {
+      color: var(--theme-color);
+      background-color: #F1F5F9;
+    }
+
+    /* Docsify Tabs */
+    :root {
+      --docsifytabs-border-color: #E2E8F0;
+      --docsifytabs-tab-color: #64748B;
+      --docsifytabs-tab-color--active: var(--theme-color);
+      --docsifytabs-tab-background: #F8FAFC;
+      --docsifytabs-tab-background--active: #FFFFFF;
+      --docsifytabs-tab-highlight-color: var(--theme-color);
     }
   </style>
 </head>
 <body>
-  <div id="app">Carregando documentação...</div>
+  <div id="app">Carregando portal canónico de documentação...</div>
   <script>
     window.$docsify = {
       name: 'Pure Life Docs',
       repo: 'https://github.com/purelifeministriesbrasil/documentation',
       loadSidebar: true,
+      loadNavbar: true,
+      coverpage: true,
+      onlyCover: false,
       subMaxLevel: 3,
       auto2top: true,
       search: {
         maxAge: 86400000,
         paths: 'auto',
-        placeholder: 'Pesquisar...',
+        placeholder: 'Pesquisar documentação...',
         noData: 'Nenhum resultado encontrado',
         depth: 3
       },
       copyCode: {
         buttonText: 'Copiar',
         errorText: 'Erro',
-        successText: 'Copiado!'
+        successText: 'Copiado'
+      },
+      pagination: {
+        previousText: 'Anterior',
+        nextText: 'Próximo',
+        crossChapter: true,
+        crossChapterText: true
+      },
+      tabs: {
+        persist: true,
+        sync: true,
+        theme: 'classic',
+        tabComments: true,
+        tabHeadings: true
       }
-    }
+    };
   </script>
-  <!-- Docsify v4 -->
+  <!-- Docsify Core v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
   <!-- Plugins -->
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-  <!-- Mermaid -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <!-- Mermaid Support -->
   <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
-  <script>mermaid.initialize({ startOnLoad: true });</script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      themeVariables: {
+        primaryColor: '#044A82',
+        primaryTextColor: '#FFFFFF',
+        primaryBorderColor: '#032D50',
+        lineColor: '#044A82',
+        secondaryColor: '#F8FAFC',
+        tertiaryColor: '#FFFFFF',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
   <!-- Prism Syntax Highlighting -->
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-sql.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-hcl.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
 </body>
 </html>
