@@ -1,5 +1,6 @@
 * [Visão Geral](README.md)
 * [Arquitetura do Sistema](architecture/system-overview.md)
+* [Especificação de Requisitos (SRS)](requirements/especificacao-requisitos-ecossistema.md)
 
 * **Registros de Decisões (ADRs)**
   * [ADR-001: Astro SSG](adrs/ADR-001-astro-ssg.md)
