@@ -1,0 +1,66 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Pure Life Ministries Brasil",
+  "logo": {
+    "dark": "https://purelifebrasil.org/logo-white.svg",
+    "light": "https://purelifebrasil.org/logo.svg"
+  },
+  "favicon": "/favicon.ico",
+  "colors": {
+    "primary": "#0F172A",
+    "light": "#38BDF8",
+    "dark": "#0284C7"
+  },
+  "topbarLinks": [
+    {
+      "name": "Portal Oficial",
+      "url": "https://purelifebrasil.org"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Repositórios GitHub",
+    "url": "https://github.com/purelifeministriesbrasil"
+  },
+  "navigation": [
+    {
+      "group": "Introdução & Arquitetura",
+      "pages": [
+        "README",
+        "architecture/system-overview",
+        "deployment/deployment-guide"
+      ]
+    },
+    {
+      "group": "Decisões de Arquitetura (ADRs)",
+      "pages": [
+        "adrs/ADR-001-astro-ssg",
+        "adrs/ADR-002-isolamento-sanity-neon",
+        "adrs/ADR-003-seguranca-borda-cloudflare-terraform",
+        "adrs/ADR-004-criptografia-aes-gcm-aad",
+        "adrs/ADR-005-modelo-lease-idempotencia"
+      ]
+    },
+    {
+      "group": "Contratos & Interfaces",
+      "pages": [
+        "api/api-contracts"
+      ]
+    },
+    {
+      "group": "Privacidade & LGPD",
+      "pages": [
+        "compliance/lgpd-compliance"
+      ]
+    },
+    {
+      "group": "Runbooks Operacionais",
+      "pages": [
+        "runbooks/key-rotation",
+        "runbooks/disaster-recovery"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/purelifeministriesbrasil"
+  }
+}

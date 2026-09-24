@@ -1,0 +1,27 @@
+name: 'Proposta de Novo Documento / Guia Arquitetural'
+description: Sugira a criação de uma nova seção, ADR, runbook ou guia técnico.
+title: '[DOC PROPOSAL]: '
+labels: ['documentation', 'enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: Compartilhe ideias para enriquecer a documentação técnica do projeto.
+  - type: input
+    id: topic
+    attributes:
+      label: Tópico / Título Proposto
+      placeholder: Ex: Runbook para Monitoramento com Datadog / Cloudflare Analytics
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto e Motivação
+      description: Por que essa documentação é necessária e qual problema ela resolve?
+    validations:
+      required: true
+  - type: textarea
+    id: outline
+    attributes:
+      label: Estrutura / Esboço Sugerido
+      description: Principais tópicos ou seções que devem constar no documento.

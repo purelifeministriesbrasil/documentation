@@ -1,0 +1,28 @@
+name: 'Relato de Erro / Inconsistência na Documentação'
+description: Reporte links quebrados, erros de digitação ou inconsistências conceituais na documentação.
+title: '[DOC BUG]: '
+labels: ['documentation', 'bug']
+body:
+  - type: markdown
+    attributes:
+      value: Obrigado por ajudar a manter a documentação de Pure Life Ministries Brasil precisa e atualizada!
+  - type: input
+    id: page_url
+    attributes:
+      label: Página ou Arquivo Afetado
+      description: Informe o caminho do arquivo (ex. `adrs/ADR-004-criptografia-aes-gcm-aad.md`) ou URL.
+      placeholder: architecture/system-overview.md
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do Problema
+      description: O que está incorreto, confuso ou quebrado?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Sugestão de Correção (Opcional)
+      description: Como você sugeriria corrigir essa informação?

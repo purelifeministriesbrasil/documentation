@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questões de Segurança e Vulnerabilidades
+    url: mailto:seguranca@purelifebrasil.org
+    about: Relate vulnerabilidades de segurança de forma confidencial.
+  - name: Portal Oficial Pure Life Ministries Brasil
+    url: https://purelifebrasil.org
+    about: Conheça o portal oficial do ministério.
