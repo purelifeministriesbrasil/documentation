@@ -11,7 +11,9 @@ Desenvolvido para publicação instantânea e sincronizada com Git através do *
 
 ---
 
-## 📚 Índice de Navegação
+## Índice de Navegação
+
+Índice de Navegação
 
 ### 1. Arquitetura e Engenharia de Software
 - [**Visão Geral do Sistema e Topologia Multirepo**](architecture/system-overview.md): Mapeamento dos 6 repositórios (`frontend`, `backend`, `cms`, `contracts`, `documentation`, `infra`), fronteiras de Clean Architecture e isolamento absoluto de dados sensíveis.
@@ -38,7 +40,9 @@ Desenvolvido para publicação instantânea e sincronizada com Git através do *
 
 ---
 
-## 🚀 Publicação no Mintlify
+## Instalação e Execução
+
+Publicação no Mintlify
 
 Este repositório está configurado nativamente com `mint.json`. Para publicar a documentação oficial:
 1. Acesse o [Dashboard do Mintlify](https://dashboard.mintlify.com/).
@@ -54,7 +58,9 @@ mintlify dev
 
 ---
 
-## 🛡️ Governança e Contribuição
+## Governança e Contribuição
+
+Governança e Contribuição
 
 - [Código de Conduta](CODE_OF_CONDUCT.md)
 - [Guia de Contribuição](CONTRIBUTING.md)

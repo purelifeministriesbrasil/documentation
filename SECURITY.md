@@ -4,7 +4,7 @@ A segurança das informações e a estrita confidencialidade de indivíduos que 
 
 ---
 
-## 🔒 Relato de Vulnerabilidades
+## Segurança: Relato de Vulnerabilidades
 
 Se você identificou uma vulnerabilidade de segurança neste ou em qualquer outro repositório do ecossistema Pure Life, **NÃO crie uma issue pública**.
 
@@ -20,7 +20,9 @@ Solicitamos incluir:
 
 ---
 
-## 🛡️ Diretrizes de Divulgação Responsável
+## Governança e Contribuição
+
+Diretrizes de Divulgação Responsável
 
 - Dê-nos um prazo razoável (mínimo de 30 dias) para investigar, mitigar e implantar correções antes de qualquer divulgação pública.
 - Não acesse, modifique ou destrua dados de usuários reais ou informações sensíveis de triagem.
@@ -29,7 +31,7 @@ Solicitamos incluir:
 
 ---
 
-## ⚠️ Dados Sensíveis e Proteção de PII
+## Atenção: Dados Sensíveis e Proteção de PII
 
 Este repositório contém exclusivamente documentação pública e especificações arquiteturais.
 - **Nenhum segredo em produção** (chaves de API, senhas de banco, chaves privadas AES) deve ser documentado ou commitado aqui.

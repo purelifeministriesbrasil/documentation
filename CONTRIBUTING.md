@@ -6,7 +6,9 @@ A documentação é a fonte da verdade para todo o ecossistema tecnológico. Por
 
 ---
 
-## 📋 Diretrizes de Contribuição
+## Diretrizes e Checklist
+
+Diretrizes de Contribuição
 
 1. **Documento Canónico**:
    - Toda proposta de alteração estrutural ou arquitetural deve estar em harmonia com a Especificação Técnica v5.0 (`arquitetura-purelife-v5.md`).
@@ -30,7 +32,9 @@ A documentação é a fonte da verdade para todo o ecossistema tecnológico. Por
 
 ---
 
-## 🛠️ Visualização Local com Mintlify
+## Validação Local
+
+Visualização Local com Mintlify
 
 Para validar as alterações localmente antes de submeter o Pull Request:
 ```bash
