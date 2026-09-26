@@ -123,6 +123,7 @@ nav:
       - Backup & Recuperação: operations/backup-recovery.md
       - Rotação de Chaves Criptográficas: operations/key-rotation.md
       - CLI Cheatsheet: operations/cli-cheatsheet.md
+      - Observabilidade & Monitoramento: operations/observability.md
   - Requisitos & Governança:
       - Especificação de Requisitos (SRS v2.0): requirements/especificacao-requisitos-ecossistema.md
       - Glossário Técnico Canônico: glossary/glossary.md
