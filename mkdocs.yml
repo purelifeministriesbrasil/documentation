@@ -48,7 +48,7 @@ theme:
         icon: material/weather-night
         name: Alternar para modo claro
   font:
-    text: Plus Jakarta Sans
+    text: Montserrat
     code: JetBrains Mono
 
 extra_css:
