@@ -1,378 +1,592 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap");
 
 /* ==============================================================================
-   PURE LIFE MINISTRIES BRASIL — IDENTIDADE VISUAL INSTITUCIONAL & ENGENHARIA
-   Padrão: Corporativo, Sóbrio, Solene e Rigoroso.
-   Cores Oficiais da Marca:
-     - Ink Primário: #1C2530 (Charcoal Deep)
-     - Navy Institucional: #044A82 (Azul Pure Life)
-     - Slate Blue: #3B4C60 (Apoio e contraste)
-     - Ivory / Gold: #C1BDA6 (Marfim Acetinado / Dourado Nobre)
-     - Light Border: #DEDEDE
-     - Paper Background: #F5F2EC / #FAFAFA
+   PURE LIFE MINISTRIES BRASIL — IDENTIDADE CANÔNICA DE ENGENHARIA
+   Padrão: Soberano, Arquitetural, Solene e Rigoroso.
+   Cores Institucionais:
+     - Obsidian Dark: #0E141B
+     - Charcoal Base: #141D26
+     - Navy Institucional: #044A82
+     - Pure Life Blue: #0D5EA1
+     - Liturgical Ivory / Gold: #C1BDA6
+     - Radiant Gold: #D4AF37
+     - Border Subtle: rgba(193, 189, 166, 0.22)
    ============================================================================== */
 
 :root {
-  --plm-ink: #1C2530;
+  --plm-obsidian: #0E141B;
+  --plm-charcoal: #141D26;
   --plm-navy: #044A82;
-  --plm-blue: #3B4C60;
+  --plm-blue: #0D5EA1;
   --plm-ivory: #C1BDA6;
-  --plm-ivory-light: #E2DFD2;
-  --plm-light: #DEDEDE;
-  --plm-paper: #F8F9FA;
-  --plm-slate: #5A6573;
+  --plm-gold: #D4AF37;
+  --plm-border: rgba(193, 189, 166, 0.22);
+  --plm-text-main: #141D26;
+  --plm-text-muted: #5A6573;
 
   /* Overrides MkDocs Material */
-  --md-primary-fg-color: #1C2530;
+  --md-primary-fg-color: #0E141B;
   --md-primary-fg-color--light: #044A82;
-  --md-primary-fg-color--dark: #141B24;
+  --md-primary-fg-color--dark: #0A0E13;
   --md-accent-fg-color: #044A82;
 
   --md-default-bg-color: #FFFFFF;
-  --md-default-fg-color: #1C2530;
+  --md-default-fg-color: #141D26;
   --md-default-fg-color--light: #5A6573;
 
-  /* Tipografia */
+  /* Tipografia Canônica */
   --md-text-font: "Montserrat", -apple-system, BlinkMacSystemFont, sans-serif;
-  --md-code-font: "JetBrains Mono", monospace;
+  --md-code-font: "JetBrains Mono", Consolas, monospace;
 }
 
 [data-md-color-scheme="slate"] {
-  --plm-ink: #101720;
-  --plm-navy: #0D5EA1;
-  --plm-blue: #3B4C60;
-  --plm-ivory: #C1BDA6;
+  --plm-text-main: #EAECEF;
+  --plm-text-muted: #9BA3AF;
 
-  --md-default-bg-color: #0F161E;
-  --md-default-bg-color--light: #16202A;
-  --md-default-bg-color--lighter: #1E2B38;
-  --md-default-fg-color: #E6E8EA;
+  --md-default-bg-color: #0B1017;
+  --md-default-bg-color--light: #121922;
+  --md-default-bg-color--lighter: #1A232E;
+  --md-default-fg-color: #EAECEF;
   --md-default-fg-color--light: #9BA3AF;
 
-  --md-primary-fg-color: #101720;
+  --md-primary-fg-color: #0B1017;
   --md-accent-fg-color: #C1BDA6;
 }
 
 /* ==============================================================================
-   CABEÇALHO E ABAS (UNIFICADOS — SÓBRIOS E INTEGRADOS)
+   1. CABEÇALHO ANTI-CORTE E ABAS INTEGRADAS (RESPONSIVO E NUNCA TRUNCADO)
    ============================================================================== */
 
 .md-header {
-  background-color: #1C2530 !important;
+  background-color: #0E141B !important;
   border-bottom: 1px solid rgba(193, 189, 166, 0.25) !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
 }
 
+.md-header__inner {
+  max-width: 100% !important;
+  padding: 0 1.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+/* Logo Oficial (Ícone puro sem corte) */
+.md-header__button.md-logo {
+  padding: 0.2rem !important;
+  margin-right: 0.25rem !important;
+}
+
+.md-header__button.md-logo img {
+  height: 28px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  transition: transform 0.25s ease;
+}
+
+.md-header__button.md-logo:hover img {
+  transform: scale(1.08);
+}
+
+/* Título do Cabeçalho - Anti-Ellipsis */
 .md-header__title {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  font-size: 0.95rem;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
 }
 
-.md-header__button.md-logo img,
-.md-header__button.md-logo svg {
-  height: 26px;
-  width: auto;
+.md-header__topic {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.01em !important;
+  color: #FFFFFF !important;
 }
 
-/* Barra de Abas — Mesma tonalidade do topo, sem quebras de cor */
+.md-header__topic:first-child {
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+}
+
+.md-header__topic:last-child {
+  color: #C1BDA6 !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+}
+
+/* Campo de Busca Otimizado */
+.md-search {
+  max-width: 280px !important;
+}
+
+.md-search__inner {
+  border-radius: 6px !important;
+}
+
+/* Botão Repositório Enxuto */
+.md-header__source {
+  max-width: 120px !important;
+  margin-left: 0.25rem !important;
+}
+
+.md-source__repository {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+}
+
+.md-source__facts {
+  display: none !important; /* Remove 0 stars/forks para economizar espaço horizontal */
+}
+
+/* ==============================================================================
+   2. BARRA DE NAVEGAÇÃO SUPERIOR (ABAS DESLIZANTES SEM TRUNCAMENTO)
+   ============================================================================== */
+
 .md-tabs {
-  background-color: #1C2530 !important;
-  border-top: 0 !important;
+  background-color: #0E141B !important;
   border-bottom: 1px solid rgba(193, 189, 166, 0.2) !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important; /* Firefox */
+  -webkit-overflow-scrolling: touch;
 }
 
-.md-tabs__inner,
+.md-tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
+}
+
 .md-tabs__list {
-  background: transparent !important;
-  border: 0 !important;
-  padding: 0;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0 1rem !important;
+  width: max-content !important;
+  min-width: 100% !important;
+}
+
+.md-tabs__item {
+  flex-shrink: 0 !important;
 }
 
 .md-tabs__link {
-  font-family: "Montserrat", sans-serif;
-  color: #DEDEDE !important;
+  font-family: "Montserrat", sans-serif !important;
+  color: #C5CBD3 !important;
   font-weight: 600 !important;
-  font-size: 0.8rem !important;
-  letter-spacing: 0.03em;
-  padding: 0.75rem 1.1rem !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.02em !important;
+  padding: 0.7rem 1rem !important;
+  border-radius: 4px 4px 0 0 !important;
   border-bottom: 2px solid transparent !important;
-  transition: all 0.2s ease-in-out;
+  white-space: nowrap !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   opacity: 1 !important;
 }
 
 .md-tabs__link:hover {
-  color: #C1BDA6 !important;
-  background: rgba(255, 255, 255, 0.04);
+  color: #D4AF37 !important;
+  background-color: rgba(255, 255, 255, 0.04) !important;
 }
 
 .md-tabs__link--active {
   color: #FFFFFF !important;
-  border-bottom: 2px solid #C1BDA6 !important;
-  background: rgba(193, 189, 166, 0.08);
+  font-weight: 700 !important;
+  border-bottom: 2px solid #D4AF37 !important;
+  background-color: rgba(212, 175, 55, 0.08) !important;
 }
 
 /* ==============================================================================
-   TIPOGRAFIA & HIERARQUIA INSTITUCIONAL
+   3. HERO BLUEPRINT & CONSOLE DE ENGENHARIA (IDENTIDADE EXCLUSIVA PURE LIFE)
    ============================================================================== */
 
-body, .md-typeset {
-  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: var(--md-default-fg-color);
-  -webkit-font-smoothing: antialiased;
-}
-
-code, kbd, pre, .md-typeset code {
-  font-family: "JetBrains Mono", Consolas, Monaco, monospace !important;
-  font-size: 0.86em;
-}
-
-.md-typeset h1 {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--md-default-fg-color);
-  margin-bottom: 1rem;
-}
-
-.md-typeset h2 {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  margin-top: 2.2rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--plm-light);
-}
-
-[data-md-color-scheme="slate"] .md-typeset h2 {
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-.md-typeset h3 {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  margin-top: 1.5rem;
-}
-
-.md-typeset p, .md-typeset li {
-  line-height: 1.75;
-}
-
-/* ==============================================================================
-   PORTAL HERO INSTITUCIONAL (SÓBRIO, ELEGANTE E COM AUTORIDADE)
-   ============================================================================== */
-
-.executive-hero {
-  border: 1px solid rgba(193, 189, 166, 0.35);
-  border-radius: 12px;
-  background: #1C2530;
-  color: #FFFFFF;
-  padding: 3.5rem 2.5rem;
-  margin: 1.5rem 0 3rem 0;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(28, 37, 48, 0.12);
+.blueprint-console {
   position: relative;
+  background: radial-gradient(circle at 50% 0%, #162434 0%, #0E141B 70%);
+  border: 1px solid rgba(193, 189, 166, 0.3);
+  border-radius: 12px;
+  padding: 3.5rem 2rem 2.5rem 2rem;
+  margin: 1.5rem 0 3rem 0;
+  box-shadow: 0 16px 40px rgba(10, 14, 19, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  text-align: center;
 }
 
-.executive-badge {
-  display: inline-block;
+/* Padrão de Grid Arquitetural Sutil */
+.blueprint-console::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(193, 189, 166, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(193, 189, 166, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* Moldura Superior com Brilho Canônico */
+.blueprint-console::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  opacity: 0.8;
+}
+
+/* Badge Litúrgico */
+.blueprint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(14, 20, 27, 0.7);
   border: 1px solid #C1BDA6;
-  color: #C1BDA6;
-  font-size: 0.76rem;
+  padding: 0.35rem 1.1rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0.3rem 1rem;
-  border-radius: 4px;
-  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+  color: #C1BDA6;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(8px);
 }
 
-.executive-title {
+.beacon-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #22C55E;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #22C55E;
+  animation: beacon-pulse 2s infinite ease-in-out;
+}
+
+@keyframes beacon-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+.blueprint-title {
   font-family: "Montserrat", sans-serif;
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 800;
   color: #FFFFFF !important;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.15;
   margin: 0 0 1rem 0;
 }
 
-.executive-subtitle {
-  font-size: 1.08rem;
-  color: #DEDEDE !important;
-  max-width: 760px;
-  margin: 0 auto 2rem auto;
-  line-height: 1.65;
+.blueprint-title-gold {
+  color: #D4AF37 !important;
+  font-weight: 800;
+}
+
+.blueprint-subtitle {
+  font-size: 1.05rem;
+  color: #C5CBD3 !important;
+  max-width: 780px;
+  margin: 0 auto 2.2rem auto;
+  line-height: 1.7;
   font-weight: 400;
 }
 
-.executive-cta {
+/* Painel de Telemetria Operacional (4 Indicadores Reais) */
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  max-width: 960px;
+  margin: 0 auto 2.2rem auto;
+  text-align: left;
+}
+
+.telemetry-item {
+  background: rgba(14, 20, 27, 0.65);
+  border: 1px solid rgba(193, 189, 166, 0.2);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  backdrop-filter: blur(6px);
+  transition: all 0.25s ease;
+}
+
+.telemetry-item:hover {
+  border-color: #D4AF37;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.telemetry-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #C1BDA6;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.telemetry-value {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.2rem;
+}
+
+.telemetry-sub {
+  font-size: 0.76rem;
+  color: #8C96A3;
+  line-height: 1.35;
+}
+
+/* Botoes de Ação Rápida no Console */
+.blueprint-cta {
   display: flex;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.executive-cta > p {
+.blueprint-cta > p {
   display: contents;
 }
 
-.md-typeset .executive-cta .md-button {
+.md-typeset .blueprint-cta .md-button {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
-  font-size: 0.88rem;
-  letter-spacing: 0.03em;
-  padding: 0.65rem 1.6rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  padding: 0.65rem 1.4rem;
   border-radius: 6px;
-  border: 1px solid rgba(193, 189, 166, 0.5);
+  border: 1px solid rgba(193, 189, 166, 0.4);
   color: #FFFFFF !important;
-  background: transparent;
-  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.md-typeset .executive-cta .md-button:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: #FFFFFF;
+.md-typeset .blueprint-cta .md-button:hover {
+  border-color: #D4AF37;
+  color: #D4AF37 !important;
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateY(-2px);
 }
 
-.md-typeset .executive-cta .md-button--primary {
+.md-typeset .blueprint-cta .md-button--primary {
   background: #044A82 !important;
   border-color: #044A82 !important;
   color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(4, 74, 130, 0.4);
 }
 
-.md-typeset .executive-cta .md-button--primary:hover {
-  background: #033863 !important;
-  border-color: #033863 !important;
+.md-typeset .blueprint-cta .md-button--primary:hover {
+  background: #0D5EA1 !important;
+  border-color: #0D5EA1 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgba(13, 94, 161, 0.5);
 }
 
 /* ==============================================================================
-   DIVISOR INSTITUCIONAL & SUBTÍTULOS
+   4. OS 3 PILARES CANÔNICOS ("FRONT COM FRONT, BACK COM BACK, DOCS COM DOCS")
    ============================================================================== */
 
-.section-header {
-  text-align: center;
-  margin: 3rem 0 1.5rem 0;
+.pillars-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0 3.5rem 0;
 }
 
-.section-header h2 {
-  font-size: 1.65rem;
+.pillar-card {
+  border: 1px solid var(--plm-border);
+  border-radius: 10px;
+  padding: 1.8rem;
+  background: var(--md-default-bg-color);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-md-color-scheme="slate"] .pillar-card {
+  background: #111822;
+  border-color: rgba(193, 189, 166, 0.15);
+}
+
+.pillar-card:hover {
+  border-color: #044A82;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(4, 74, 130, 0.12);
+}
+
+.pillar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.pillar-badge {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  background: rgba(4, 74, 130, 0.12);
+  color: #044A82;
+  border: 1px solid rgba(4, 74, 130, 0.25);
+}
+
+[data-md-color-scheme="slate"] .pillar-badge {
+  color: #C1BDA6;
+  background: rgba(193, 189, 166, 0.1);
+  border-color: rgba(193, 189, 166, 0.2);
+}
+
+.pillar-status {
+  font-size: 0.72rem;
+  color: #22C55E;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pillar-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
   margin: 0 0 0.5rem 0 !important;
+  color: var(--plm-text-main) !important;
+}
+
+.pillar-desc {
+  font-size: 0.88rem;
+  color: var(--plm-text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+.pillar-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 1.5rem 0 !important;
+  font-size: 0.82rem;
+}
+
+.pillar-list li {
+  padding: 0.35rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--plm-text-main);
+  border-bottom: 1px dashed rgba(193, 189, 166, 0.18);
+}
+
+.pillar-list li:last-child {
+  border-bottom: none;
+}
+
+/* ==============================================================================
+   5. PERÍMETRO CRIPTOGRÁFICO (PIPELINE VISUAL DE SIGILO PASTORAL)
+   ============================================================================== */
+
+.crypto-pipeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 3rem 0;
+}
+
+.crypto-step {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--plm-border);
+  border-radius: 8px;
+  padding: 1.2rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+[data-md-color-scheme="slate"] .crypto-step {
+  background: #111822;
+}
+
+.crypto-step:hover {
+  border-color: #D4AF37;
+  transform: translateY(-2px);
+}
+
+.crypto-step-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #D4AF37;
+  margin-bottom: 0.35rem;
+}
+
+.crypto-step-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--plm-text-main);
+}
+
+.crypto-step-desc {
+  font-size: 0.76rem;
+  color: var(--plm-text-muted);
+  line-height: 1.4;
+}
+
+/* Divisores e Seções */
+.section-anchor-header {
+  text-align: center;
+  margin: 3.5rem 0 1.5rem 0;
+}
+
+.section-anchor-header h2 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin: 0 !important;
   padding: 0 !important;
   border: 0 !important;
+  color: var(--plm-text-main) !important;
 }
 
-.gold-divider {
-  width: 48px;
+.gold-separator {
+  width: 56px;
   height: 2px;
-  background: #C1BDA6;
-  margin: 0.6rem auto 1rem auto;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  margin: 0.6rem auto 1.2rem auto;
 }
 
-.section-desc {
-  color: var(--md-default-fg-color--light);
-  font-size: 0.98rem;
+.section-anchor-sub {
+  color: var(--plm-text-muted);
+  font-size: 0.96rem;
   max-width: 680px;
   margin: 0 auto;
 }
 
 /* ==============================================================================
-   CARDS DE ENGENHARIA (SÓBRIOS E ESTRUTURADOS)
+   6. REDUCED MOTION ACCESSIBILITY (WCAG COMPLIANCE)
    ============================================================================== */
 
-.md-typeset .grid.cards > ul > li {
-  border: 1px solid var(--plm-light);
-  border-radius: 8px;
-  padding: 1.4rem;
-  background: var(--md-default-bg-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li {
-  border-color: rgba(255, 255, 255, 0.1);
-  background: #141D26;
-}
-
-.md-typeset .grid.cards > ul > li:hover {
-  border-color: #3B4C60;
-  box-shadow: 0 6px 18px rgba(28, 37, 48, 0.08);
-}
-
-.md-typeset .grid.cards > ul > li hr {
-  margin: 0.75rem 0;
-  border-color: var(--plm-light);
-}
-
-[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li hr {
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-/* ==============================================================================
-   TABELAS CORPORATIVAS
-   ============================================================================== */
-
-.md-typeset table:not([class]) {
-  border-collapse: collapse;
-  border: 1px solid var(--plm-light);
-  border-radius: 6px;
-  overflow: hidden;
-  font-size: 0.88rem;
-}
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.md-typeset table:not([class]) thead {
-  background-color: #1C2530;
-}
-
-.md-typeset table:not([class]) th {
-  color: #FFFFFF !important;
-  font-weight: 700;
-  padding: 0.75rem 1rem;
-  border: 0;
-}
-
-.md-typeset table:not([class]) td {
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid var(--plm-light);
-}
-
-[data-md-color-scheme="slate"] .md-typeset table:not([class]) td {
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-.md-typeset table:not([class]) tbody tr:hover {
-  background-color: rgba(4, 74, 130, 0.04);
-}
-
-/* ==============================================================================
-   ADMONITIONS & NOTAS
-   ============================================================================== */
-
-.md-typeset .admonition {
-  border-radius: 6px;
-  border-left-width: 4px !important;
-  font-size: 0.9rem;
-}
-
-.md-typeset .admonition.tip,
-.md-typeset .admonition.important {
-  border-left-color: #044A82 !important;
-}
-
-/* ==============================================================================
-   RODAPÉ SÓBRIO
-   ============================================================================== */
-
-.md-footer {
-  background-color: #141B24 !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.md-footer-meta {
-  background-color: #0E131A !important;
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

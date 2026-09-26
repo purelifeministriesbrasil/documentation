@@ -1,9 +1,9 @@
-site_name: Pure Life Ministries Brasil — Documentação Técnica
+site_name: Pure Life Ministries Brasil
 site_description: Arquitetura de software, especificações de requisitos LGPD (Art. 11), contratos de dados e runbooks do ecossistema Pure Life Ministries Brasil.
 site_author: Pure Life Ministries Brasil
 site_url: https://purelifeministriesbrasil.github.io/documentation/
 
-repo_name: purelifeministriesbrasil/documentation
+repo_name: GitHub
 repo_url: https://github.com/purelifeministriesbrasil/documentation
 edit_uri: edit/main/docs/
 copyright: "© 2026 Pure Life Ministries Brasil — Liderando Cristãos à Pureza desde 1986"
@@ -11,7 +11,7 @@ copyright: "© 2026 Pure Life Ministries Brasil — Liderando Cristãos à Purez
 theme:
   name: material
   language: pt-BR
-  logo: assets/images/logo-purelife-branca-m.png
+  logo: assets/images/PLM_Logo.png
   favicon: assets/images/favicon.png
   icon:
     repo: fontawesome/brands/github
@@ -91,7 +91,7 @@ markdown_extensions:
 
 nav:
   - Início: index.md
-  - Arquitetura & Engenharia:
+  - Arquitetura:
       - Visão Geral do Sistema: architecture/system-overview.md
       - Fronteiras dos Repositórios: architecture/repositories-scope.md
       - Diagramas de Sequência: architecture/sequence-diagrams.md
@@ -109,12 +109,12 @@ nav:
       - Conformidade Estrita com a LGPD: security/lgpd-compliance.md
       - Arquitetura Criptográfica: security/crypto-architecture.md
       - Política de Segurança da Informação: governance/security-policy.md
-  - Contratos & Schemas:
+  - Contratos:
       - Formulário de Triagem: schemas/triage-schema.md
       - Formulário de Contato: schemas/contact-schema.md
       - Doações & PIX Dinâmico: schemas/donation-schema.md
       - Inscrição em Newsletter: schemas/newsletter-schema.md
-  - Operações & Runbooks:
+  - Operações:
       - Guia Rápido de Instalação: getting-started/quickstart.md
       - Variáveis de Ambiente: getting-started/environment.md
       - Configuração do Supabase: getting-started/supabase-setup.md
@@ -124,7 +124,7 @@ nav:
       - Rotação de Chaves Criptográficas: operations/key-rotation.md
       - CLI Cheatsheet: operations/cli-cheatsheet.md
       - Observabilidade & Monitoramento: operations/observability.md
-  - Requisitos & Governança:
+  - Governança:
       - Especificação de Requisitos (SRS v2.0): requirements/especificacao-requisitos-ecossistema.md
       - Glossário Técnico Canônico: glossary/glossary.md
       - Código de Conduta: governance/code-of-conduct.md

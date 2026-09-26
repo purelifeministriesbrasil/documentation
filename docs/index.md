@@ -1,180 +1,226 @@
 ---
-title: 'Pure Life Ministries Brasil — Plataforma Tecnológica'
+title: 'Pure Life Ministries Brasil — Console de Engenharia'
 hide:
   - navigation
   - toc
 ---
 
-<div class="executive-hero" markdown="1">
-
-  <div class="executive-badge">Documentação Técnica Oficial</div>
-  
-  <h1 class="executive-title">Pure Life Ministries Brasil</h1>
-  
-  <p class="executive-subtitle">
-    Portal Corporativo de Engenharia, Arquitetura de Software, Segurança da Informação (LGPD Art. 11),
-    Contratos de Dados e Procedimentos Operacionais do Ecossistema Ministerial.
-  </p>
-  
-  <div class="executive-cta" markdown="1">
-
-  [Visão Geral da Arquitetura](architecture/system-overview.md){ .md-button .md-button--primary }
-  [Especificação de Requisitos (SRS)](requirements/especificacao-requisitos-ecossistema.md){ .md-button }
-  [Operações & Runbooks](operations/deployment.md){ .md-button }
-
+<div class="blueprint-console">
+  <div class="blueprint-badge">
+    <span class="beacon-dot"></span>
+    SISTEMA OPERACIONAL &bull; SOLI DEO GLORIA &bull; EST. 1986
   </div>
+  
+  <h1 class="blueprint-title">
+    Pure Life Ministries Brasil<br>
+    <span class="blueprint-title-gold">Arquitetura Canônica &amp; Engenharia</span>
+  </h1>
+  
+  <p class="blueprint-subtitle">
+    Portal corporativo de especificações técnicas, decisões de arquitetura e governança de segurança da informação.
+    O ecossistema digital foi concebido para sustentar quatro décadas de aconselhamento bíblico sob estrito
+    sigilo pastoral e conformidade irrestrita com a LGPD (Art. 11 &mdash; Dados Sensíveis).
+  </p>
+
+  <div class="telemetry-grid">
+    <div class="telemetry-item">
+      <div class="telemetry-label">Disponibilidade na Borda</div>
+      <div class="telemetry-value">99.98% SLO</div>
+      <div class="telemetry-sub">Vercel Edge Anycast &bull; 16 Rotas SSG &bull; LCP &lt; 0.8s</div>
+    </div>
+    <div class="telemetry-item">
+      <div class="telemetry-label">Perímetro Criptográfico</div>
+      <div class="telemetry-value">AES-256-GCM</div>
+      <div class="telemetry-sub">Envelope AAD por Registro &bull; Chaves em Hardware</div>
+    </div>
+    <div class="telemetry-item">
+      <div class="telemetry-label">Privacidade Pastoral</div>
+      <div class="telemetry-value">Zero PII Logs</div>
+      <div class="telemetry-sub">Scrubber de Telemetria &bull; Sem Rastro em Logs</div>
+    </div>
+    <div class="telemetry-item">
+      <div class="telemetry-label">Governança Temporal</div>
+      <div class="telemetry-value">180d Purge</div>
+      <div class="telemetry-sub">Cron Diário 03:00 UTC &bull; Expurgo Irreversível</div>
+    </div>
+  </div>
+  
+  <div class="blueprint-cta">
+    <a href="architecture/system-overview/" class="md-button md-button--primary">Visão Geral da Arquitetura</a>
+    <a href="architecture/repositories-scope/" class="md-button">Fronteiras dos Repositórios</a>
+    <a href="security/threat-model/" class="md-button">Modelagem de Ameaças &amp; LGPD</a>
+    <a href="operations/deployment/" class="md-button">Runbooks &amp; Operações</a>
+  </div>
+</div>
+
+---
+
+<div class="section-anchor-header" markdown>
+
+## Divisão Canônica em Três Pilares
+<div class="gold-separator"></div>
+<p class="section-anchor-sub">
+Isolamento estrito de responsabilidades e segurança: <strong>"Front com Front, Back com Back e Docs com Docs"</strong>.
+</p>
+
+</div>
+
+<div class="pillars-container">
+
+<div class="pillar-card">
+  <div>
+    <div class="pillar-top">
+      <span class="pillar-badge">REPO: frontend</span>
+      <span class="pillar-status">&bull; 100% Estático</span>
+    </div>
+    <h3 class="pillar-title">Borda &amp; Experiência Visual</h3>
+    <p class="pillar-desc">
+      Interface pública ultraveloz, acessível e blindada contra injeção de código ou vazamento de segredos.
+    </p>
+    <ul class="pillar-list">
+      <li>&check; 16 páginas estáticas compiladas com Astro 5 SSG</li>
+      <li>&check; Ilhas React isoladas para formulários sensíveis</li>
+      <li>&check; Tailwind CSS v4 com tokens institucionais</li>
+      <li>&check; Zero chaves administrativas (apenas cliente <code>anon</code>)</li>
+      <li>&check; Zero estilos residuais inline e zero fontes externas não auditadas</li>
+    </ul>
+  </div>
+  <div style="margin-top: 1rem;">
+    <a href="architecture/repositories-scope/#a-repositorio-frontend-front-com-front" class="md-button md-button--primary" style="width: 100%; text-align: center; font-size: 0.82rem;">
+      Explorar Escopo Frontend &rarr;
+    </a>
+  </div>
+</div>
+
+<div class="pillar-card">
+  <div>
+    <div class="pillar-top">
+      <span class="pillar-badge">REPO: backend</span>
+      <span class="pillar-status">&bull; Serverless 24/7</span>
+    </div>
+    <h3 class="pillar-title">Núcleo &amp; Webhooks Financeiros</h3>
+    <p class="pillar-desc">
+      Microsserviços serverless na Cloudflare para liquidação de doações via PIX e manutenção confidencial.
+    </p>
+    <ul class="pillar-list">
+      <li>&check; Validação anti-bot Cloudflare Turnstile nativa</li>
+      <li>&check; Webhooks PIX idempotentes (Asaas e Mercado Pago)</li>
+      <li>&check; Assinatura criptográfica HMAC-SHA256 validada</li>
+      <li>&check; Lease atômico contra duplicidade de doação</li>
+      <li>&check; Cron de expurgo diário às 03:00 UTC (180 dias)</li>
+    </ul>
+  </div>
+  <div style="margin-top: 1rem;">
+    <a href="architecture/repositories-scope/#b-repositorio-backend-back-com-back" class="md-button md-button--primary" style="width: 100%; text-align: center; font-size: 0.82rem;">
+      Explorar Escopo Backend &rarr;
+    </a>
+  </div>
+</div>
+
+<div class="pillar-card">
+  <div>
+    <div class="pillar-top">
+      <span class="pillar-badge">REPO: docs</span>
+      <span class="pillar-status">&bull; Fonte da Verdade</span>
+    </div>
+    <h3 class="pillar-title">Governança &amp; Auditoria</h3>
+    <p class="pillar-desc">
+      O repositório central de decisões de engenharia, requisitos contratuais e manuais de resposta a incidentes.
+    </p>
+    <ul class="pillar-list">
+      <li>&check; Portal MkDocs Material com build estrito validado</li>
+      <li>&check; 5 Decisões formais de Arquitetura (ADRs 001 a 005)</li>
+      <li>&check; Especificação de Requisitos SRS v2.0 completa</li>
+      <li>&check; Modelagem de ameaças STRIDE e conformidade LGPD</li>
+      <li>&check; Runbooks operacionais, observabilidade e contingência</li>
+    </ul>
+  </div>
+  <div style="margin-top: 1rem;">
+    <a href="architecture/repositories-scope/#c-repositorio-documentation-docs-com-docs" class="md-button md-button--primary" style="width: 100%; text-align: center; font-size: 0.82rem;">
+      Explorar Escopo Docs &rarr;
+    </a>
+  </div>
+</div>
 
 </div>
 
 ---
 
-<div class="section-header" markdown>
+<div class="section-anchor-header" markdown>
 
-## Princípios de Engenharia & Governança
-<div class="gold-divider"></div>
-<p class="section-desc">
-A arquitetura do ecossistema foi projetada sob o princípio de tolerância zero a falhas em dados sensíveis:
-<strong>Corretude > Segurança & Privacidade > Observabilidade > Simplicidade > Velocidade de Entrega</strong>.
+## Perímetro Criptográfico de Sigilo Pastoral
+<div class="gold-separator"></div>
+<p class="section-anchor-sub">
+O ciclo de vida de dados confidenciais desde a coleta na borda até a destruição criptográfica definitiva.
 </p>
+
+</div>
+
+<div class="crypto-pipeline">
+  <div class="crypto-step">
+    <div class="crypto-step-num">ETAPA 01</div>
+    <div class="crypto-step-title">Desafio Borda</div>
+    <div class="crypto-step-desc">Turnstile bloqueia tráfego hostil e bots antes do processamento.</div>
+  </div>
+  <div class="crypto-step">
+    <div class="crypto-step-num">ETAPA 02</div>
+    <div class="crypto-step-title">Envelope Cripto</div>
+    <div class="crypto-step-desc">AES-256-GCM cifra o relato pastoral com AAD vinculado ao ID.</div>
+  </div>
+  <div class="crypto-step">
+    <div class="crypto-step-num">ETAPA 03</div>
+    <div class="crypto-step-title">Persistência RLS</div>
+    <div class="crypto-step-desc">Inserção direta no Supabase com permissão exclusiva INSERT ONLY.</div>
+  </div>
+  <div class="crypto-step">
+    <div class="crypto-step-num">ETAPA 04</div>
+    <div class="crypto-step-title">Sanitização</div>
+    <div class="crypto-step-desc">Scrubber em tempo real mascara PII em logs e telemetria externa.</div>
+  </div>
+  <div class="crypto-step">
+    <div class="crypto-step-num">ETAPA 05</div>
+    <div class="crypto-step-title">Expurgo 180d</div>
+    <div class="crypto-step-desc">Cron agendado remove registros inativos permanentemente.</div>
+  </div>
+</div>
+
+---
+
+<div class="section-anchor-header" markdown>
+
+## Acesso Direto aos Recursos Técnicos
+<div class="gold-separator"></div>
 
 </div>
 
 <div class="grid cards" markdown>
 
-- **Privacidade & Conformidade Estrita LGPD**
+- :material-file-document-check: **Decisões de Arquitetura (ADRs)**
   
     ---
-    Tratamento rigoroso de dados de aconselhamento confidencial (Art. 11 da Lei nº 13.709/2018). Criptografia de ponta a ponta com AES-256-GCM + AAD vinculado ao identificador do registro, expurgo temporal automático (180 dias) e trilha de auditoria append-only.
+    Registros detalhados de por que escolhemos Astro 5, Supabase, Vercel Edge, Criptografia AES-GCM e Leases de Idempotência.
+    
+    [:material-arrow-right: Ver Todas as ADRs](adrs/index.md)
 
-- **Persistência Segura no Supabase Postgres**
+- :material-shield-lock-outline: **Segurança da Informação & LGPD**
   
     ---
-    Banco de dados relacional com Row Level Security (RLS) habilitado. Políticas restritas asseguram que clientes anônimos possuem permissão de inserção exclusiva (`INSERT ONLY`), eliminando qualquer risco de leitura pública de registros de terceiros.
+    Modelagem STRIDE, conformidade com o Artigo 11 da LGPD para dados sensíveis e procedimentos de contingência.
+    
+    [:material-arrow-right: Acessar Segurança](security/threat-model.md)
 
-- **Disponibilidade & Borda na Vercel Edge**
+- :material-code-json: **Contratos & Validação de Dados**
   
     ---
-    16 rotas institucionais compiladas em HTML estático de alto desempenho (Astro 5 SSG), CDN global Anycast com tempo de resposta inferior a 100ms, zero CSS residual inline e pontuações máximas em Core Web Vitals (LCP < 1.0s, INP < 50ms, CLS = 0).
+    Esquemas de dados em TypeScript/Zod para triagem confidencial, contato institucional, newsletter e PIX.
+    
+    [:material-arrow-right: Consultar Schemas](schemas/triage-schema.md)
 
-- **Pagamentos & Webhooks Idempotentes**
+- :material-server-network: **Operações & Observabilidade**
   
     ---
-    Integração de checkout e doações com PIX dinâmico (Asaas), protegida por leases atômicos transacionais no banco de dados (`pg_try_advisory_xact_lock`) e validação criptográfica HMAC contra duplicidade de cobrança.
-
-- **Fronteiras e Segregação de Repositórios**
-  
-    ---
-    Governança estrita: <em>"Front com Front, Back com Back, Docs com Docs"</em>. Três repositórios isolados e autônomos, sem dependências circulares, pacotes locais acoplados ou pipelines de CI cruzados.
-
-- **Rastreabilidade e Decisões de Arquitetura**
-  
-    ---
-    Registros formais de Decisões de Arquitetura (ADRs 001 a 005), diagramas de sequência, modelo de dados relacional e runbooks operacionais auditáveis.
-
-</div>
-
----
-
-<div class="section-header" markdown>
-
-## Topologia dos Repositórios Ativos
-<div class="gold-divider"></div>
-<p class="section-desc">
-Segregação estrutural dos três projetos fundamentais que compõem o ecossistema digital.
-</p>
-
-</div>
-
-<div align="center" markdown>
-
-| Repositório | Stack Tecnológica | Papel no Ecossistema | Infraestrutura / Borda |
-| :--- | :--- | :--- | :--- |
-| **`frontend`** | Astro 5, Tailwind CSS v4, React (Ilhas), Supabase-JS, Zod | Interface pública web, 16 rotas estáticas, formulários | **Vercel Edge Network** |
-| **`backend`** | TypeScript, Cloudflare Workers, Asaas SDK, Drizzle | Webhooks bancários PIX, cron diário de expurgo LGPD | **Cloudflare Workers** |
-| **`documentation`** | Material for MkDocs, Python, GitHub Pages | Documentação técnica canônica, ADRs, runbooks e SRS | **GitHub Pages** |
-
-[:material-arrow-right: Consultar Fronteiras e Escopo dos Repositórios](architecture/repositories-scope.md){ .md-button style="margin-top: 1rem;" }
-
-</div>
-
----
-
-<div class="section-header" markdown>
-
-## Guia Rápido de Execução Local
-<div class="gold-divider"></div>
-<p class="section-desc">
-Instruções para inicialização dos ambientes locais de desenvolvimento e visualização da documentação.
-</p>
-
-</div>
-
-=== "Servir Documentação (uv / Python)"
-
-    ```bash
-    # Clone o repositório de documentação
-    git clone https://github.com/purelifeministriesbrasil/documentation.git
-    cd documentation
-
-    # Inicie o servidor local com recarregamento em tempo real (http://127.0.0.1:8000)
-    uv run --with "mkdocs>=1.6.0" --with "mkdocs-material>=9.5.0" --with "pymdown-extensions>=10.7" mkdocs serve
-    ```
-
-=== "Frontend Web (pnpm / Node.js 22)"
-
-    ```bash
-    # Clone o repositório frontend
-    git clone https://github.com/purelifeministriesbrasil/frontend.git
-    cd frontend
-
-    # Instale as dependências e inicie o ambiente de desenvolvimento (http://localhost:4321)
-    pnpm install
-    pnpm dev
-
-    # Validação completa de compilação, topologia e estilo
-    pnpm ci:verify
-    ```
-
-=== "Backend Worker (Cloudflare / Wrangler)"
-
-    ```bash
-    # Clone o repositório backend
-    git clone https://github.com/purelifeministriesbrasil/backend.git
-    cd backend
-
-    # Instale as dependências e execute os testes locais
-    pnpm install
-    pnpm test
-    pnpm lint
-    ```
-
----
-
-<div class="section-header" markdown>
-
-## Estrutura de Navegação da Documentação
-<div class="gold-divider"></div>
-
-</div>
-
-<div class="grid cards" markdown>
-
-- **[Arquitetura & Engenharia](architecture/system-overview.md)**
-    Visão geral da topologia, diagramas de sequência, modelo de dados relacional, design system e decisões ADR.
-
-- **[Segurança & LGPD](security/threat-model.md)**
-    Modelagem de ameaças, conformidade com o Art. 11 da LGPD, arquitetura criptográfica e políticas de segurança.
-
-- **[Contratos & Schemas](schemas/triage-schema.md)**
-    Esquemas de validação estritos (Zod) para formulários de triagem residencial, contato geral, doações e newsletter.
-
-- **[Operações & Runbooks](operations/deployment.md)**
-    Procedimentos de deploy na Vercel, hardening do Supabase, rotação de chaves e gestão de backups.
-
-- **[Especificações & Requisitos](requirements/especificacao-requisitos-ecossistema.md)**
-    Catálogo formal de requisitos funcionais e não funcionais (SRS v2.0.0) e glossário técnico canônico.
-
-- **[Governança Corporativa](governance/code-of-conduct.md)**
-    Código de conduta ministerial, diretrizes de contribuição para engenheiros e licenças de software.
+    Runbooks de deploy na Vercel, monitoramento de Golden Signals, rotação de chaves e comandos CLI.
+    
+    [:material-arrow-right: Ver Runbooks](operations/observability.md)
 
 </div>
