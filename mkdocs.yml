@@ -1,51 +1,65 @@
 site_name: Pure Life Ministries Brasil — Documentação Técnica
-site_description: Arquitetura, especificações, contratos de dados, segurança LGPD e runbooks do ecossistema Pure Life Ministries Brasil.
+site_description: Arquitetura de software, especificações de requisitos LGPD (Art. 11), contratos de dados e runbooks do ecossistema Pure Life Ministries Brasil.
 site_author: Pure Life Ministries Brasil
 site_url: https://purelifeministriesbrasil.github.io/documentation/
 
 repo_name: purelifeministriesbrasil/documentation
 repo_url: https://github.com/purelifeministriesbrasil/documentation
+edit_uri: edit/main/docs/
+copyright: "© 2026 Pure Life Ministries Brasil — Liderando Cristãos à Pureza desde 1986"
 
 theme:
   name: material
   language: pt-BR
-  logo: assets/images/PLM_Logo.png
+  logo: assets/images/logo-purelife-branca-m.png
   favicon: assets/images/favicon.png
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
-        name: Alternar para modo escuro
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-night
-        name: Alternar para modo claro
-  font:
-    text: Montserrat
-    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+    annotation: material/arrow-right-circle
   features:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
     - navigation.top
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.instant.prefetch
     - navigation.tracking
+    - toc.follow
     - search.suggest
     - search.highlight
+    - search.share
+    - content.tabs.link
     - content.code.copy
     - content.code.annotate
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Alternar para modo escuro
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Alternar para modo claro
+  font:
+    text: Plus Jakarta Sans
+    code: JetBrains Mono
 
 extra_css:
   - assets/stylesheets/extra.css
 
+extra_javascript:
+  - assets/javascripts/mobile-nav.js
+
 plugins:
-  - search
+  - search:
+      lang: pt
 
 markdown_extensions:
   - admonition
@@ -63,6 +77,12 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.mark
   - tables
   - attr_list
   - md_in_html
@@ -71,45 +91,41 @@ markdown_extensions:
 
 nav:
   - Início: index.md
-  - Começando:
-      - Visão Rápida: getting-started/quickstart.md
-      - Variáveis de Ambiente: getting-started/environment.md
-      - Configuração do Supabase: getting-started/supabase-setup.md
-  - Arquitetura:
+  - Arquitetura & Engenharia:
       - Visão Geral do Sistema: architecture/system-overview.md
       - Fronteiras dos Repositórios: architecture/repositories-scope.md
       - Diagramas de Sequência: architecture/sequence-diagrams.md
-      - Modelo de Dados: architecture/data-model.md
-  - Decisões (ADRs):
-      - Índice de ADRs: adrs/index.md
-      - ADR-001 - Astro SSG & Tailwind v4: adrs/ADR-001-astro-ssg-tailwind.md
-      - ADR-002 - Supabase como Plataforma de Dados: adrs/ADR-002-supabase-plataforma-dados.md
-      - ADR-003 - Hospedagem e Borda na Vercel: adrs/ADR-003-vercel-hospedagem-borda.md
-      - ADR-004 - Criptografia AES-256-GCM com AAD: adrs/ADR-004-criptografia-aes-gcm-aad.md
-      - ADR-005 - Modelo de Lease e Idempotência: adrs/ADR-005-modelo-lease-idempotencia.md
-  - Schemas & Validação:
+      - Modelo de Dados Relacional: architecture/data-model.md
+      - Design System & Componentes: design-system/design-system.md
+      - Decisões de Arquitetura (ADRs):
+          - Índice de Decisões: adrs/index.md
+          - ADR-001 — Astro SSG & Tailwind v4: adrs/ADR-001-astro-ssg-tailwind.md
+          - ADR-002 — Supabase como Plataforma de Dados: adrs/ADR-002-supabase-plataforma-dados.md
+          - ADR-003 — Hospedagem e Borda na Vercel: adrs/ADR-003-vercel-hospedagem-borda.md
+          - ADR-004 — Criptografia AES-256-GCM com AAD: adrs/ADR-004-criptografia-aes-gcm-aad.md
+          - ADR-005 — Modelo de Lease e Idempotência: adrs/ADR-005-modelo-lease-idempotencia.md
+  - Segurança & LGPD:
+      - Modelagem de Ameaças (Threat Model): security/threat-model.md
+      - Conformidade Estrita com a LGPD: security/lgpd-compliance.md
+      - Arquitetura Criptográfica: security/crypto-architecture.md
+      - Política de Segurança da Informação: governance/security-policy.md
+  - Contratos & Schemas:
       - Formulário de Triagem: schemas/triage-schema.md
       - Formulário de Contato: schemas/contact-schema.md
-      - Doações & PIX: schemas/donation-schema.md
+      - Doações & PIX Dinâmico: schemas/donation-schema.md
       - Inscrição em Newsletter: schemas/newsletter-schema.md
-  - Segurança & LGPD:
-      - Modelagem de Ameaças: security/threat-model.md
-      - Conformidade com a LGPD: security/lgpd-compliance.md
-      - Arquitetura Criptográfica: security/crypto-architecture.md
-  - Design System:
-      - Guia de Estilo e Componentes: design-system/design-system.md
   - Operações & Runbooks:
-      - Deploy na Vercel: operations/deployment.md
+      - Guia Rápido de Instalação: getting-started/quickstart.md
+      - Variáveis de Ambiente: getting-started/environment.md
+      - Configuração do Supabase: getting-started/supabase-setup.md
       - Hardening do Supabase (Linter): operations/supabase-hardening.md
+      - Deploy na Vercel: operations/deployment.md
       - Backup & Recuperação: operations/backup-recovery.md
-      - Rotação de Chaves: operations/key-rotation.md
+      - Rotação de Chaves Criptográficas: operations/key-rotation.md
       - CLI Cheatsheet: operations/cli-cheatsheet.md
-  - Requisitos & Glossário:
-      - Especificação de Requisitos (SRS): requirements/especificacao-requisitos-ecossistema.md
-      - Glossário Canónico: glossary/glossary.md
-  - Governança:
+  - Requisitos & Governança:
+      - Especificação de Requisitos (SRS v2.0): requirements/especificacao-requisitos-ecossistema.md
+      - Glossário Técnico Canônico: glossary/glossary.md
       - Código de Conduta: governance/code-of-conduct.md
-      - Como Contribuir: governance/contributing.md
-      - Política de Segurança: governance/security-policy.md
-      - Licença: governance/license.md
-
+      - Diretrizes de Contribuição: governance/contributing.md
+      - Licença e Termos de Uso: governance/license.md
