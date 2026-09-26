@@ -1,7 +1,7 @@
-# Especificação de Requisitos do Sistema (SRS v2.0)
+# Especificação de Requisitos do Sistema (SRS)
 
 **Documento Canônico de Engenharia de Requisitos e Governança de Dados**  
-**Versão:** 2.0.0 (Modernizada: Supabase & Vercel)  
+**Versão:** Canônica (Modernizada: Supabase & Vercel)  
 **Conformidade:** LGPD (Lei Federal nº 13.709/2018), ASVS v4.0.3, ISO/IEC/IEEE 29148  
 
 ---

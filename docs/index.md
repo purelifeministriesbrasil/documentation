@@ -7,7 +7,7 @@ hide:
 
 <div class="docs-hero">
   <div class="docs-hero-badge">
-    ARQUITETURA CANÔNICA &bull; VERSÃO 2.0
+    ARQUITETURA CANÔNICA
   </div>
   
   <h1 class="docs-hero-title">
@@ -163,7 +163,7 @@ O ecossistema adota separação estrita de responsabilidades: **"Front com Front
     <ul class="pillar-list">
       <li>Portal MkDocs Material com validação estrita em pipeline</li>
       <li>Decisões de Arquitetura (ADRs 001 a 005) versionadas</li>
-      <li>Especificação de Requisitos de Software (SRS v2.0)</li>
+      <li>Especificação de Requisitos de Software (SRS)</li>
       <li>Modelagem de ameaças STRIDE e conformidade LGPD Art. 11</li>
       <li>Manuais de deploy, observabilidade e contingência</li>
     </ul>

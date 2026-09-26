@@ -1,7 +1,7 @@
 # Glossário Canónico de Domínio (DDD) e Engenharia
 
 **Linguagem Ubíqua (*Ubiquitous Language*) do Ecossistema Pure Life Ministries Brasil**  
-**Versão:** 2.0.0 (Modernizada)  
+**Versão:** Canônica (Modernizada)  
 **Classificação:** Referência Terminológica para Engenharia e Ministério
 
 ---
