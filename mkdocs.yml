@@ -56,12 +56,16 @@ extra_css:
 
 extra_javascript:
   - assets/javascripts/mobile-nav.js
+  - assets/javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 plugins:
   - search:
       lang: pt
 
 markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
   - admonition
   - pymdownx.details
   - pymdownx.superfences:

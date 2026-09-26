@@ -6,8 +6,8 @@ Este runbook define os procedimentos para garantir a continuidade operacional da
 
 ## 1. Métricas Canónicas de Recuperação
 
-- **RPO (Recovery Point Objective)**: $\le 24$ horas para backups automáticos diários do Supabase (ou $\le 1$ hora com Point-in-Time Recovery - PITR ativado).
-- **RTO (Recovery Time Objective)**: $\le 1$ hora para restauração completa de instâncias e apontamento de DNS.
+- **RPO (Recovery Point Objective)**: ≤ 24 horas para backups automáticos diários do Supabase (ou ≤ 1 hora com Point-in-Time Recovery - PITR ativado).
+- **RTO (Recovery Time Objective)**: ≤ 1 hora para restauração completa de instâncias e apontamento de DNS.
 
 ---
 

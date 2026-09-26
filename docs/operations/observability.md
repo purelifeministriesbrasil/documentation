@@ -6,9 +6,10 @@ A estratégia de observabilidade da **Pure Life Ministries Brasil** é orientada
 
 ## 1. Princípio Fundamental de Sigilo de Dados
 
-> [!CAUTION] Regra Inviolável de Telemetria
-> **Nenhum dado confidencial de aconselhamento, nome de aconselhado, relato de pecado, telefone, e-mail ou cabeçalho de autorização pode constar em logs legíveis por humanos, traces APM ou relatórios de erro.**
-> A observabilidade mede a saúde e a integridade dos processos técnicos, nunca o conteúdo espiritual ou pessoal dos fiéis.
+!!! danger "Regra Inviolável de Telemetria"
+    **Nenhum dado confidencial de aconselhamento, nome de aconselhado, relato de pecado, telefone, e-mail ou cabeçalho de autorização pode constar em logs legíveis por humanos, traces APM ou relatórios de erro.**
+    
+    A observabilidade mede a saúde e a integridade dos processos técnicos, nunca o conteúdo espiritual ou pessoal dos fiéis.
 
 O ecossistema implementa o componente canônico `scrubber.ts` no `backend`, que remove automaticamente quaisquer chaves sensíveis na camada de geração de eventos.
 
