@@ -62,7 +62,7 @@ flowchart TD
   - `NewsletterForm.astro`: Captação simplificada de informativos por e-mail.
 
 ### B. Plataforma de Dados (`Supabase`)
-- **Segurança de Linha (RLS)**: Cada tabela possui políticas estritas (`FOR INSERT TO anon WITH CHECK (true)`).
+- **Segurança de Linha (RLS)**: Cada tabela possui políticas estritas com validação em nível de banco para garantir preenchimento de campos obrigatórios (sem expressões permissivas de `WITH CHECK (true)`).
 - **Sem Exposição de Leitura**: Usuários públicos anônimos só possuem permissão de inserção. É matematicamente impossível consultar dados de terceiros pela API anônima.
 - **Painel Visual**: A equipe pastoral utiliza o painel administrativo com controle de acesso granular e auditoria para despachar atendimentos.
 

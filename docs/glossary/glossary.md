@@ -1,7 +1,7 @@
 # Glossário Canónico de Domínio (DDD) e Engenharia
 
-**Linguagem Ubíqua (*Ubiquitous Language*) do Ecossistema Pure Life Brasil**  
-**Versão:** 1.0.0  
+**Linguagem Ubíqua (*Ubiquitous Language*) do Ecossistema Pure Life Ministries Brasil**  
+**Versão:** 2.0.0 (Modernizada)  
 **Classificação:** Referência Terminológica para Engenharia e Ministério
 
 ---
@@ -11,12 +11,11 @@
 | Termo de Domínio | Definição Canónica | Contexto Operacional / Sistema |
 |---|---|---|
 | **Aconselhamento Bíblico** | Prática pastoral focada na aplicação das Escrituras Sagradas como autoridade suficiente para tratar desordens emocionais, compulsões e pecados sexuais. | Módulo central de triagem e acompanhamento do ecossistema. |
-| **Programa Residencial** | Regime de internato de 9 meses localizado no campus em Águas Lindas de Goiás / DF, exclusivo para homens adultos ($\ge 18$ anos). Dividido em Fase I (6 meses de fundamentação) e Fase II (3 meses de transição). | Entidade `InscricaoPrograma` com `tipo_programa = 'RESIDENCIAL'`. |
-| **Programa Vencedores em Casa** | Programa de aconselhamento à distância com duração de 6 meses, voltado para homens que não podem se internar, mulheres em luta com pecado sexual e adolescentes maduros ($\ge 16$ anos). | Entidade `InscricaoPrograma` com `tipo_programa = 'ONLINE'`. |
-| **Programa Para Esposas** | Acompanhamento individual e confidencial de 18 semanas para mulheres cujos maridos cometeram adultério ou estão presos na pornografia. Conduzido exclusivamente por conselheiras experientes. | Entidade `InscricaoPrograma` com `tipo_programa = 'ESPOSAS'`. |
-| **Aconselhamento Suplementar** | Ciclos adicionais de até 6 sessões semanais pós-formatura para prestação de contas contínua, intencionalmente alocados para um novo conselheiro bíblico. | Regra de negócio `RN-008`. |
+| **Programa Residencial** | Regime de internato de 9 meses localizado no campus em Águas Lindas de Goiás / DF, exclusivo para homens adultos ($\ge 18$ anos). Dividido em Fase I (6 meses de fundamentação) e Fase II (3 meses de transição). | Tabela `triagens` com `program_interest = 'residencial'`. |
+| **Programa Vencedores em Casa** | Programa de aconselhamento à distância com duração de 6 meses, voltado para homens que não podem se internar, mulheres em luta com pecado sexual e adolescentes maduros ($\ge 16$ anos). | Tabela `triagens` com `program_interest = 'online'`. |
+| **Programa Para Esposas** | Acompanhamento individual e confidencial de 18 semanas para mulheres cujos maridos cometeram adultério ou estão presos na pornografia. Conduzido exclusivamente por conselheiras experientes. | Tabela `triagens` com `program_interest = 'esposas'`. |
 | **Trauma de Traição (*Betrayal Trauma*)** | Quadro de choque emocional profundo, desregulação afetiva e hipervigilância vivenciado pela esposa após descobrir a quebra do pacto matrimonial pelo cônjuge. | Diretriz de sensibilidade no módulo `Para Esposas`. |
-| **Sigilo Pastoral e Sacerdotal** | Obrigação moral e dever de confissão inviolável mantido pelos conselheiros da Pure Life em relação aos relatos íntimos compartilhados pelos aconselhandos. | Refletido no controle de acesso RBAC e cifra AES-256-GCM em repouso. |
+| **Sigilo Pastoral e Sacerdotal** | Obrigação moral e dever de confissão inviolável mantido pelos conselheiros da Pure Life em relação aos relatos íntimos compartilhados pelos aconselhandos. | Refletido no controle de acesso RLS e isolamento restrito no Supabase. |
 
 ---
 
@@ -24,15 +23,14 @@
 
 | Termo Técnico | Definição Canónica | Aplicação no Ecossistema |
 |---|---|---|
-| **AAD (*Additional Authenticated Data*)** | Dados em texto claro que são criptograficamente autenticados pelo algoritmo AES-GCM, vinculando o identificador do registro ao seu conteúdo cifrado. | Previne o ataque de *cross-row splicing* vinculando `triagem_id` à coluna. |
-| **AES-256-GCM** | Cifra de fluxo simétrica com autenticação integrada (AEAD) que garante simultaneamente confidencialidade e integridade da mensagem. | Padrão criptográfico obrigatório para dados de triagem (ADR-004). |
-| **Astro SSG** | Compilador web moderno que gera páginas em HTML puramente estático no momento do build (*Static Site Generation*). | Base do repositório `purelife-web` (`frontend`), garantindo TTFB $\le 200$ms. |
-| **Cloudflare Worker** | Ambiente serverless de execução na borda baseado em V8 isolates da Cloudflare, com latência zero e tempo de inicialização imperceptível. | Runtime do repositório `purelife-api` (`backend`). |
-| **Desacoplamento Físico Sanity / Neon** | Princípio arquitetural que proíbe o trânsito ou gravação de dados pessoais de aconselhamento dentro do CMS editorial Sanity. | Definido no ADR-002 e na regra `RN-005`. |
-| **Expurgo Criptográfico** | Destruição irreversível de dados sensíveis mediante a sobrescrita dos campos por valores nulos e descarte de chaves decifradoras (Crypto-shredding). | Implementado no cron noturno para triagens com mais de 180 dias. |
-| **Idempotency Key (Chave de Idempotência)** | Identificador único transmitido no cabeçalho HTTP que permite repetir com segurança uma requisição de pagamento sem risco de duplicidade. | Utilizado em doações Pix e cartão de crédito (ADR-005). |
-| **Lease Atômico (`pg_try_advisory_xact_lock`)** | Mecanismo de trava consultiva no PostgreSQL que vincula o processamento de um webhook a uma transação atômica única. | Impede corridas concorrentes no processamento de webhooks de pagamento. |
-| **Neon Postgres Serverless** | Banco de dados PostgreSQL com arquitetura desacoplada de computação e armazenamento sobre Cloud Storage seguro. | Camada de persistência relacional transacional do backend. |
-| **RBAC (*Role-Based Access Control*)** | Controle de autorização baseado em papéis atribuídos a cada usuário autenticado (`ADMIN`, `CONSELHEIRO`, `ALUNO`, etc.). | Enforçado em middleware no Worker antes de qualquer consulta de dados. |
-| **Sanity Content Lake** | Banco de dados orientado a documentos JSON com consultas via GROQ para conteúdo editorial público. | Camada de dados do repositório `purelife-cms`. |
-| **Zero-JS** | Diretriz de arquitetura onde páginas de conteúdo estático não transmitem nenhum script JavaScript para o cliente, maximizando performance e segurança. | Filosofia aplicada a 15 páginas públicas do `purelife-web`. |
+| **AAD (*Additional Authenticated Data*)** | Dados em texto claro que são criptograficamente autenticados pelo algoritmo AES-GCM, vinculando o identificador do registro ao seu conteúdo cifrado. | Previne o ataque de *cross-row splicing* vinculando `triagem_id` ao ciphertext. |
+| **AES-256-GCM** | Cifra de fluxo simétrica com autenticação integrada (AEAD) que garante simultaneamente confidencialidade e integridade da mensagem. | Padrão criptográfico para dados sensíveis em repouso (ADR-004). |
+| **Astro 5 SSG** | Compilador web moderno que gera páginas em HTML puramente estático no momento do build (*Static Site Generation*). | Base do repositório `frontend`, garantindo carregamento instantâneo. |
+| **Cloudflare Worker** | Ambiente serverless de execução na borda para webhooks e tarefas agendadas. | Runtime do repositório `backend`. |
+| **Expurgo Automático LGPD** | Destruição irreversível de dados sensíveis após a janela máxima de retenção de 180 dias. | Implementado no cron diário executado no banco Supabase. |
+| **Idempotência (Lease Atômico)** | Mecanismo que impede que um mesmo evento de webhook de pagamento seja processado mais de uma vez. | Utilizado em doações Pix e cartão de crédito (ADR-005). |
+| **Row Level Security (RLS)** | Políticas de segurança ativas no PostgreSQL que controlam em nível de linha quem pode inserir, consultar ou modificar dados. | Garante que o público só pode executar `INSERT` e jamais `SELECT` nos dados de terceiros. |
+| **Supabase Postgres** | Banco de dados relacional PostgreSQL totalmente gerenciado, com suporte a RLS, autenticação e visual Table Editor. | Camada de persistência central e painel pastoral do ecossistema. |
+| **Supabase Table Editor** | Interface visual integrada do Supabase utilizada pela equipe pastoral para gerenciar triagens, alterar status e inserir anotações. | Painel administrativo nativo sem necessidade de CMSs adicionais. |
+| **Vercel Edge Network** | CDN global com roteamento Anycast de alta performance e suporte nativo a compilação do Astro. | Plataforma de hospedagem do repositório `frontend`. |
+| **Zod Schema Validation** | Biblioteca de declaração e inferência de esquemas estritos em TypeScript executada no client e server. | Validação estrita de todos os formulários em `frontend/src/schemas/`. |

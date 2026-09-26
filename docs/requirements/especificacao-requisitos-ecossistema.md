@@ -1,7 +1,7 @@
 # Especificação de Requisitos do Sistema (SRS) — Ecossistema Digital Pure Life Ministries Brasil
 
 **Documento Canónico de Engenharia de Requisitos e Governança de Dados**  
-**Versão:** 1.0.0  
+**Versão:** 2.0.0 (Modernizada: Supabase & Vercel)  
 **Data:** Setembro de 2026  
 **Status:** Aprovado / Canónico  
 **Classificação:** Uso Oficial Interno e Engenharia de Software  
@@ -12,14 +12,11 @@
 
 ## 0. Sumário Executivo e Escopo do Ecossistema
 
-O presente documento estabelece a especificação formal, exaustiva e auditável de todos os requisitos do ecossistema digital da **Pure Life Ministries Brasil** (`purelifeministriesbrasil.org`). O ecossistema opera sob uma arquitetura multirepo desacoplada composta por seis repositórios fundamentais:
+O presente documento estabelece a especificação formal, exaustiva e auditável de todos os requisitos do ecossistema digital da **Pure Life Ministries Brasil** (`purelifeministriesbrasil.org`). O ecossistema opera sob uma arquitetura multirepo enxuta e desacoplada composta por 3 repositórios essenciais, orientada pelo princípio "Front com Front, Back com Back, Docs com Docs":
 
-1. `purelife-contracts` (`contracts`): Biblioteca compartilhada de tipos TypeScript e esquemas Zod (`.strict()`).
-2. `purelife-web` (`frontend`): Aplicação em Astro SSG, Tailwind v4, microinterações e Islands React restritas.
-3. `purelife-api` (`backend`): Cloudflare Worker independente com Clean Architecture / DDD e Neon Postgres Serverless.
-4. `purelife-cms` (`cms`): Sanity Studio v3 para gestão de conteúdo editorial público e institucional.
-5. `purelife-docs` (`documentation`): Documentação canónica técnica, ADRs, runbooks e este SRS em Docsify via GitHub Pages.
-6. `purelife-infra` (`infra`): Módulos Terraform para provisionamento de borda na Cloudflare e observabilidade.
+1. `purelife-web` (`frontend`): Aplicação em Astro 5 SSG, Tailwind CSS v4, microinterações e Ilhas React restritas, hospedada na **Vercel** com cliente nativo Supabase e schemas Zod internos.
+2. `purelife-api` (`backend`): Cloudflare Worker independente com Clean Architecture / DDD, integração ao gateway Asaas (PIX Dinâmico) e rotinas cron de expurgo LGPD no **Supabase Postgres**.
+3. `purelife-docs` (`documentation`): Documentação canónica técnica, ADRs, runbooks e este SRS compilados com **Material for MkDocs** e publicados via GitHub Pages.
 
 O sistema atende a cinco macrodomínios funcionais:
 - **Núcleo de Aconselhamento Bíblico:** Triagem confidencial e gestão de programas de restauração (Residencial, Vencedores em Casa, Para Esposas e Aconselhamento Suplementar).
@@ -50,7 +47,7 @@ flowchart TD
 
     subgraph Seguro["Zona Criptográfica e Restrita"]
         P5["PER-005: Equipe Pastoral / Conselheiro Interno"]
-        DB[(Neon Postgres - Cifrado)]
+        DB[(Supabase Postgres - Cifrado)]
     end
 
     P1 --> W1
@@ -121,7 +118,7 @@ Os requisitos funcionais foram mapeados com base na decomposição dos módulos 
 
 | ID | Módulo | Descrição do Requisito | Entradas / Gatilhos | Saídas / Comportamento do Sistema | Prioridade |
 |---|---|---|---|---|---|
-| **RF-001** | Aconselhamento | Submissão de Formulário de Triagem Confidencial para Programa Residencial. | Formulário web: dados biográficos, endereço, estado civil, histórico detalhado de adicção sexual e consentimento explícito LGPD Art. 11. | Validação estrita via Zod; cifragem do relato confidencial com AES-256-GCM + AAD; persistência no Neon; disparo de notificação sigilosa à equipe pastoral. | **Must Have** |
+| **RF-001** | Aconselhamento | Submissão de Formulário de Triagem Confidencial para Programa Residencial. | Formulário web: dados biográficos, endereço, estado civil, histórico detalhado de adicção sexual e consentimento explícito LGPD Art. 11. | Validação estrita via Zod; cifragem do relato confidencial com AES-256-GCM + AAD; persistência no Supabase Postgres; disparo de notificação sigilosa à equipe pastoral. | **Must Have** |
 | **RF-002** | Aconselhamento | Inscrição no Programa "Vencedores em Casa" (6 meses, remoto/híbrido). | Formulário web com dados pessoais, relato sintético da demanda, indicação de disponibilidade de horário e escolha de forma de pagamento (R$ 2.000,00). | Registro da inscrição com status `AGUARDANDO_AVALIACAO`; bloqueio de menores de 16 anos; geração de intenção de pagamento. | **Must Have** |
 | **RF-003** | Aconselhamento | Inscrição no Programa "Para Esposas" (18 semanas, remoto). | Formulário exclusivo feminino com relato da situação conjugal, telefone/WhatsApp de contato seguro e confirmação de consentimento específico. | Validação de elegibilidade (sexo feminino, $\ge 18$ anos); geração de registro cifrado; encaminhamento direto à coordenadora do programa feminino. | **Must Have** |
 | **RF-004** | Aconselhamento | Solicitação de Aconselhamento Bíblico Suplementar pós-programa. | Aconselhado egresso submete código de formando e solicitação de ciclo suplementar de até 6 sessões semanais. | Validação de egresso no banco de dados; aplicação da regra de alocação de novo conselheiro (RN-008); criação do ciclo de acompanhamento. | **Should Have** |
@@ -131,10 +128,10 @@ Os requisitos funcionais foram mapeados com base na decomposição dos módulos 
 | **RF-008** | Educação | Matrícula no Curso de Capacitação em Aconselhamento Bíblico (R$ 3.120,00). | Seleção do curso na vitrine educacional, dados cadastrais do aluno, dados de cobrança e forma de pagamento. | Processamento do pagamento via gateway; geração de ID de matrícula; envio de credenciais de acesso e recibo por e-mail. | **Must Have** |
 | **RF-009** | Educação | Inscrição com Upload de Documentos para Pós-Graduação (R$ 2.160,00). | Formulário de inscrição com upload seguro de diploma de graduação (PDF/PNG até 5MB) e documento oficial de identidade. | Validação de formato MIME e hash SHA-256 do arquivo; armazenamento em bucket Cloudflare R2 isolado; status da matrícula fixado em `PENDENTE_DOCUMENTACAO`. | **Must Have** |
 | **RF-010** | Educação | Validação Documental e Homologação de Alunos de Pós-Graduação. | Administrador acadêmico avalia documentos submetidos no painel interno e emite parecer de deferimento/indeferimento. | Atualização do status da matrícula para `HOMOLOGADO` ou `DOCUMENTACAO_RECUSADA`; envio de e-mail transacional com justificativa. | **Should Have** |
-| **RF-011** | Educação | Emissão e Validação Pública de Certificados de Conclusão. | Sistema processa conclusão de carga horária e emite certificado digital assinado com hash SHA-256 e código QR. | Disponibilização de página pública de validação em Astro SSG (`/validar-certificado/[codigo]`) com consulta direta ao hash registrado no Neon. | **Should Have** |
+| **RF-011** | Educação | Emissão e Validação Pública de Certificados de Conclusão. | Sistema processa conclusão de carga horária e emite certificado digital assinado com hash SHA-256 e código QR. | Disponibilização de página pública de validação em Astro SSG (`/validar-certificado/[codigo]`) com consulta direta ao hash registrado no Supabase Postgres. | **Should Have** |
 | **RF-012** | Doações | Doação Pontual via Pix com Geração Dinâmica de QR Code Copia e Cola. | Seleção de valor pré-definido ou valor livre (mínimo R$ 10,00), nome, e-mail e CPF do doador. | Chamada à API do gateway de pagamento; geração de payload Pix EMV com expiração de 15 minutos; exibição na tela sem recarregar a página. | **Must Have** |
-| **RF-013** | Doações | Doação Recorrente Mensal via Cartão de Crédito. | Seleção de plano mensal, token seguro de cartão de crédito gerado via SDK do gateway na borda, dados do titular. | Criação de assinatura no gateway financeiro; persistência da assinatura no Neon; agendamento de cobrança recorrente com webhooks de acompanhamento. | **Must Have** |
-| **RF-014** | Doações | Processamento Idempotente de Webhooks de Pagamento e Doação. | Recebimento de payload HTTP POST do gateway financeiro com assinatura HMAC no cabeçalho. | Verificação criptográfica da assinatura do webhook; obtenção de lease atômico via `pg_try_advisory_xact_lock` no Neon; conciliação financeira do pedido/doação. | **Must Have** |
+| **RF-013** | Doações | Doação Recorrente Mensal via Cartão de Crédito. | Seleção de plano mensal, token seguro de cartão de crédito gerado via SDK do gateway na borda, dados do titular. | Criação de assinatura no gateway financeiro; persistência da assinatura no Supabase Postgres; agendamento de cobrança recorrente com webhooks de acompanhamento. | **Must Have** |
+| **RF-014** | Doações | Processamento Idempotente de Webhooks de Pagamento e Doação. | Recebimento de payload HTTP POST do gateway financeiro com assinatura HMAC no cabeçalho. | Verificação criptográfica da assinatura do webhook; obtenção de lease atômico via `pg_try_advisory_xact_lock` no Supabase Postgres; conciliação financeira do pedido/doação. | **Must Have** |
 | **RF-015** | Doações | Emissão de Comprovante de Doação Eclesiástica por E-mail. | Evento de confirmação de compensação bancária da doação. | Geração de recibo em formato PDF ou HTML assinado contendo dados da instituição (CNPJ) e doação; disparo seguro por serviço transacional de e-mail. | **Should Have** |
 | **RF-016** | Loja / Materiais | Catálogo de Livros e Apostilas Didáticas. | Requisição GET pública para a vitrine da loja virtual (`/cursos-e-conferencias/` ou `/loja/`). | Renderização instantânea em Astro SSG dos produtos (ex.: livro "Pilha de Máscaras" a R$ 50,00, apostilas de cursos a R$ 199,00 e R$ 219,00). | **Must Have** |
 | **RF-017** | Loja / Materiais | Cálculo Dinâmico de Frete com Correios / Melhor Envio. | Usuário informa CEP de destino na página do carrinho ou checkout. | Consulta segura à API de frete (SEDEX e PAC); retorno de prazos e valores; inclusão no subtotal do pedido. | **Should Have** |
@@ -143,7 +140,7 @@ Os requisitos funcionais foram mapeados com base na decomposição dos módulos 
 | **RF-020** | Eventos | Inscrição na Conferência de Treinamento Avançado em Distúrbios da Sexualidade. | Seleção da conferência (ex.: Nível 1: Fundamentos a R$ 100,00), dados dos participantes e pagamento. | Registro de inscrição com alocação de vaga; emissão de credencial digital com código de barras/QR Code de acesso. | **Must Have** |
 | **RF-021** | Eventos | Credenciamento Presencial e Check-in com Leitor de QR Code. | Staff do evento faz a leitura do QR Code do participante no dia da conferência através de aplicação móvel/web. | Validação da autenticidade da credencial; marcação do check-in como realizado; bloqueio contra tentativas de reuso da mesma credencial. | **Should Have** |
 | **RF-022** | Comunicação | Captura de Lead para Newsletter Mensal (eNews) com Duplo Opt-in. | Submissão de e-mail e nome no formulário de rodapé ou modal institucional. | Envio de e-mail com link de confirmação de consentimento; ativação do lead apenas após clique no link de validação. | **Must Have** |
-| **RF-023** | Editorial | Exibição de Depoimentos Editoriais Sanitizados e Autorizados. | Requisição pública às páginas de depoimentos e histórias de transformação. | Renderização de depoimentos estáticos gerados via Astro a partir do Sanity CMS, contendo apenas registros explicitamente autorizados com nomes abreviados. | **Must Have** |
+| **RF-023** | Editorial | Exibição de Depoimentos Editoriais Sanitizados e Autorizados. | Requisição pública às páginas de depoimentos e histórias de transformação. | Renderização de depoimentos estáticos gerados via Astro a partir do Supabase / coleções de conteúdo estáticas, contendo apenas registros explicitamente autorizados com nomes abreviados. | **Must Have** |
 | **RF-024** | Atendimento | Encaminhamento Seguro para Acolhimento Pré-Triagem via WhatsApp. | Clique no botão de contato institucional de suporte via WhatsApp (`(61) 99566-1936`). | Redirecionamento com mensagem predefinida sanitizada sem inclusão de parâmetros de URL contendo dados pessoais ou diagnósticos na querystring. | **Should Have** |
 | **RF-025** | Auditoria | Trilha de Auditoria Imutável de Acessos a Registros Confidenciais. | Qualquer operação de visualização, exportação, edição ou expurgo de dados sensíveis realizada por conselheiro ou administrador. | Inserção imediata e não editável de registro na tabela `LogAuditoriaAcesso` com ID do operador, registro visualizado, IP, timestamp UTC e hash de integridade. | **Must Have** |
 
@@ -173,12 +170,12 @@ As regras de negócio estabelecem as invariantes canónicas, restrições operac
 - **Enunciado:** A matrícula no curso de *Pós-Graduação em Aconselhamento Bíblico e Distúrbios da Sexualidade* (R$ 2.160,00) depende da comprovação formal de conclusão de curso de graduação de nível superior (bacharelado ou licenciatura reconhecido pelo MEC).
 - **Fluxo Operacional:** A compensação do pagamento não garante o início imediato das aulas de pós-graduação. O aluno tem prazo de 30 dias para submeter o diploma de graduação em formato PDF legível. Caso os documentos não sejam submetidos ou apresentem irregularidades, a inscrição é cancelada e o valor pago é estornado conforme o Código de Defesa do Consumidor e termos contratuais.
 
-### RN-005: Desacoplamento Físico e Lógico entre Sanity CMS e Neon Postgres
-- **Enunciado:** É terminantemente proibido gravar, espelhar, transitar ou consultar dados confidenciais de triagem, confissões ou PII de aconselhados no Sanity CMS.
+### RN-005: Segregação e Governança de Dados no Supabase Postgres
+- **Enunciado:** É terminantemente proibido expor dados confidenciais de triagem, confissões ou PII de aconselhados sem Row Level Security (RLS) restrito e isolamento criptográfico.
 - **Separação de Papéis:**
-  - O Sanity CMS atua exclusivamente como repositório de conteúdo editorial público (artigos, sermões, vídeos, detalhes da grade de cursos e depoimentos públicos com termo assinado).
-  - O Neon Postgres armazena triagens, pedidos de loja, doações e matrículas.
-- **Isolamento de Credenciais:** As chaves de API com permissão de escrita no Sanity (`SANITY_API_WRITE_TOKEN`) jamais devem possuir visibilidade das chaves de criptografia do banco de dados relacional. Qualquer depoimento exibido publicamente no site deve ter consentimento assinado em cartório e nomes anonimizados no próprio documento editorial.
+  - O conteúdo editorial público (artigos, sermões, vídeos, detalhes da grade de cursos) é mantido em coleções estáticas do Astro e gerenciado pelo Supabase Table Editor com políticas RLS restritas para leitura pública apenas de registros publicados.
+  - O Supabase Postgres armazena triagens, pedidos de loja, doações e matrículas com políticas `INSERT ONLY` para chaves anônimas (`anon`), exigindo credenciais com MFA pastoral para visualização.
+- **Isolamento de Credenciais:** As chaves anônimas públicas (`anon_key`) jamás possuem permissão de leitura sobre tabelas de triagens ou contatos. Qualquer depoimento exibido publicamente no site deve possuir consentimento assinado em cartório e nomes anonimizados no próprio documento editorial.
 
 ### RN-006: Moderação Pastoral e Expurgo Temporal de Triagens
 - **Enunciado:** Formulários de triagem submetidos que não forem convertidos em matrícula efetiva no Programa Residencial ou no Vencedores em Casa no prazo limite de **180 dias corridos** devem ser automaticamente expurgados do banco de dados operacional.
@@ -186,7 +183,7 @@ As regras de negócio estabelecem as invariantes canónicas, restrições operac
 
 ### RN-007: Idempotência Obrigatória em Transações Financeiras e Webhooks
 - **Enunciado:** Toda requisição de checkout, criação de Pix ou notificação de webhook de gateway de pagamento deve conter um identificador único de idempotência (`Idempotency-Key` ou `Transaction-ID`).
-- **Prevenção de Concorrência:** O Cloudflare Worker deve adquirir trava atômica no Neon Postgres utilizando `pg_try_advisory_xact_lock(hashtext(idempotency_key))` durante a transação. Caso a trava já esteja retida por outra requisição idêntica, a requisição concorrente deve ser rejeitada com código HTTP `409 Conflict` ou aguardar o término da transação anterior, impedindo cobranças duplicadas ou credenciamentos duplicados.
+- **Prevenção de Concorrência:** O Cloudflare Worker deve adquirir trava atômica no Supabase Postgres utilizando `pg_try_advisory_xact_lock(hashtext(idempotency_key))` durante a transação. Caso a trava já esteja retida por outra requisição idêntica, a requisição concorrente deve ser rejeitada com código HTTP `409 Conflict` ou aguardar o término da transação anterior, impedindo cobranças duplicadas ou credenciamentos duplicados.
 
 ### RN-008: Regra de Conselheiro Suplementar Distinto
 - **Enunciado:** Ao contratar o ciclo de Aconselhamento Bíblico Suplementar (até 6 sessões semanais após a formatura do programa principal), o sistema deve alocar, de forma intencional e automática, um conselheiro bíblico diferente daquele que atendeu o aconselhado durante o programa residencial ou remoto anterior.
@@ -215,7 +212,7 @@ flowchart LR
         CryptoEngine["AES-256-GCM + AAD Engine"]
     end
 
-    subgraph Storage["Neon Postgres Serverless"]
+    subgraph Storage["Supabase Postgres"]
         EncCol[("Colunas Cifradas em Repouso")]
         AuditLog[("Trilha de Auditoria Imutável")]
     end
@@ -248,18 +245,18 @@ flowchart LR
 - **Vetor de Inicialização (IV):** Cada operação de cifragem deve gerar um IV criptograficamente seguro e único de 96 bits (12 bytes) via gerador de números pseudoaleatórios CSPRNG (`crypto.getRandomValues`).
 
 ### RNF-004: Cabeçalhos de Segurança HTTP Rígidos na Borda
-O Cloudflare Worker e as regras de transformação gerenciadas via Terraform devem injetar obrigatoriamente os seguintes cabeçalhos HTTP em todas as respostas públicas e de API:
+As respostas públicas na Vercel e as respostas da API no Cloudflare Worker devem injetar obrigatoriamente os seguintes cabeçalhos HTTP:
 ```http
 Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://purelife-api.purelifebrasil.org; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.supabase.co; font-src 'self'; connect-src 'self' https://*.supabase.co https://purelife-api.purelifebrasil.org; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';
 ```
 
 ### RNF-005: Orçamento de Desempenho e Arquitetura Zero-JS na Borda
-- **Desempenho de Entrega:** O portal institucional (`purelife-web`) deve ser compilado em Astro SSG e distribuído globalmente pela Cloudflare Pages.
+- **Desempenho de Entrega:** O portal institucional (`purelife-web`) deve ser compilado em Astro SSG e distribuído globalmente pela Vercel Edge Network.
 - **Métricas Alvo (Core Web Vitals - P95 em conexões móveis 4G):**
   - **First Contentful Paint (FCP):** $\le 1{,}0\text{ segundo}$.
   - **Largest Contentful Paint (LCP):** $\le 2{,}0\text{ segundos}$.
@@ -269,9 +266,9 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' h
 - **Restrição de JavaScript:** O carregamento inicial da página inicial e páginas editoriais deve conter Zero-JS para conteúdo textual, reservando hidratação de componentes React apenas para componentes interativos pontuais (formulários de triagem, modal de carrinho e doação Pix).
 
 ### RNF-006: Alta Disponibilidade, Resiliência e Metas de RPO / RTO
-- **Disponibilidade da Borda:** Mínimo de **99,9%** de uptime mensal para o portal público de navegação.
+- **Disponibilidade da Borda:** Mínimo de **99,9%** de uptime mensal para o portal público de navegação na Vercel.
 - **Disponibilidade da API e Ingestão:** Mínimo de **99,95%** de uptime mensal para a API Cloudflare Worker e processamento de doações/triagens.
-- **Recovery Point Objective (RPO):** $\le 1\text{ hora}$. Garantido por backup contínuo com *Write-Ahead Logging* (WAL) e *Point-in-Time Recovery* (PITR) nativo no Neon Postgres Serverless.
+- **Recovery Point Objective (RPO):** $\le 1\text{ hora}$. Garantido por backup contínuo com *Write-Ahead Logging* (WAL) e *Point-in-Time Recovery* (PITR) nativo no Supabase Postgres.
 - **Recovery Time Objective (RTO):** $\le 1\text{ hora}$. Garantido pela infraestrutura como código (Terraform) capaz de reconstruir zonas DNS, Workers e variáveis de ambiente em região alternativa em caso de catástrofe sistêmica.
 
 ### RNF-007: Trilha de Auditoria Imutável e Detecção de Anomalias
@@ -314,7 +311,7 @@ Funcionalidade: Submissão de Triagem Confidencial do Programa Residencial
     E clico no botão "Enviar Triagem com Sigilo"
     Então o sistema deve validar os dados contra o esquema estrito Zod
     E a API Worker deve cifrar o campo "relatoConfidencial" com AES-256-GCM usando o UUID da triagem como AAD
-    E o registro deve ser persistido no Neon Postgres com status "RECEBIDA_PENDENTE"
+    E o registro deve ser persistido no Supabase Postgres com status "RECEBIDA_PENDENTE"
     E a tela deve exibir confirmação imediata com orientações de contato pastoral seguro
     E nenhum dado confidencial em texto plano deve restar armazenado em cookies ou localStorage
 
@@ -355,7 +352,7 @@ Funcionalidade: Inscrição e Upload de Documentos para Pós-Graduação
     Então o sistema deve validar que o arquivo possui MIME type "application/pdf"
     E deve computar o hash SHA-256 do arquivo para garantia de integridade
     E deve armazenar o arquivo no Cloudflare R2 com controle de acesso privado
-    E deve salvar o registro de matrícula no Neon Postgres com status "PENDENTE_DOCUMENTACAO"
+    E deve salvar o registro de matrícula no Supabase Postgres com status "PENDENTE_DOCUMENTACAO"
     E deve enviar e-mail ao candidato confirmando o recebimento da documentação para análise
 
   Cenário: Tentativa de upload de arquivo malicioso ou formato proibido (Caso de Borda / Segurança)
@@ -387,7 +384,7 @@ Funcionalidade: Doação via Pix e Conciliação de Webhook Idempotente
     E o gateway financeiro envia uma notificação POST de webhook com o status "PAID"
     Então o Cloudflare Worker deve verificar a assinatura HMAC do cabeçalho
     E deve obter a trava de concorrência "pg_try_advisory_xact_lock" para o ID da transação
-    E deve atualizar o status da doação no Neon Postgres para "CONFIRMADA"
+    E deve atualizar o status da doação no Supabase Postgres para "CONFIRMADA"
     E deve disparar e-mail de agradecimento e comprovante da doação para o meu endereço
     E a trava atômica deve ser liberada ao final da transação
 
@@ -411,7 +408,7 @@ Funcionalidade: Rotina de Expurgo Criptográfico Temporal
   Para assegurar o princípio da necessidade e minimização da LGPD
 
   Cenário: Expurgo de triagem pendente após transcorridos 180 dias
-    Dado que existe uma triagem confidencial registrada no Neon Postgres há 181 dias
+    Dado que existe uma triagem confidencial registrada no Supabase Postgres há 181 dias
     E seu status permaneceu como "RECEBIDA_PENDENTE" sem admissão no programa
     Quando o cron disparador do Cloudflare Worker executa a rotina noturna de higienização
     Então o sistema deve selecionar todas as triagens pendentes com criação superior a 180 dias
@@ -428,7 +425,7 @@ Funcionalidade: Rotina de Expurgo Criptográfico Temporal
 
 ### 1. Diagrama de Entidade-Relacionamento Lógico (ERD)
 
-O diagrama a seguir modela as entidades do banco de dados relacional **Neon Postgres**, evidenciando os relacionamentos e a rigorosa segregação entre dados operacionais e dados confidenciais cifrados.
+O diagrama a seguir modela as entidades do banco de dados relacional **Supabase Postgres**, evidenciando os relacionamentos e a rigorosa segregação entre dados operacionais e dados confidenciais cifrados.
 
 ```mermaid
 erDiagram
@@ -568,7 +565,7 @@ A matriz abaixo vincula cada persona atendida aos requisitos funcionais (RF), re
 | **PER-003** (Esposa Atendimento) | RF-003, RF-005, RF-007 | RN-003, RN-006 | RNF-001, RNF-002, RNF-003 | `Usuario`, `InscricaoPrograma`, `TriagemConfidencial`, `LogAuditoriaAcesso` |
 | **PER-004** (Doador / Comprador) | RF-012, RF-013, RF-014, RF-015, RF-016, RF-017, RF-018 | RN-007 | RNF-004, RNF-005, RNF-006 | `Usuario`, `Doacao`, `PedidoLoja`, `ItemPedidoLoja` |
 | **PER-005** (Equipe Pastoral) | RF-005, RF-006, RF-007, RF-025 | RN-005, RN-006, RN-008, RN-009 | RNF-001, RNF-003, RNF-007 | `TriagemConfidencial`, `LogAuditoriaAcesso` |
-| **Público Geral** (Visitantes) | RF-020, RF-022, RF-023, RF-024 | RN-005 | RNF-004, RNF-005 | `LeadNewsletter`, Sanity CMS (Editorial Desacoplado) |
+| **Público Geral** (Visitantes) | RF-020, RF-022, RF-023, RF-024 | RN-005 | RNF-004, RNF-005 | `LeadNewsletter`, Gestão Editorial no Supabase / Astro SSG |
 
 ---
 

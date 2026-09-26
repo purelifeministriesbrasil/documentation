@@ -3,8 +3,8 @@ site_description: Arquitetura, especificações, contratos de dados, segurança 
 site_author: Pure Life Ministries Brasil
 site_url: https://purelifeministriesbrasil.github.io/documentation/
 
-repo_name: purelifeministriesbrasil/frontend
-repo_url: https://github.com/purelifeministriesbrasil/frontend
+repo_name: purelifeministriesbrasil/documentation
+repo_url: https://github.com/purelifeministriesbrasil/documentation
 
 theme:
   name: material
@@ -77,6 +77,7 @@ nav:
       - Configuração do Supabase: getting-started/supabase-setup.md
   - Arquitetura:
       - Visão Geral do Sistema: architecture/system-overview.md
+      - Fronteiras dos Repositórios: architecture/repositories-scope.md
       - Diagramas de Sequência: architecture/sequence-diagrams.md
       - Modelo de Dados: architecture/data-model.md
   - Decisões (ADRs):
@@ -99,6 +100,7 @@ nav:
       - Guia de Estilo e Componentes: design-system/design-system.md
   - Operações & Runbooks:
       - Deploy na Vercel: operations/deployment.md
+      - Hardening do Supabase (Linter): operations/supabase-hardening.md
       - Backup & Recuperação: operations/backup-recovery.md
       - Rotação de Chaves: operations/key-rotation.md
       - CLI Cheatsheet: operations/cli-cheatsheet.md
