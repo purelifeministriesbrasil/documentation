@@ -125,7 +125,7 @@ nav:
       - CLI Cheatsheet: operations/cli-cheatsheet.md
       - Observabilidade & Monitoramento: operations/observability.md
   - Governança:
-      - Visão Geral (SRS v2.0): requirements/index.md
+      - Visão Geral (SRS): requirements/index.md
       - Requisitos Funcionais: requirements/functional.md
       - Regras de Negócio: requirements/business-rules.md
       - Requisitos Não-Funcionais & LGPD: requirements/non-functional.md
