@@ -11,6 +11,7 @@
 Gateways de pagamento (como Asaas e Mercado Pago) utilizam retentativas automáticas (*at-least-once delivery*) no envio de webhooks de notificação de PIX e cartão. Em caso de instabilidade transitória de rede ou lentidão temporária, a mesma notificação de confirmação de pagamento pode chegar em duplicidade ou em paralelo simultâneo à API.
 
 A ausência de tratamento de concorrência estrita pode provocar:
+
 1. Confirmações duplicadas de doações.
 2. Disparo duplicado de recibos fiscais ou e-mails de agradecimento.
 3. Condições de corrida (*race conditions*) corrompendo o saldo e status financeiro.

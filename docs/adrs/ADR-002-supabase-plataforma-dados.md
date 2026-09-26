@@ -9,6 +9,7 @@
 ## 1. Contexto e Motivação
 
 Originalmente, o projeto planejava utilizar uma divisão entre **Sanity CMS** (para conteúdo editorial) e **Neon Postgres** (para triagens confidenciais). No entanto, essa arquitetura apresentou complexidade operacional excessiva para a equipe ministerial:
+
 1. Dois painéis administrativos distintos para gerenciar.
 2. Necessidade de esquemas de dados duplicados e sincronização via webhooks.
 3. Conselheiros pastorais precisavam de uma interface simples para visualizar triagens, mudar status de atendimento e registrar anotações sem complexidade técnica.
@@ -18,6 +19,7 @@ Originalmente, o projeto planejava utilizar uma divisão entre **Sanity CMS** (p
 ## 2. Decisão
 
 Adotar o **Supabase** como a plataforma central de banco de dados e gestão operacional do ecossistema:
+
 1. **Banco PostgreSQL Gerenciado**: Hospedagem robusta, compatível com SQL padrão, backups e replicação.
 2. **Row Level Security (RLS)**: Aplicação de políticas que permitem inserções anônimas diretas do frontend web (`INSERT TO anon WITH CHECK (true)`), enquanto impedem qualquer tipo de leitura pública (`SELECT`) de registros de terceiros.
 3. **Table Editor Visual**: Os conselheiros e administradores pastorais utilizam a interface web intuitiva do Supabase para acompanhar as triagens, atualizar status e adicionar notas com controle de acesso baseado em papéis e 2FA.

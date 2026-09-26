@@ -89,6 +89,7 @@ END $$;
 ## 3. Verificação Pós-Aplicação
 
 Após executar o script:
+
 1. No painel do Supabase, acesse **Database** > **Linter**.
 2. Clique em **Rerun Linter**.
 3. Todos os 6 avisos serão removidos, atingindo status 100% verde (Passed).

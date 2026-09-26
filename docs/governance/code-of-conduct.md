@@ -11,6 +11,7 @@ Comprometemo-nos a fazer da participação em nossa comunidade e nos repositóri
 ## Nossos Padrões
 
 Exemplos de comportamentos que contribuem para um ambiente saudável e alinhado aos princípios bíblicos e profissionais:
+
 - Demonstrar empatia e bondade para com outros membros e colaboradores.
 - Tratar com máxima reverência e estrito sigilo qualquer tema ligado ao cuidado pastoral, proteção de dados pessoais e relatos de restauração.
 - Respeitar opiniões, pontos de vista divergentes e críticas técnicas construtivas.
@@ -18,6 +19,7 @@ Exemplos de comportamentos que contribuem para um ambiente saudável e alinhado 
 - Focar no que é melhor para o avanço do Reino de Deus e para a segurança dos indivíduos assistidos pelo ministério.
 
 Exemplos de comportamentos inaceitáveis:
+
 - Linguagem ou conduta depreciativa, intimidadora, insultuosa ou de escárnio.
 - Exposição não autorizada de dados pessoais de terceiros (PII, endereços, relatos de aconselhamento pastoral).
 - Violação voluntária de políticas de segurança e privacidade (LGPD, sigilo pastoral).

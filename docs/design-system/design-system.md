@@ -37,7 +37,9 @@ A tipografia é baseada em fontes variáveis otimizadas no formato `.woff2`, pr�
 - **Variante Contorno (Outline)**: Borda `#C1BDA6`, fundo transparente, hover preenchido.
 
 ### Diálogo Nativo de Acessibilidade (`<dialog>`)
+
 O menu de navegação em telas móveis utiliza a tag nativa HTML5 `<dialog id="mobile-menu-dialog">`, proporcionando:
+
 - Foco automático com fechamento nativo via tecla `ESC`.
 - Bloqueio de scroll de fundo (*backdrop blur*).
 - Plena conformidade com tecnologias assistivas e leitores de tela (WCAG 2.2 AA).

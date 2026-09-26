@@ -19,6 +19,7 @@ Os **Architecture Decision Records (ADRs)** capturam as decisões arquiteturais 
 ## Estrutura Padrão de um ADR
 
 Todo ADR no projeto segue rigorosamente o formato canónico:
+
 - **Status**: Proposto, Aprovado, Rejeitado, Substituído ou Obsoleto.
 - **Contexto**: A motivação do problema e as restrições de negócio/técnicas.
 - **Decisão**: A solução escolhida e a forma de implementação.
