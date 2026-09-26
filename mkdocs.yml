@@ -125,8 +125,11 @@ nav:
       - CLI Cheatsheet: operations/cli-cheatsheet.md
       - Observabilidade & Monitoramento: operations/observability.md
   - Governança:
-      - Especificação de Requisitos (SRS v2.0): requirements/especificacao-requisitos-ecossistema.md
-      - Glossário Técnico Canônico: glossary/glossary.md
+      - Visão Geral (SRS v2.0): requirements/index.md
+      - Requisitos Funcionais: requirements/functional.md
+      - Regras de Negócio: requirements/business-rules.md
+      - Requisitos Não-Funcionais & LGPD: requirements/non-functional.md
+      - Glossário Técnico: glossary/glossary.md
       - Código de Conduta: governance/code-of-conduct.md
       - Diretrizes de Contribuição: governance/contributing.md
       - Licença e Termos de Uso: governance/license.md

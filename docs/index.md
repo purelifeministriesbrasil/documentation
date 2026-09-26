@@ -193,34 +193,65 @@ O ciclo de vida de dados confidenciais desde a coleta na borda até a destruiç�
 
 </div>
 
-<div class="grid cards" markdown>
+<div class="four-columns-grid">
+  <div class="four-card">
+    <div>
+      <div class="four-card-header">
+        <span>📄</span>
+        <span>Decisões de Arquitetura</span>
+      </div>
+      <p class="four-card-desc">
+        Registros formais (ADRs 001 a 005) com a fundamentação de escolhas tecnológicas, alternativas e trade-offs.
+      </p>
+    </div>
+    <a href="adrs/index.md" class="four-card-link">
+      Consultar ADRs &rarr;
+    </a>
+  </div>
 
-- :material-file-document-check: **Decisões de Arquitetura (ADRs)**
-  
-    ---
-    Registros detalhados de por que escolhemos Astro 5, Supabase, Vercel Edge, Criptografia AES-GCM e Leases de Idempotência.
-    
-    [:material-arrow-right: Ver Todas as ADRs](adrs/index.md)
+  <div class="four-card">
+    <div>
+      <div class="four-card-header">
+        <span>🛡️</span>
+        <span>Segurança &amp; LGPD</span>
+      </div>
+      <p class="four-card-desc">
+        Modelagem STRIDE, conformidade com o Artigo 11 para dados sensíveis e governança de chaves AES-256-GCM.
+      </p>
+    </div>
+    <a href="security/threat-model/" class="four-card-link">
+      Acessar Segurança &rarr;
+    </a>
+  </div>
 
-- :material-shield-lock-outline: **Segurança da Informação & LGPD**
-  
-    ---
-    Modelagem STRIDE, conformidade com o Artigo 11 da LGPD para dados sensíveis e procedimentos de contingência.
-    
-    [:material-arrow-right: Acessar Segurança](security/threat-model.md)
+  <div class="four-card">
+    <div>
+      <div class="four-card-header">
+        <span>📦</span>
+        <span>Contratos &amp; Schemas</span>
+      </div>
+      <p class="four-card-desc">
+        Esquemas canônicos Zod/TypeScript para triagens, contatos, intenções de doação PIX e newsletters.
+      </p>
+    </div>
+    <a href="schemas/triage-schema/" class="four-card-link">
+      Ver Contratos &rarr;
+    </a>
+  </div>
 
-- :material-code-json: **Contratos & Validação de Dados**
-  
-    ---
-    Esquemas de dados em TypeScript/Zod para triagem confidencial, contato institucional, newsletter e PIX.
-    
-    [:material-arrow-right: Consultar Schemas](schemas/triage-schema.md)
-
-- :material-server-network: **Operações & Observabilidade**
-  
-    ---
-    Runbooks de deploy na Vercel, monitoramento de Golden Signals, rotação de chaves e comandos CLI.
-    
-    [:material-arrow-right: Ver Runbooks](operations/observability.md)
-
+  <div class="four-card">
+    <div>
+      <div class="four-card-header">
+        <span>⚙️</span>
+        <span>Operações &amp; Runbooks</span>
+      </div>
+      <p class="four-card-desc">
+        Guias de deploy na Vercel, observabilidade de Golden Signals, comandos CLI e planos de contingência.
+      </p>
+    </div>
+    <a href="operations/observability/" class="four-card-link">
+      Ver Runbooks &rarr;
+    </a>
+  </div>
 </div>
+
