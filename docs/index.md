@@ -1,203 +1,43 @@
 ---
-title: 'Pure Life Ministries Brasil — Console de Engenharia'
+title: 'Pure Life Ministries Brasil — Documentação Técnica'
 hide:
   - navigation
   - toc
 ---
 
-<div class="blueprint-console">
-  <div class="blueprint-badge">
-    <span class="beacon-dot"></span>
-    SISTEMA OPERACIONAL &bull; SOLI DEO GLORIA &bull; EST. 1986
+<div class="docs-hero">
+  <div class="docs-hero-badge">
+    ARQUITETURA CANÔNICA &bull; VERSÃO 2.0
   </div>
   
-  <h1 class="blueprint-title">
+  <h1 class="docs-hero-title">
     Pure Life Ministries Brasil<br>
-    <span class="blueprint-title-gold">Arquitetura Canônica &amp; Engenharia</span>
+    <span>Engenharia de Software &amp; Governança</span>
   </h1>
   
-  <p class="blueprint-subtitle">
-    Portal corporativo de especificações técnicas, decisões de arquitetura e governança de segurança da informação.
-    O ecossistema digital foi concebido para sustentar quatro décadas de aconselhamento bíblico sob estrito
-    sigilo pastoral e conformidade irrestrita com a LGPD (Art. 11 &mdash; Dados Sensíveis).
+  <p class="docs-hero-subtitle">
+    Portal corporativo de especificações técnicas, decisões arquiteturais, governança de segurança da informação
+    e conformidade irrestrita com a LGPD (Art. 11 &mdash; Dados Sensíveis). O ecossistema digital foi concebido para sustentar
+    quatro décadas de aconselhamento bíblico sob estrito sigilo pastoral e alta disponibilidade na borda.
   </p>
 
-  <div class="telemetry-grid">
-    <div class="telemetry-item">
-      <div class="telemetry-label">Disponibilidade na Borda</div>
-      <div class="telemetry-value">99.98% SLO</div>
-      <div class="telemetry-sub">Vercel Edge Anycast &bull; 16 Rotas SSG &bull; LCP &lt; 0.8s</div>
-    </div>
-    <div class="telemetry-item">
-      <div class="telemetry-label">Perímetro Criptográfico</div>
-      <div class="telemetry-value">AES-256-GCM</div>
-      <div class="telemetry-sub">Envelope AAD por Registro &bull; Chaves em Hardware</div>
-    </div>
-    <div class="telemetry-item">
-      <div class="telemetry-label">Privacidade Pastoral</div>
-      <div class="telemetry-value">Zero PII Logs</div>
-      <div class="telemetry-sub">Scrubber de Telemetria &bull; Sem Rastro em Logs</div>
-    </div>
-    <div class="telemetry-item">
-      <div class="telemetry-label">Governança Temporal</div>
-      <div class="telemetry-value">180d Purge</div>
-      <div class="telemetry-sub">Cron Diário 03:00 UTC &bull; Expurgo Irreversível</div>
-    </div>
-  </div>
-  
-  <div class="blueprint-cta">
+  <div class="docs-hero-actions">
     <a href="architecture/system-overview/" class="md-button md-button--primary">Visão Geral da Arquitetura</a>
     <a href="architecture/repositories-scope/" class="md-button">Fronteiras dos Repositórios</a>
-    <a href="security/threat-model/" class="md-button">Modelagem de Ameaças &amp; LGPD</a>
-    <a href="operations/deployment/" class="md-button">Runbooks &amp; Operações</a>
+    <a href="security/threat-model/" class="md-button">Segurança &amp; LGPD</a>
+    <a href="operations/deployment/" class="md-button">Runbooks Operacionais</a>
   </div>
 </div>
 
 ---
-
-<div class="section-anchor-header" markdown>
-
-## Divisão Canônica em Três Pilares
-<div class="gold-separator"></div>
-<p class="section-anchor-sub">
-Isolamento estrito de responsabilidades e segurança: <strong>"Front com Front, Back com Back e Docs com Docs"</strong>.
-</p>
-
-</div>
-
-<div class="pillars-container">
-
-<div class="pillar-card">
-  <div>
-    <div class="pillar-top">
-      <span class="pillar-badge">REPO: frontend</span>
-      <span class="pillar-status">&bull; 100% Estático</span>
-    </div>
-    <h3 class="pillar-title">Borda &amp; Experiência Visual</h3>
-    <p class="pillar-desc">
-      Interface pública ultraveloz, acessível e blindada contra injeção de código ou vazamento de segredos.
-    </p>
-    <ul class="pillar-list">
-      <li>&check; 16 páginas estáticas compiladas com Astro 5 SSG</li>
-      <li>&check; Ilhas React isoladas para formulários sensíveis</li>
-      <li>&check; Tailwind CSS v4 com tokens institucionais</li>
-      <li>&check; Zero chaves administrativas (apenas cliente <code>anon</code>)</li>
-      <li>&check; Zero estilos residuais inline e zero fontes externas não auditadas</li>
-    </ul>
-  </div>
-  <div style="margin-top: 1rem;">
-    <a href="architecture/repositories-scope/#a-repositorio-frontend-front-com-front" class="md-button md-button--primary" style="width: 100%; text-align: center; font-size: 0.82rem;">
-      Explorar Escopo Frontend &rarr;
-    </a>
-  </div>
-</div>
-
-<div class="pillar-card">
-  <div>
-    <div class="pillar-top">
-      <span class="pillar-badge">REPO: backend</span>
-      <span class="pillar-status">&bull; Serverless 24/7</span>
-    </div>
-    <h3 class="pillar-title">Núcleo &amp; Webhooks Financeiros</h3>
-    <p class="pillar-desc">
-      Microsserviços serverless na Cloudflare para liquidação de doações via PIX e manutenção confidencial.
-    </p>
-    <ul class="pillar-list">
-      <li>&check; Validação anti-bot Cloudflare Turnstile nativa</li>
-      <li>&check; Webhooks PIX idempotentes (Asaas e Mercado Pago)</li>
-      <li>&check; Assinatura criptográfica HMAC-SHA256 validada</li>
-      <li>&check; Lease atômico contra duplicidade de doação</li>
-      <li>&check; Cron de expurgo diário às 03:00 UTC (180 dias)</li>
-    </ul>
-  </div>
-  <div style="margin-top: 1rem;">
-    <a href="architecture/repositories-scope/#b-repositorio-backend-back-com-back" class="md-button md-button--primary" style="width: 100%; text-align: center; font-size: 0.82rem;">
-      Explorar Escopo Backend &rarr;
-    </a>
-  </div>
-</div>
-
-<div class="pillar-card">
-  <div>
-    <div class="pillar-top">
-      <span class="pillar-badge">REPO: docs</span>
-      <span class="pillar-status">&bull; Fonte da Verdade</span>
-    </div>
-    <h3 class="pillar-title">Governança &amp; Auditoria</h3>
-    <p class="pillar-desc">
-      O repositório central de decisões de engenharia, requisitos contratuais e manuais de resposta a incidentes.
-    </p>
-    <ul class="pillar-list">
-      <li>&check; Portal MkDocs Material com build estrito validado</li>
-      <li>&check; 5 Decisões formais de Arquitetura (ADRs 001 a 005)</li>
-      <li>&check; Especificação de Requisitos SRS v2.0 completa</li>
-      <li>&check; Modelagem de ameaças STRIDE e conformidade LGPD</li>
-      <li>&check; Runbooks operacionais, observabilidade e contingência</li>
-    </ul>
-  </div>
-  <div style="margin-top: 1rem;">
-    <a href="architecture/repositories-scope/#c-repositorio-documentation-docs-com-docs" class="md-button md-button--primary" style="width: 100%; text-align: center; font-size: 0.82rem;">
-      Explorar Escopo Docs &rarr;
-    </a>
-  </div>
-</div>
-
-</div>
-
----
-
-<div class="section-anchor-header" markdown>
-
-## Perímetro Criptográfico de Sigilo Pastoral
-<div class="gold-separator"></div>
-<p class="section-anchor-sub">
-O ciclo de vida de dados confidenciais desde a coleta na borda até a destruição criptográfica definitiva.
-</p>
-
-</div>
-
-<div class="crypto-pipeline">
-  <div class="crypto-step">
-    <div class="crypto-step-num">ETAPA 01</div>
-    <div class="crypto-step-title">Desafio Borda</div>
-    <div class="crypto-step-desc">Turnstile bloqueia tráfego hostil e bots antes do processamento.</div>
-  </div>
-  <div class="crypto-step">
-    <div class="crypto-step-num">ETAPA 02</div>
-    <div class="crypto-step-title">Envelope Cripto</div>
-    <div class="crypto-step-desc">AES-256-GCM cifra o relato pastoral com AAD vinculado ao ID.</div>
-  </div>
-  <div class="crypto-step">
-    <div class="crypto-step-num">ETAPA 03</div>
-    <div class="crypto-step-title">Persistência RLS</div>
-    <div class="crypto-step-desc">Inserção direta no Supabase com permissão exclusiva INSERT ONLY.</div>
-  </div>
-  <div class="crypto-step">
-    <div class="crypto-step-num">ETAPA 04</div>
-    <div class="crypto-step-title">Sanitização</div>
-    <div class="crypto-step-desc">Scrubber em tempo real mascara PII em logs e telemetria externa.</div>
-  </div>
-  <div class="crypto-step">
-    <div class="crypto-step-num">ETAPA 05</div>
-    <div class="crypto-step-title">Expurgo 180d</div>
-    <div class="crypto-step-desc">Cron agendado remove registros inativos permanentemente.</div>
-  </div>
-</div>
-
----
-
-<div class="section-anchor-header" markdown>
 
 ## Acesso Direto aos Recursos Técnicos
-<div class="gold-separator"></div>
-
-</div>
 
 <div class="four-columns-grid">
   <div class="four-card">
     <div>
       <div class="four-card-header">
-        <span>📄</span>
+        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
         <span>Decisões de Arquitetura</span>
       </div>
       <p class="four-card-desc">
@@ -212,7 +52,7 @@ O ciclo de vida de dados confidenciais desde a coleta na borda até a destruiç�
   <div class="four-card">
     <div>
       <div class="four-card-header">
-        <span>🛡️</span>
+        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
         <span>Segurança &amp; LGPD</span>
       </div>
       <p class="four-card-desc">
@@ -227,7 +67,7 @@ O ciclo de vida de dados confidenciais desde a coleta na borda até a destruiç�
   <div class="four-card">
     <div>
       <div class="four-card-header">
-        <span>📦</span>
+        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
         <span>Contratos &amp; Schemas</span>
       </div>
       <p class="four-card-desc">
@@ -242,7 +82,7 @@ O ciclo de vida de dados confidenciais desde a coleta na borda até a destruiç�
   <div class="four-card">
     <div>
       <div class="four-card-header">
-        <span>⚙️</span>
+        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
         <span>Operações &amp; Runbooks</span>
       </div>
       <p class="four-card-desc">
@@ -255,3 +95,125 @@ O ciclo de vida de dados confidenciais desde a coleta na borda até a destruiç�
   </div>
 </div>
 
+---
+
+## Divisão Canônica em Três Repositórios
+
+O ecossistema adota separação estrita de responsabilidades: **"Front com Front, Back com Back e Docs com Docs"**.
+
+<div class="pillars-container">
+
+<div class="pillar-card">
+  <div>
+    <div class="pillar-top">
+      <span class="pillar-badge">repositório: frontend</span>
+    </div>
+    <h3 class="pillar-title">Interface Pública &amp; Borda</h3>
+    <p class="pillar-desc">
+      Apresentação institucional compilada em HTML estático e blindada contra injeção de código ou vazamento de segredos.
+    </p>
+    <ul class="pillar-list">
+      <li>16 páginas estáticas pré-renderizadas com Astro 5 SSG</li>
+      <li>Ilhas React isoladas exclusivamente para formulários interativos</li>
+      <li>Tailwind CSS v4 com tokens tipográficos institucionais</li>
+      <li>Zero credenciais privilegiadas (cliente público com chave anônima)</li>
+      <li>Topologia 100% estática com verificação em CI/CD</li>
+    </ul>
+  </div>
+  <div class="pillar-action">
+    <a href="architecture/repositories-scope/#a-repositorio-frontend-front-com-front" class="md-button md-button--primary">
+      Escopo Frontend &rarr;
+    </a>
+  </div>
+</div>
+
+<div class="pillar-card">
+  <div>
+    <div class="pillar-top">
+      <span class="pillar-badge">repositório: backend</span>
+    </div>
+    <h3 class="pillar-title">Serviços &amp; Webhooks PIX</h3>
+    <p class="pillar-desc">
+      Microsserviços serverless na Cloudflare Workers para processamento financeiro assíncrono e rotinas de manutenção.
+    </p>
+    <ul class="pillar-list">
+      <li>Proteção anti-bot Cloudflare Turnstile nativa</li>
+      <li>Webhooks PIX idempotentes para Asaas e Mercado Pago</li>
+      <li>Validação criptográfica de assinaturas HMAC-SHA256</li>
+      <li>Lease atômico contra processamento concorrente de pagamentos</li>
+      <li>Rotina diária de expurgo de dados sensíveis (180 dias)</li>
+    </ul>
+  </div>
+  <div class="pillar-action">
+    <a href="architecture/repositories-scope/#b-repositorio-backend-back-com-back" class="md-button md-button--primary">
+      Escopo Backend &rarr;
+    </a>
+  </div>
+</div>
+
+<div class="pillar-card">
+  <div>
+    <div class="pillar-top">
+      <span class="pillar-badge">repositório: documentation</span>
+    </div>
+    <h3 class="pillar-title">Governança &amp; Auditoria</h3>
+    <p class="pillar-desc">
+      Repositório central de engenharia contendo especificações canônicas, registros de decisões e manuais operacionais.
+    </p>
+    <ul class="pillar-list">
+      <li>Portal MkDocs Material com validação estrita em pipeline</li>
+      <li>Decisões de Arquitetura (ADRs 001 a 005) versionadas</li>
+      <li>Especificação de Requisitos de Software (SRS v2.0)</li>
+      <li>Modelagem de ameaças STRIDE e conformidade LGPD Art. 11</li>
+      <li>Manuais de deploy, observabilidade e contingência</li>
+    </ul>
+  </div>
+  <div class="pillar-action">
+    <a href="architecture/repositories-scope/#c-repositorio-documentation-docs-com-docs" class="md-button md-button--primary">
+      Escopo Docs &rarr;
+    </a>
+  </div>
+</div>
+
+</div>
+
+---
+
+## Topologia Geral da Arquitetura
+
+```mermaid
+graph TD
+    Client["Navegador do Usuário / Dispositivo Móvel"]
+    
+    subgraph EdgeFrontend ["Repositório: frontend (Vercel Edge)"]
+        AstroSSG["Astro 5 SSG (16 Páginas Estáticas)"]
+        ReactIslands["Ilhas React (Formulários Triagem/Contato/Doação)"]
+    end
+
+    subgraph ServerlessBackend ["Repositório: backend (Cloudflare Workers)"]
+        TurnstileGuard["Proteção Anti-Bot Turnstile"]
+        PaymentWebhooks["Webhooks PIX Idempotentes (Asaas / MP)"]
+        PurgeCron["Cron de Expurgo Diário (03:00 UTC)"]
+    end
+
+    subgraph DataPlatform ["Supabase PostgreSQL"]
+        RLS["Row-Level Security (RLS)"]
+        TriageVault["Tabela Triagens (Criptografia AES-256-GCM)"]
+        ContactStore["Tabela Contatos (Tratamento Pastoral)"]
+        DonationStore["Tabela Intenções PIX & Liquidação"]
+    end
+
+    subgraph GovernanceDocs ["Repositório: documentation (GitHub Pages)"]
+        MkDocsPortal["Portal Técnico Canônico & ADRs"]
+    end
+
+    Client -->|HTTPS / Anycast| AstroSSG
+    AstroSSG --> ReactIslands
+    ReactIslands -->|Insert Seguro via RLS / Anon| RLS
+    ReactIslands -->|Validação Anti-Bot| TurnstileGuard
+    PaymentWebhooks -->|Notificação de Liquidação| DonationStore
+    PurgeCron -->|Expurgo Automático 180d| TriageVault
+    RLS --> TriageVault
+    RLS --> ContactStore
+    RLS --> DonationStore
+```
