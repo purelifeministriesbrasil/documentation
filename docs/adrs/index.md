@@ -13,6 +13,7 @@ Os **Architecture Decision Records (ADRs)** capturam as decisões arquiteturais 
 | [**ADR-003**](ADR-003-vercel-hospedagem-borda.md) | Hospedagem e CDN de Alta Performance na Vercel | **Aprovado** | 2026-09-25 |
 | [**ADR-004**](ADR-004-criptografia-aes-gcm-aad.md) | Criptografia de Campo em Repouso com AES-256-GCM e AAD | **Aprovado** | 2026-09-24 |
 | [**ADR-005**](ADR-005-modelo-lease-idempotencia.md) | Modelo de Lease Atómico para Idempotência de Webhooks | **Aprovado** | 2026-09-24 |
+| [**ADR-006**](ADR-006-modernizacao-workers-hono-supabase.md) | Modernização em Cloudflare Workers com Hono, Drizzle e Supabase | **Aprovado** | 2026-09-29 |
 
 ---
 

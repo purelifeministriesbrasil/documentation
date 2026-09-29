@@ -12,8 +12,8 @@ O presente documento estabelece a especificação formal, exaustiva e auditável
 
 > **"Front com Front, Back com Back e Docs com Docs."**
 
-1. **`frontend` (`purelife-web`):** Aplicação em Astro 5 SSG, Tailwind CSS v4, microinterações e Ilhas React restritas, hospedada na **Vercel Edge** com cliente nativo Supabase e esquemas Zod locais.
-2. **`backend` (`purelife-api`):** Cloudflare Worker independente com Clean Architecture / DDD, integração ao gateway Asaas (PIX Dinâmico) e rotinas cron de expurgo LGPD no **Supabase Postgres**.
+1. **`frontend` (`purelife-web`):** Aplicação em Astro 5 SSG, Tailwind CSS v4, microinterações e Ilhas React restritas, hospedada na **Vercel Edge** com proxy reverso seguro `/api/*`, esquemas Zod locais e conformidade WCAG/a11y.
+2. **`backend` (`purelife-api`):** Cloudflare Worker independente em Hono com Clean Architecture, Drizzle ORM (driver `postgres.js` via Supabase Transaction Pooler), proteção anti-bot Turnstile, criptografia AES-256-GCM + AAD, integração Asaas e rotinas cron de expurgo LGPD.
 3. **`documentation` (`purelife-docs`):** Documentação técnica canônica, ADRs, runbooks e este SRS compilados com **Material for MkDocs** e publicados via GitHub Pages.
 
 ---

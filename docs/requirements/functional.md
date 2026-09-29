@@ -52,4 +52,28 @@ Catálogo detalhado das capacidades e comportamentos operacionais do ecossistema
 * **Descrição:** O portal deve disponibilizar informações detalhadas (local, preletores, cronograma e lotes) e formulário de inscrição para o evento anual.
 
 ### RF-009: Catálogo de Literatura da Editora
-* **Descrição:** Exibição estruturada das publicações da Editora Pure Life com sinopse, capa oficial e link direto para aquisição dos livros de aconselhamento.
+* **Descrição:** Exibição estruturada das 9 publicações oficiais da Editora Pure Life com título, autor, valor tabelado (de R$ 45,00 a R$ 85,00), público-alvo específico, sinopse bíblica e link direto para solicitação individual ou em lotes para igrejas e livrarias.
+* **Obras Catalogadas:**
+  1. *Cria em Mim um Coração Puro* — R$ 55,00 (Mulheres / Kathy Gallagher)
+  2. *No Altar da Idolatria Sexual* — R$ 65,00 (Homens / Steve Gallagher)
+  3. *O Impacto Pessoal e Social da Pornografia* — R$ 45,00 (Geral / Pr. Paulo Gouvêa)
+  4. *As 20 Verdades Contra o Vício em Pornografia* — R$ 75,00 (Devocional / Steve Gallagher)
+  5. *Curando a Dor da Traição no Casamento* — R$ 55,00 (Esposas Traídas / Kathy Gallagher)
+  6. *Trauma Redimido* — R$ 85,00 (Restauração / PLM)
+  7. *Pilha de Máscaras* — R$ 50,00 (Igreja & Liderança / Steve Gallagher)
+  8. *Contaminados com a Babilônia* — R$ 45,00 (Igreja & Cultura / Steve Gallagher)
+  9. *Eu, a Raiz Exposta do Pecado* — R$ 50,00 (Vida Cristã / Steve Gallagher)
+
+---
+
+## 5. Programa Residencial & Recursos Multimídia
+
+### RF-010: Programa Residencial de Imersão (9 Meses)
+* **Descrição:** Especificação formal do programa presencial em Águas Lindas de Goiás:
+  * **Duração:** 09 meses integrais de recolhimento e discipulado bíblico.
+  * **Taxa de Inscrição:** R$ 500,00 (avaliação pastoral e triagem inicial).
+  * **Mensalidade:** R$ 1.200,00 (hospedagem no campus, alimentação completa, materiais didáticos e aconselhamento semanal individual).
+  * **Fluxo de Entrada:** Exige preenchimento prévio e aprovação na triagem confidencial.
+
+### RF-011: Biblioteca Multimídia e Integração com YouTube
+* **Descrição:** Disponibilização integrada de pregações, estudos bíblicos, ministrações em conferências (MEVAM Curitiba, Igreja Dókimos, HNT) e testemunhos de restauração (IECBR Reaviva, Sexo sem Cativeiro) com capas oficiais em alta definição e links diretos para o canal institucional.
