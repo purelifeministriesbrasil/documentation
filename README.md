@@ -24,7 +24,7 @@ O ecossistema opera sob a regra de ouro de isolamento de responsabilidades:
 
 | Repositório | Responsabilidade | Stack Principal | Hospedagem |
 |---|---|---|---|
-| **`frontend`** | Interface pública, páginas institucionais e ilhas interativas | Astro v5 SSG, Tailwind CSS v4, React 19, Supabase Client | Vercel Edge |
+| **`frontend`** | Interface pública, páginas institucionais e ilhas interativas | Astro v5 SSG, Tailwind CSS v4, React 19 | Cloudflare Pages |
 | **`backend`** | API de borda, gateways de pagamento, criptografia e rotinas cron | Cloudflare Worker, Clean Architecture, Supabase Postgres, Drizzle ORM | Cloudflare Network |
 | **`documentation`** | Portal central de especificações técnicas, ADRs, runbooks e governança | Material for MkDocs, PyMdown Extensions, Mermaid.js | GitHub Pages |
 

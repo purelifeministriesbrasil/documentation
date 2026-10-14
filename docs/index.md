@@ -53,7 +53,7 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
         <span>Decisões Técnicas (ADRs)</span>
       </div>
       <p class="four-card-desc">
-        Fundamentação e trade-offs das escolhas de engenharia: Astro SSG, Supabase Postgres, Vercel Edge, Criptografia AES-GCM e Idempotência.
+        Fundamentação e trade-offs das escolhas de engenharia: Astro SSG, Supabase Postgres, Cloudflare Pages e Workers, Criptografia AES-GCM e Idempotência.
       </p>
     </div>
     <a href="adrs/index.md" class="four-card-link">
@@ -98,7 +98,7 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
         <span>Operações &amp; Runbooks</span>
       </div>
       <p class="four-card-desc">
-        Procedimentos de deploy na Vercel e Cloudflare, monitoramento de liveness e métricas, rotação de chaves e cheatsheet de comandos úteis.
+        Runbook de implantação nas contas institucionais (Cloudflare e Supabase), monitoramento de liveness e métricas, rotação de chaves e cheatsheet de comandos úteis.
       </p>
     </div>
     <a href="operations/observability/" class="four-card-link">
@@ -200,14 +200,14 @@ O diagrama abaixo ilustra como o fluxo de navegação e as requisições de form
 graph TD
     Client["Navegador do Usuário / Dispositivo Móvel"]
     
-    subgraph EdgeFrontend ["Repositório: frontend (Vercel Edge)"]
-        AstroSSG["Astro 5 SSG (16 Páginas Estáticas)"]
+    subgraph EdgeFrontend ["Repositório: frontend (Cloudflare Pages)"]
+        AstroSSG["Astro 5 SSG (17 Páginas Estáticas)"]
         ReactIslands["Ilhas React (TriageForm / ContactForm / DonationForm)"]
     end
 
     subgraph ServerlessBackend ["Repositório: backend (Cloudflare Workers)"]
         TurnstileGuard["Validação Anti-Bot Turnstile"]
-        PaymentWebhooks["Webhooks PIX Idempotentes (Asaas)"]
+        PaymentWebhooks["Webhooks PIX Idempotentes (Asaas / Mercado Pago)"]
         PurgeCron["Cron de Expurgo Diário (03:00 UTC)"]
     end
 

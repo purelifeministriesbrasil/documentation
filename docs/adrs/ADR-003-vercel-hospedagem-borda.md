@@ -1,5 +1,10 @@
 # ADR-003: Hospedagem e Borda na Vercel
 
+!!! warning "Substituído"
+    Esta decisão foi substituída pelo [ADR-007](ADR-007-cloudflare-pages-contas-institucionais.md): o frontend
+    agora é publicado no Cloudflare Pages da conta institucional.
+
+
 - **Status**: Aprovado
 - **Data**: 2026-09-25
 - **Decisores**: Equipe de Engenharia Pure Life Ministries Brasil
