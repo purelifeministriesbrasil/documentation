@@ -1,95 +1,53 @@
-# Guia de Hardening e Correção do Linter de Segurança do Supabase
+# Hardening do Supabase
 
-Este guia documenta o diagnóstico e a resolução técnica dos avisos de segurança emitidos pelo Database Linter do Supabase para o ecossistema Pure Life Brasil.
-
----
-
-## 1. Diagnóstico dos Warnings do Linter
-
-O Supabase Database Linter analisa periodicamente o banco de dados contra vetores de exposição e emitiu os seguintes avisos:
-
-1. **`rls_policy_always_true` (Aviso 0024)**:
-   - *Descrição*: Políticas de inserção (`INSERT`) que utilizam a cláusula permissiva `WITH CHECK (true)` concedem inserção irrestrita sem validar o conteúdo do payload inserido.
-   - *Tabelas afetadas*: `public.triagens`, `public.contatos`, `public.newsletter` e `public.doacoes_intencoes`.
-2. **`anon_security_definer_function_executable` & `authenticated_security_definer_function_executable` (Avisos 0028 e 0029)**:
-   - *Descrição*: Funções criadas com privilégio `SECURITY DEFINER` expostas na rota RPC do PostgREST sem revogação de permissão pública para os papéis `anon` e `authenticated`.
-   - *Função afetada*: `public.rls_auto_enable()`.
+O banco é acessado **somente** pelo Worker, conectado com a role `postgres` (dona das tabelas). As roles da Data
+API do Supabase (`anon`, `authenticated`) não têm nenhum acesso. Todo o hardening está versionado em
+`backend/drizzle/0002_supabase_hardening_and_rls.sql` e é aplicado por `pnpm db:migrate`.
 
 ---
 
-## 2. Script de Remediação Imediata
+## 1. Modelo de ameaça corrigido
 
-Para sanar 100% dos avisos, execute o seguinte script no **SQL Editor** do painel do Supabase:
+O schema legado (antigo `frontend/supabase/schema.sql`, removido) criava tabelas com **PII em texto claro** e
+políticas `INSERT` para `anon`: qualquer pessoa com a chave pública podia gravar diretamente no banco, contornando
+Turnstile, validação e criptografia. O modelo atual elimina essa superfície:
+
+| Controle | Implementação |
+|---|---|
+| RLS em todas as tabelas, **sem políticas** | `ALTER TABLE … ENABLE ROW LEVEL SECURITY` — PostgREST/Realtime não leem nem escrevem nada |
+| Revogação explícita | `REVOKE ALL ON ALL TABLES/SEQUENCES/FUNCTIONS … FROM anon, authenticated` |
+| Objetos futuros | `ALTER DEFAULT PRIVILEGES … REVOKE ALL … FROM anon, authenticated` |
+| Funções seguras | `set_updated_at()` com `SECURITY INVOKER` e `SET search_path = ''` (linter `0011`) |
+| Remoção de legado | `DROP FUNCTION IF EXISTS public.rls_auto_enable()` (linter `0028`/`0029`) |
+| Índices de FK | `webhook_charge_idx`, `charge_intent_idx`, `contact_consent_unq` (linter `0001`) |
+| Dados sensíveis | Cifrados no Worker antes de chegar ao banco (ADR-004); e-mails de deduplicação como HMAC |
+| Expurgo | CHECKs `triage_purged_clean` e `contact_purged_clean` impedem registro expurgado com identificadores |
+
+O bloco de `REVOKE` é condicional à existência das roles, então a mesma migration roda em Postgres puro (CI/local).
+
+---
+
+## 2. Verificação contínua
+
+- **CI do backend**: cria `anon`/`authenticated`, aplica as migrations num Postgres 17 e falha se `anon`
+  conseguir ler `triage_submissions`.
+- **Supabase → Advisors → Security Advisor**: deve permanecer sem alertas após cada migration.
+- **Teste manual**:
 
 ```sql
--- ==============================================================================
--- CORREÇÃO DE WARNINGS DO LINTER DE SEGURANÇA DO SUPABASE
--- ==============================================================================
-
--- 1. CORREÇÃO RLS: triagens (valida campos mínimos obrigatórios)
-DROP POLICY IF EXISTS "Permitir submissão pública de triagem" ON public.triagens;
-CREATE POLICY "Permitir submissão pública de triagem"
-    ON public.triagens
-    FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (
-        full_name IS NOT NULL AND length(trim(full_name)) >= 2 AND
-        email IS NOT NULL AND length(trim(email)) >= 5
-    );
-
--- 2. CORREÇÃO RLS: contatos (valida nome, email e mensagem)
-DROP POLICY IF EXISTS "Permitir submissão pública de contato" ON public.contatos;
-CREATE POLICY "Permitir submissão pública de contato"
-    ON public.contatos
-    FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (
-        nome IS NOT NULL AND length(trim(nome)) >= 2 AND
-        email IS NOT NULL AND length(trim(email)) >= 5 AND
-        mensagem IS NOT NULL AND length(trim(mensagem)) >= 5
-    );
-
--- 3. CORREÇÃO RLS: newsletter (valida email mínimo)
-DROP POLICY IF EXISTS "Permitir inscrição pública na newsletter" ON public.newsletter;
-CREATE POLICY "Permitir inscrição pública na newsletter"
-    ON public.newsletter
-    FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (
-        email IS NOT NULL AND length(trim(email)) >= 5
-    );
-
--- 4. CORREÇÃO RLS: doacoes_intencoes (valida valor positivo)
-DROP POLICY IF EXISTS "Permitir registro público de doação" ON public.doacoes_intencoes;
-CREATE POLICY "Permitir registro público de doação"
-    ON public.doacoes_intencoes
-    FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (
-        valor_cents > 0
-    );
-
--- 5 & 6. CORREÇÃO SECURITY DEFINER: rls_auto_enable
--- Revoga execução pública e converte para SECURITY INVOKER
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM pg_proc p
-        JOIN pg_namespace n ON p.pronamespace = n.oid
-        WHERE n.nspname = 'public' AND p.proname = 'rls_auto_enable'
-    ) THEN
-        REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM anon, authenticated, PUBLIC;
-        EXECUTE 'ALTER FUNCTION public.rls_auto_enable() SECURITY INVOKER';
-    END IF;
-END $$;
+SET ROLE anon;
+SELECT 1 FROM triage_submissions LIMIT 1;   -- ERRO: permissão negada
+RESET ROLE;
 ```
 
 ---
 
-## 3. Verificação Pós-Aplicação
+## 3. Recomendações adicionais no painel
 
-Após executar o script:
-
-1. No painel do Supabase, acesse **Database** > **Linter**.
-2. Clique em **Rerun Linter**.
-3. Todos os 6 avisos serão removidos, atingindo status 100% verde (Passed).
+1. **Data API**: se o plano permitir, desative-a (ou retire `public` dos schemas expostos).
+2. **2FA obrigatório** para todos os membros da organização.
+3. **Network Restrictions** (planos pagos): restrinja conexões diretas ao banco aos IPs necessários; o Worker
+   usa o pooler.
+4. **Backups**: confirme os backups diários; avalie PITR para o plano Pro ([Backup & Recuperação](backup-recovery.md)).
+5. **Nunca** crie políticas RLS para `anon`/`authenticated` nas tabelas do ministério: toda escrita deve passar
+   pela API (Turnstile, validação, cifra, idempotência).

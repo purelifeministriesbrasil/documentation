@@ -1,39 +1,55 @@
-# Procedimento de Rotação de Chaves Criptográficas
+# Procedimento de Rotação de Chaves e Segredos
 
-A rotação de chaves de cifra e segredos de ambiente deve ocorrer a cada 90 dias ou imediatamente após qualquer suspeita de comprometimento de credencial.
-
----
-
-## 1. Rotação da Chave Criptográfica de Triagem (`TRIAGE_KEY`)
-
-O sistema suporta versionamento de chaves simétricas AES-256 (`keyId`), permitindo a inclusão de uma nova chave sem necessidade de desencriptar e re-encriptar imediatamente o histórico existente.
-
-### Passo 1: Geração de Nova Chave Criptográfica
-Gere 32 bytes de entropia pura codificados em Base64:
-
-```bash
-# Via OpenSSL
-openssl rand -base64 32
-```
-
-### Passo 2: Atualização do Ambiente do Worker
-No Cloudflare Workers ou no painel de segredos do backend:
-
-```bash
-# Adiciona a nova chave versão 2
-npx wrangler secret put TRIAGE_KEY_V2
-```
-
-### Passo 3: Promoção da Chave Ativa
-Atualize a variável `CURRENT_KEY_VERSION=2` na configuração do Worker. Todas as novas triagens passarão a ser encriptadas com a chave V2, enquanto as triagens antigas com `keyId=1` continuarão sendo lidas normalmente utilizando a chave V1 mantida no repositório de chaves.
+Rotacione a cada 12 meses, quando um membro com acesso deixar a equipe, ou **imediatamente** diante de qualquer
+suspeita de exposição.
 
 ---
 
-## 2. Rotação das Chaves de API do Supabase
+## 1. Chave de cifra de campo (`TRIAGE_KEY_Vn`)
 
-Caso a chave anônima ou a chave de serviço do Supabase seja exposta:
+O Worker mantém um chaveiro: lê todas as variáveis `TRIAGE_KEY_V1`, `TRIAGE_KEY_V2`, … e cifra novos dados com
+`TRIAGE_KEY_CURRENT_VERSION`. Cada registro guarda sua `key_version`, e o AAD inclui a versão — dados antigos
+continuam legíveis com a chave antiga.
 
-1. Acesse o painel do Supabase: `Project Settings` > `API`.
-2. Em **Project API Keys**, localize o botão **Reset API Keys** (ou gere um novo JWT Secret).
-3. Atualize imediatamente as variáveis `PUBLIC_SUPABASE_ANON_KEY` no painel da Vercel.
-4. Dispare um novo build na Vercel para que as novas credenciais entrem em vigor.
+```bash
+openssl rand -base64 32                       # nova chave → cofre da organização
+cd backend
+pnpm exec wrangler secret put TRIAGE_KEY_V2
+# wrangler.toml: TRIAGE_KEY_CURRENT_VERSION = "2"
+pnpm deploy
+```
+
+Verificação: envie uma triagem de teste e confirme `key_version = 2` no banco.
+
+**Quando a chave antiga pode ser removida**: triagens e contatos são expurgados após 180 dias, mas e-mails de
+newsletter e de doadores **não expiram**. Mantenha `TRIAGE_KEY_V1` no Worker e no cofre enquanto existir qualquer
+linha com `key_version = 1`:
+
+```sql
+select 'triage' t, count(*) from triage_submissions where key_version = 1
+union all select 'contact', count(*) from contact_submissions where key_version = 1
+union all select 'newsletter', count(*) from newsletter_subscriptions where key_version = 1
+union all select 'donation', count(*) from donation_intents where key_version = 1;
+```
+
+!!! danger "Exposição de chave"
+    Se uma chave **vazou**, adicionar uma nova não protege os dados antigos. É preciso re-cifrar os registros
+    existentes (decifrar com Vn, cifrar com Vn+1 com o novo AAD) — operação ainda não automatizada; trate como
+    incidente de segurança.
+
+## 2. Pepper de e-mail (`HASH_PEPPER`)
+
+Trocar o pepper invalida a deduplicação: o mesmo e-mail passa a gerar outro `email_hash`. Rotacione apenas em caso
+de exposição; nesse cenário, recalcule os hashes decifrando os e-mails (script manual) ou aceite reconfirmações.
+
+## 3. Segredos de integrações
+
+| Segredo | Onde gerar | Passos |
+|---|---|---|
+| `DATABASE_URL` | Supabase → *Database* → *Reset database password* | `wrangler secret put DATABASE_URL` e atualize o cofre |
+| `TURNSTILE_SECRET_KEY` | Cloudflare → Turnstile → widget → *Rotate secret* | `wrangler secret put TURNSTILE_SECRET_KEY` |
+| `RESEND_API_KEY` | Resend → API Keys | Crie a nova, publique com `wrangler secret put`, depois revogue a antiga |
+| `ASAAS_API_KEY` / `ASAAS_WEBHOOK_SECRET` | Asaas → Integrações | Atualize o token no cadastro do webhook **e** no Worker na mesma janela |
+| `MERCADOPAGO_*` | Mercado Pago → Suas integrações | Renove credenciais / assinatura secreta e publique no Worker |
+
+`wrangler secret put` publica uma nova versão do Worker imediatamente; não é preciso `pnpm deploy`.
