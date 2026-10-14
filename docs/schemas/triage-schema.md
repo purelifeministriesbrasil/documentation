@@ -1,52 +1,85 @@
 # Esquema de Validação: Formulário de Triagem Confidencial
 
-O esquema de triagem valida os dados de admissão e pedidos de ajuda confidencial antes de qualquer inserção no banco de dados.
+Valida a solicitação de triagem pastoral no cliente (ilha `TriageForm`) e novamente no Worker antes de qualquer persistência.
 
-Localização do código-fonte: [`frontend/src/schemas/triage/schema.ts`](file:///c:/Users/pedrohpsantos/Documents/purelifeministriesbrasil/frontend/src/schemas/triage/schema.ts)
+!!! info "Fonte de verdade"
+    Código canônico: [`backend/src/schemas/triage/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/schemas/triage/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
+    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7**. Qualquer alteração deve ser feita nos dois
+    repositórios no mesmo ciclo de release.
 
----
+## Definição do schema Zod
 
-## 1. Definição do Esquema Zod
+```typescript
+import { z } from "zod";
+import { emailSchema, phoneSchema, policyVersionSchema, turnstileTokenSchema } from "../common/schema.js";
+
+export const triageSubmissionSchema = z.object({
+  isAdult: z.literal(true, { error: "Este formulário é destinado a maiores de 18 anos." }),
+  programInterest: z.enum(["residencial", "online", "esposas", "indefinido"]),
+  profile: z.enum(["para_mim", "para_meu_conjuge", "para_um_familiar", "sou_lider"]),
+
+  fullName: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(120),
+  email: emailSchema,
+  phone: phoneSchema.optional(),
+  contactChannel: z.enum(["email", "telefone", "whatsapp"]),
+
+  /** Opcional por desenho: ninguém é obrigado a relatar nada para pedir ajuda. */
+  report: z.string().trim().max(2000, "Relato não pode exceder 2000 caracteres").optional(),
+
+  consent: z.literal(true, { error: "É necessário concordar com a Política de Privacidade." }),
+  policyVersion: policyVersionSchema,
+  turnstileToken: turnstileTokenSchema,
+}).strict();
+```
+
+## Blocos compartilhados (`common/schema.ts`)
 
 ```typescript
 import { z } from "zod";
 
-export const triageSubmissionSchema = z.object({
-  // Confirmação obrigatória de maioridade
-  isAdult: z.literal(true, {
-    errorMap: () => ({ message: "Este formulário é destinado a maiores de 18 anos." }),
-  }),
-  
-  // Programa de interesse pastoral
-  programInterest: z.enum(["residencial", "online", "esposas", "indefinido"]),
-  
-  // Perfil de quem está submetendo
-  profile: z.enum(["para_mim", "para_meu_conjuge", "para_um_familiar", "sou_lider"]),
+/** Remove separadores visuais comuns ("(61) 90000-0000") antes da validação de dígitos. */
+const stripPhoneSeparators = (value: string): string => value.replace(/[\s().-]/g, "");
 
-  // Dados de contato
-  fullName: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(120),
-  email: z.string().trim().toLowerCase().email("E-mail inválido").max(160),
-  phone: z.string().trim().regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD").optional(),
-  contactChannel: z.enum(["email", "telefone", "whatsapp"]),
+export const phoneSchema = z
+  .string()
+  .trim()
+  .overwrite(stripPhoneSeparators)
+  .regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD");
 
-  // Relato confidencial opcional por desenho (privacidade)
-  report: z.string().trim().max(2000, "Relato não pode exceder 2000 caracteres").optional(),
+export const emailSchema = z.string().trim().toLowerCase().email("E-mail inválido").max(160);
 
-  // Consentimento e proteção anti-bot
-  consent: z.literal(true, {
-    errorMap: () => ({ message: "É necessário concordar com a Política de Privacidade." }),
-  }),
-  policyVersion: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD"),
-  turnstileToken: z.string().min(10).max(2048),
-}).strict();
+export const policyVersionSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD");
 
-export type TriageSubmission = z.infer<typeof triageSubmissionSchema>;
+export const turnstileTokenSchema = z.string().min(10).max(2048);
+
+/** Valor do header `Idempotency-Key`: UUID v4 gerado pelo cliente por tentativa lógica de envio. */
+export const idempotencyKeySchema = z.uuidv4("Idempotency-Key deve ser um UUID v4");
+
+export const IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
 ```
 
----
+## Contrato HTTP
 
-## 2. Invariantes de Negócio e Segurança
+`POST /api/forms/triagem` · `Content-Type: application/json` · header **`Idempotency-Key: <UUID v4>`** obrigatório · corpo ≤ 8 KiB.
 
-1. **Maioridade Estrita (`isAdult`)**: Apenas maiores de 18 anos podem submeter triagens diretamente pelo site. O esquema rejeita qualquer payload onde `isAdult !== true`.
-2. **Relato Opcional por Desenho (`report`)**: O campo de relato pessoal é intencionalmente opcional. O assistido não é coagido a relatar detalhes íntimos para solicitar atendimento pastoral preliminar.
-3. **Modo Estrito (`.strict()`)**: Quaisquer campos adicionais não mapeados são sumariamente descartados e geram erro de validação (prevenção contra ataques de poluição de propriedades).
+| Status | Corpo | Quando |
+|---|---|---|
+| `200` | `{ "referenceCode": "PLM-XXXX-XXXX" }` | Registrada (retentativa com a mesma chave devolve o mesmo código) |
+| `400` | `{ "error": "invalid_idempotency_key" }` ou `{ "error": "invalid_json" }` | Header ausente/inválido ou JSON malformado |
+| `403` | `{ "error": "turnstile_failed" }` ou vazio | Turnstile reprovado ou `Origin` não autorizada |
+| `413` / `415` | vazio | Corpo grande demais / Content-Type diferente de JSON |
+| `422` | `{ "error": "validation_failed", "fields": { "campo": "mensagem" } }` | Falha do schema (valores enviados nunca são ecoados) |
+| `500` | `{ "error": "internal_error" }` | Falha de persistência (sem detalhes do driver) |
+| `503` | `{ "error": "service_unavailable" }` | Configuração ausente/inválida no Worker (fail-closed) |
+
+## Invariantes de negócio e segurança
+
+1. **Maioridade estrita (`isAdult`)**: apenas `true` literal é aceito.
+2. **Relato opcional por desenho (`report`)**: ninguém é obrigado a relatar algo para pedir ajuda.
+3. **Modo estrito (`.strict()`)**: campos extras geram `422` (proteção contra poluição de propriedades).
+4. **Telefone normalizado**: espaços, parênteses, pontos e hífens são removidos antes da regex (`(61) 90000-0000` → `61900000000`).
+5. **Persistência cifrada**: nome, e-mail, telefone e perfil vão em `contact_ciphertext`; o relato em `report_ciphertext` (AES-256-GCM, AAD `triage_submission:<id>:<campo>:v<versão>`).
+6. **Notificação sem PII**: a equipe recebe por e-mail apenas o código de referência.
+7. **Retenção**: 180 dias (`retention_until`), depois expurgo automático (RN-002).

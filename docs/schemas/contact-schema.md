@@ -1,37 +1,71 @@
 # Esquema de Validação: Formulário de Contato Institucional
 
-O esquema de contato assegura a integridade das mensagens enviadas pelos visitantes do portal, prevenindo payloads excessivos e tentativas de injeção.
+Valida mensagens do formulário de contato (ilha `ContactForm`) e novamente no Worker.
 
-Localização do código-fonte: [`frontend/src/schemas/contact/schema.ts`](file:///c:/Users/pedrohpsantos/Documents/purelifeministriesbrasil/frontend/src/schemas/contact/schema.ts)
+!!! info "Fonte de verdade"
+    Código canônico: [`backend/src/schemas/contact/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/schemas/contact/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
+    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7**. Qualquer alteração deve ser feita nos dois
+    repositórios no mesmo ciclo de release.
 
----
+## Definição do schema Zod
 
-## 1. Definição do Esquema Zod
+```typescript
+import { z } from "zod";
+import { emailSchema, phoneSchema, policyVersionSchema, turnstileTokenSchema } from "../common/schema.js";
+
+export const contactSubmissionSchema = z.object({
+  fullName: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(120),
+  email: emailSchema,
+  phone: phoneSchema.optional(),
+  subject: z.string().trim().min(2, "Assunto deve ter pelo menos 2 caracteres").max(100),
+  message: z.string().trim().min(10, "Mensagem deve ter pelo menos 10 caracteres").max(3000),
+
+  consent: z.literal(true, { error: "É necessário concordar com a Política de Privacidade." }),
+  policyVersion: policyVersionSchema,
+  turnstileToken: turnstileTokenSchema,
+}).strict();
+```
+
+## Blocos compartilhados (`common/schema.ts`)
 
 ```typescript
 import { z } from "zod";
 
-export const contactSubmissionSchema = z.object({
-  fullName: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(120),
-  email: z.string().trim().toLowerCase().email("E-mail inválido").max(160),
-  phone: z.string().trim().regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos").optional(),
-  subject: z.string().trim().min(2, "Assunto deve ter pelo menos 2 caracteres").max(100),
-  message: z.string().trim().min(10, "Mensagem deve ter pelo menos 10 caracteres").max(3000),
+/** Remove separadores visuais comuns ("(61) 90000-0000") antes da validação de dígitos. */
+const stripPhoneSeparators = (value: string): string => value.replace(/[\s().-]/g, "");
 
-  consent: z.literal(true, {
-    errorMap: () => ({ message: "É necessário concordar com a Política de Privacidade." }),
-  }),
-  policyVersion: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD"),
-  turnstileToken: z.string().min(10).max(2048),
-}).strict();
+export const phoneSchema = z
+  .string()
+  .trim()
+  .overwrite(stripPhoneSeparators)
+  .regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD");
 
-export type ContactSubmission = z.infer<typeof contactSubmissionSchema>;
+export const emailSchema = z.string().trim().toLowerCase().email("E-mail inválido").max(160);
+
+export const policyVersionSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD");
+
+export const turnstileTokenSchema = z.string().min(10).max(2048);
+
+/** Valor do header `Idempotency-Key`: UUID v4 gerado pelo cliente por tentativa lógica de envio. */
+export const idempotencyKeySchema = z.uuidv4("Idempotency-Key deve ser um UUID v4");
+
+export const IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
 ```
 
----
+## Contrato HTTP
 
-## 2. Invariantes
+`POST /api/forms/contato` · JSON · **`Idempotency-Key`** obrigatório · corpo ≤ 8 KiB.
 
-- Sanitização de espaços em branco via `.trim()`.
-- Normalização de e-mails em caixa baixa via `.toLowerCase()`.
-- Limite seguro de caracteres para a mensagem (máximo 3.000 caracteres) para contenção de sobrecarga de banco.
+| Status | Corpo | Quando |
+|---|---|---|
+| `200` | `{ "ok": true, "referenceCode": "CTT-XXXX-XXXX" }` | Mensagem registrada (retentativa devolve o mesmo código) |
+| demais | ver [triagem](triage-schema.md#contrato-http) | Mesma semântica de `400`/`403`/`413`/`415`/`422`/`500`/`503` |
+
+## Invariantes
+
+1. **Consentimento explícito** (`consent: true`) registrado em `contact_consents` com `policyVersion`, data e rota.
+2. **Cifra de campo**: dados de contato e mensagem são cifrados (`contact_submission:<id>:contact|message`); apenas `subject` fica em claro para triagem operacional.
+3. **Retenção de 180 dias** com expurgo diário (nulifica ciphertexts e código, CHECK `contact_purged_clean`).
+4. **Notificação sem conteúdo**: a equipe recebe apenas o código; o conteúdo é lido pela caixa pastoral auditada.
