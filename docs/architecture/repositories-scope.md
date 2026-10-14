@@ -12,12 +12,11 @@ Para assegurar manutenibilidade, isolamento de segurança e clareza de escopo, o
 flowchart LR
     subgraph RepoFront["Repositório: frontend"]
         direction TB
-        AstroPages["16 Páginas Astro SSG"]
+        AstroPages["17 Páginas Astro SSG"]
         ReactIslands["Ilhas React (Formulários)"]
         TailwindV4["Tailwind CSS v4 & Tokens"]
-        LocalSchemas["Esquemas Zod Locais"]
-        SupabaseClient["Supabase Client (anon)"]
-        DeployVercel["Deploy Contínuo na Vercel"]
+        LocalSchemas["Esquemas Zod (cópia byte a byte do backend)"]
+        DeployPages["Deploy no Cloudflare Pages"]
     end
 
     subgraph RepoBack["Repositório: backend"]
@@ -32,10 +31,10 @@ flowchart LR
     subgraph RepoDocs["Repositório: documentation"]
         direction TB
         MkDocsConfig["MkDocs Material & extra.css"]
-        ADRs["ADRs 001 a 005"]
+        ADRs["ADRs 001 a 007"]
         SRS["Especificação de Requisitos"]
         AppSec["Modelagem STRIDE / DREAD"]
-        Runbooks["Runbooks (Vercel, Supabase, DR)"]
+        Runbooks["Runbooks (Cloudflare, Supabase, DR)"]
         DeployPages["Deploy no GitHub Pages"]
     end
 ```
@@ -49,14 +48,14 @@ flowchart LR
 Este repositório é dedicado exclusivamente à experiência do usuário final, interface visual e submissão direta e segura de formulários.
 
 * **O que DEVE estar neste repositório:**
-  - Todas as 16 rotas estáticas do portal compiladas com Astro 5 (`src/pages/*.astro`).
+  - Todas as 17 rotas estáticas do portal compiladas com Astro 5 (`src/pages/**/*.astro`).
   - Componentes de UI e layout (`src/components/layout/Header.astro`, `Footer.astro`, `Navigation.astro`).
   - Formulários interativos com Ilhas React (`TriageForm.tsx`, `ContactForm.tsx`, `DonationForm.tsx`, `NewsletterForm.astro`).
   - Estilização completa e tokens em Tailwind CSS v4 (`src/styles/global.css`, `tokens.css`, `fonts.css`).
-  - Esquemas de validação de dados em TypeScript com Zod (`src/schemas/`), totalmente desacoplados de pacotes externos.
-  - Conexão segura com o Supabase utilizando exclusivamente a chave pública `anon` (`src/lib/supabase.ts`).
+  - Esquemas Zod (`src/schemas/`), cópia byte a byte de `backend/src/schemas/` (mesma versão exata do Zod).
+  - Cliente HTTP da API com timeout e `Idempotency-Key` (`src/lib/api.ts`) e widget Turnstile (`src/components/forms/Turnstile.tsx`). Nenhuma chave do Supabase.
   - Assets estáticos institucionais (`public/images/`, `public/fonts/`, `public/favicon.*`).
-  - Configuração de cabeçalhos de segurança e cache da Vercel (`vercel.json`).
+  - Cabeçalhos de segurança e cache do Cloudflare Pages (`public/_headers`) e geração do CSP (`scripts/generate-csp.mjs`).
   - Scripts automatizados de verificação de qualidade (`scripts/verify-topology.mjs` e `scripts/verify-no-inline-style.mjs`).
 
 * **O que NÃO DEVE estar no `frontend`:**
@@ -75,7 +74,7 @@ Este repositório abriga os serviços em segundo plano, integrações financeira
   - Integração com gateways de pagamento (geração de cobranças PIX dinâmicas com Asaas e Mercado Pago).
   - Tratamento de webhooks de pagamento com validação de assinatura criptográfica HMAC-SHA256.
   - Mecanismo de lease de idempotência atômica para impedir processamento duplicado de transações.
-  - Tarefa agendada (Cron Trigger `0 3 * * *`) que executa a limpeza de triagens inativas há mais de 180 dias (Conformidade LGPD).
+  - Tarefa agendada (Cron Trigger `0 3 * * *`) que expurga triagens e contatos com retenção de 180 dias vencida (Conformidade LGPD).
   - Testes automatizados de AppSec e regras de negócio (`test/`).
   - Arquivo de configuração do Worker (`wrangler.toml`).
 
@@ -95,7 +94,8 @@ Este repositório é a fonte canônica da verdade para engenharia, requisitos de
   - Especificação Formal de Requisitos de Software (**SRS**) e Regras de Negócio (**RNs**).
   - Modelagem de Ameaças (**STRIDE / DREAD**) e Documento de Conformidade com a **LGPD (Art. 11)**.
   - Esquemas de Contratos e Validação de Dados.
-  - Runbooks Operacionais (Deploy na Vercel, Configuração e Hardening do Supabase, Backup, Rotação de Chaves e CLI Cheatsheet).
+  - Runbooks Operacionais (Implantação no Cloudflare, Configuração e Hardening do Supabase, Backup, Rotação de Chaves e CLI Cheatsheet).
+  - SQL de banco de dados: o schema vive exclusivamente em `backend/drizzle/`.
   - Governança do Código Aberto (Código de Conduta, Guia de Contribuição, Política de Segurança e Licença MIT).
   - Pipeline de publicação automatizada no GitHub Pages (`.github/workflows/deploy-pages.yml`).
 

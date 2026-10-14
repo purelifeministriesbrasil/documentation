@@ -14,6 +14,14 @@ Conjunto de diretrizes mandatórias que orientam o tratamento de dados, limites 
 ### RN-002: Expurgo Automático de Triagens Inativas (180 Dias)
 * **Regra:** Solicitações de triagem que permaneçam sem atendimento, canceladas ou concluídas há mais de 180 dias devem ser destruídas de forma irreversível do banco de dados.
 * **Aplicação:** Execução diária automatizada por cron trigger (`0 3 * * *`) no Worker da Cloudflare.
+* **Comportamento implementado (2026-10-13):** o expurgo usa `retention_until = criação + 180 dias` e **não considera o status** — uma triagem ainda em atendimento também é expurgada no prazo. O registro é nulificado (código, canal, programa, ciphertexts e IVs) e marcado `purged`; `created_month` permanece apenas para métricas agregadas.
+
+!!! question "Decisão pendente da liderança pastoral"
+    Se atendimentos em andamento precisarem ultrapassar 180 dias, defina a regra (ex.: estender `retention_until` ao mudar o status para `in_review`/`contacted`) antes da entrada em produção. Até lá vale o comportamento implementado acima.
+
+### RN-002-A: Retenção de Mensagens de Contato (180 Dias)
+* **Regra:** Mensagens do formulário de contato institucional são retidas por 180 dias a partir do envio.
+* **Aplicação:** Mesmo cron da RN-002; dados de contato e mensagem são nulificados e o registro marcado `purged` (CHECK `contact_purged_clean`).
 
 ### RN-003: Restrição Estrita de Maioridade Legal (18+ Anos)
 * **Regra:** A submissão autônoma de triagem é permitida exclusivamente para indivíduos civilmente capazes (maiores de 18 anos).

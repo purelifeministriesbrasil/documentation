@@ -1,45 +1,107 @@
-# Esquema de Validação: Doações e Pagamentos PIX
+# Esquema de Validação: Doações e PIX Dinâmico
 
-Define o contrato formal para geração de intenções de doação financeira e cobranças PIX, além da estrutura de webhooks recebidos dos gateways bancários.
+Valida a criação de cobranças PIX (ilha `DonationForm`) e define os contratos de resposta e de eventos de webhook.
 
-Localização do código-fonte: [`frontend/src/schemas/donations/schema.ts`](file:///c:/Users/pedrohpsantos/Documents/purelifeministriesbrasil/frontend/src/schemas/donations/schema.ts)
+!!! info "Fonte de verdade"
+    Código canônico: [`backend/src/schemas/donations/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/schemas/donations/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
+    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7**. Qualquer alteração deve ser feita nos dois
+    repositórios no mesmo ciclo de release.
 
----
-
-## 1. Esquema de Criação de PIX (`createPixSchema`)
+## Definição do schema Zod
 
 ```typescript
 import { z } from "zod";
+import { emailSchema, turnstileTokenSchema } from "../common/schema.js";
 
 export const createPixSchema = z.object({
-  // Valor em centavos (ex: R$ 50,00 = 5000 centavos)
   amountCents: z
     .number()
     .int("O valor deve ser um número inteiro em centavos.")
     .min(500, "Valor mínimo de R$ 5,00.")
     .max(5_000_000, "Valor máximo de R$ 50.000,00."),
-  
   frequency: z.enum(["one_time", "monthly"]),
-  donorEmail: z.string().trim().toLowerCase().email("E-mail inválido.").max(160).optional(),
-  turnstileToken: z.string().min(10).max(2048),
+  donorEmail: emailSchema.optional(),
+  turnstileToken: turnstileTokenSchema,
 }).strict();
 
-export type CreatePixInput = z.infer<typeof createPixSchema>;
-```
+/** Resposta pública de `POST /api/donations/create-pix`. */
+export const createPixResponseSchema = z.object({
+  chargeId: z.uuid(),
+  provider: z.enum(["asaas", "mercadopago"]),
+  pixCopyPaste: z.string().min(1),
+  expiresAt: z.iso.datetime({ offset: true }),
+  amountCents: z.number().int(),
+}).strict();
 
----
-
-## 2. Esquema de Webhook Financeiro (`paymentWebhookSchema`)
-
-```typescript
+/** Contrato interno de evento de webhook após verificação de assinatura. */
 export const paymentWebhookSchema = z.object({
   provider: z.enum(["asaas", "mercadopago"]),
   eventId: z.string().min(1).max(128),
-  eventType: z.enum(["payment.confirmed", "payment.failed", "payment.refunded", "unknown"]),
+  eventType: z.enum([
+    "payment.confirmed",
+    "payment.failed",
+    "payment.expired",
+    "payment.cancelled",
+    "payment.refunded",
+    "unknown",
+  ]),
   providerChargeId: z.string().min(1).max(128),
   amountCents: z.number().int().nonnegative(),
-  occurredAt: z.string().datetime(),
+  occurredAt: z.iso.datetime({ offset: true }),
 }).strict();
-
-export type PaymentWebhookEvent = z.infer<typeof paymentWebhookSchema>;
 ```
+
+## Blocos compartilhados (`common/schema.ts`)
+
+```typescript
+import { z } from "zod";
+
+/** Remove separadores visuais comuns ("(61) 90000-0000") antes da validação de dígitos. */
+const stripPhoneSeparators = (value: string): string => value.replace(/[\s().-]/g, "");
+
+export const phoneSchema = z
+  .string()
+  .trim()
+  .overwrite(stripPhoneSeparators)
+  .regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD");
+
+export const emailSchema = z.string().trim().toLowerCase().email("E-mail inválido").max(160);
+
+export const policyVersionSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD");
+
+export const turnstileTokenSchema = z.string().min(10).max(2048);
+
+/** Valor do header `Idempotency-Key`: UUID v4 gerado pelo cliente por tentativa lógica de envio. */
+export const idempotencyKeySchema = z.uuidv4("Idempotency-Key deve ser um UUID v4");
+
+export const IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
+```
+
+## Contrato HTTP
+
+`POST /api/donations/create-pix` · JSON · **`Idempotency-Key`** obrigatório · corpo ≤ 4 KiB.
+
+| Status | Corpo | Quando |
+|---|---|---|
+| `200` | `createPixResponseSchema` | Cobrança criada — ou **a mesma** cobrança, se a chave for repetida |
+| `409` | `{ "error": "idempotency_conflict" }` | Mesma chave reutilizada com valor/frequência diferentes |
+| `502` | `{ "error": "gateway_rejected" }` | Provedor recusou a cobrança |
+| `503` | `{ "error": "gateway_unavailable" }` ou `{ "error": "service_unavailable" }` | Provedor fora do ar / configuração ausente |
+
+O QR Code é desenhado no navegador a partir de `pixCopyPaste` (mesmo conteúdo do QR do provedor), sem trafegar imagem base64 e sem exigir `data:` amplo no CSP.
+
+`POST /api/webhooks/payment` (provedor definido por `PAYMENT_PROVIDER`):
+
+- **Asaas**: header `asaas-access-token` comparado em tempo constante com `ASAAS_WEBHOOK_SECRET`. Eventos: `PAYMENT_RECEIVED`/`PAYMENT_CONFIRMED` → `payment.confirmed`; `PAYMENT_OVERDUE` → `payment.expired`; `PAYMENT_DELETED` → `payment.cancelled`; `PAYMENT_REFUNDED` → `payment.refunded`.
+- **Mercado Pago**: `x-signature` (`ts`, `v1`) validado por HMAC-SHA256 do manifesto `id:{data.id};request-id:{x-request-id};ts:{ts};`; em seguida o pagamento é consultado em `GET /v1/payments/{id}` (a notificação não traz status nem valor).
+- Respostas: `200` processado/ignorado/duplicado · `400` assinatura inválida · `409` lease ativo · `500`/`503` falha transitória (o provedor reenvia).
+
+## Invariantes
+
+1. **Valores em centavos inteiros**: mínimo R$ 5,00, máximo R$ 50.000,00 (também `CHECK intent_amount_chk`).
+2. **Idempotência dupla**: `Idempotency-Key` do cliente → `donation_intents.idempotency_key` (único) e repassada ao provedor (`X-Idempotency-Key` no Mercado Pago).
+3. **Máquina de estados** (`domains/donations/state-machine.ts`): `confirmed` só pode ir para `refunded`; eventos que regrediriam a doação (`failed`, `expired`) são ignorados e auditados (`charge.transition_rejected`).
+4. **Divergência de valor**: não altera o estado; registra `charge.amount_mismatch` em `audit_events` para conciliação manual.
+5. **Frequência `monthly`**: registra a intenção e emite a **primeira** cobrança; a recorrência automática ainda não é implementada (ver limitações no runbook de deploy).

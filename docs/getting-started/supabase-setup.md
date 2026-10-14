@@ -1,109 +1,77 @@
 # Configuração do Banco de Dados no Supabase
 
-O **Supabase** é a plataforma de dados central do ecossistema, fornecendo um banco de dados relacional PostgreSQL totalmente gerenciado, com segurança no nível de linha (RLS) e uma interface visual (*Table Editor*) para que a equipe pastoral possa acompanhar os atendimentos com facilidade.
+O Supabase hospeda o PostgreSQL do ecossistema. O schema é provisionado **exclusivamente** pelas migrations
+versionadas em [`backend/drizzle/`](https://github.com/purelifeministriesbrasil/backend/tree/main/drizzle)
+— a fonte única de verdade. Não há SQL de banco no repositório `frontend`.
 
 ---
 
-## 1. Criação do Projeto no Supabase
+## 1. Criar o projeto
 
-1. Crie uma conta gratuita ou faça login em [supabase.com](https://supabase.com).
-2. Clique em **New Project**.
-3. Defina:
-   - **Name**: `purelife-brasil`
-   - **Database Password**: Escolha uma senha segura e guarde-a com segurança.
-   - **Region**: Selecione `São Paulo (sa-east-1)` para menor latência no Brasil.
-4. Aguarde cerca de 2 minutos até o provisionamento do cluster Postgres.
+1. Na organização Supabase do ministério: **New project**.
+2. **Name** `purelife-brasil` · **Region** `South America (São Paulo) sa-east-1` · **Database password** gerada no
+   cofre da organização.
+3. Aguarde o provisionamento.
 
----
+## 2. Obter as conexões
 
-## 2. Aplicação do Esquema de Banco de Dados (`schema.sql`)
+Em **Connect** (topo do painel):
 
-1. No painel do Supabase, clique no menu lateral em **SQL Editor**.
-2. Clique em **+ New query**.
-3. Copie o script SQL oficial localizado em `frontend/supabase/schema.sql` e cole no editor:
+| Uso | Tipo | Porta | Onde vai |
+|---|---|---|---|
+| Worker em produção | Transaction pooler | 6543 | segredo `DATABASE_URL` do Worker |
+| Migrations / caixa pastoral | Session pooler ou Direct | 5432 | variável de shell do operador |
 
-```sql
--- Habilita extensão pgcrypto
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+O cliente do Worker já usa `prepare: false`, obrigatório no modo *transaction*.
 
--- 1. Tabela de Triagens Confidenciais (LGPD Art. 11)
-CREATE TABLE IF NOT EXISTS public.triagens (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    submitted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    whatsapp TEXT NOT NULL,
-    birthdate DATE NOT NULL,
-    gender TEXT NOT NULL CHECK (gender IN ('masculino', 'feminino')),
-    marital_status TEXT NOT NULL,
-    city TEXT NOT NULL,
-    state VARCHAR(2) NOT NULL,
-    urgency TEXT NOT NULL DEFAULT 'media' CHECK (urgency IN ('baixa', 'media', 'alta', 'critica')),
-    struggles TEXT[] NOT NULL DEFAULT '{}',
-    description TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pendente' CHECK (status IN ('pendente', 'em_atendimento', 'concluido', 'arquivado')),
-    notes TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+## 3. Aplicar as migrations
 
--- 2. Tabela de Mensagens de Contato
-CREATE TABLE IF NOT EXISTS public.contatos (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    submitted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT,
-    subject TEXT NOT NULL,
-    message TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'novo' CHECK (status IN ('novo', 'respondido', 'arquivado'))
-);
-
--- 3. Tabela de Inscrições de Newsletter
-CREATE TABLE IF NOT EXISTS public.newsletters (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email TEXT UNIQUE NOT NULL,
-    subscribed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    active BOOLEAN NOT NULL DEFAULT true
-);
-
--- 4. Tabela de Doações e Intenções PIX
-CREATE TABLE IF NOT EXISTS public.doacoes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    amount_cents INTEGER NOT NULL,
-    donor_name TEXT NOT NULL,
-    donor_email TEXT NOT NULL,
-    donor_cpf TEXT,
-    category TEXT NOT NULL DEFAULT 'geral',
-    status TEXT NOT NULL DEFAULT 'pendente' CHECK (status IN ('pendente', 'confirmado', 'cancelado')),
-    provider_charge_id TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
--- Ativa Row Level Security (RLS)
-ALTER TABLE public.triagens ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.contatos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.newsletters ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.doacoes ENABLE ROW LEVEL SECURITY;
-
--- Políticas de RLS: Apenas inserções públicas anônimas (Zero Leitura Externa)
-CREATE POLICY "Permitir insercao anonima de triagens" ON public.triagens FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "Permitir insercao anonima de contatos" ON public.contatos FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "Permitir insercao anonima de newsletters" ON public.newsletters FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "Permitir insercao anonima de doacoes" ON public.doacoes FOR INSERT TO anon WITH CHECK (true);
+```bash
+cd backend
+export DATABASE_URL='postgresql://postgres.<ref>:<senha>@aws-0-sa-east-1.pooler.supabase.com:5432/postgres'
+pnpm db:migrate:dry-run
+pnpm db:migrate
 ```
 
-4. Clique no botão verde **Run**. O resultado exibirá: `Success. No rows returned`.
+O runner (`scripts/migrate.mjs`) aplica cada arquivo `drizzle/NNNN_nome.sql` em ordem, numa transação por
+arquivo, registra nome e SHA-256 em `public.schema_migrations` e **recusa** migrations já aplicadas que tenham
+sido editadas (crie sempre uma nova migration).
 
----
+| Migration | Conteúdo |
+|---|---|
+| `0001_initial.sql` | Tabelas, constraints de domínio, índices |
+| `0002_supabase_hardening_and_rls.sql` | RLS + REVOKE, `set_updated_at()` com `search_path` fixo, índices de FK, idempotência, expurgo de contato, consentimento da newsletter |
 
-## 3. Gestão Pastoral pelo Table Editor
+## 4. Verificar
 
-Após a execução do script:
+- **Advisors → Security Advisor**: sem alertas.
+- **SQL Editor**:
 
-1. No menu lateral do Supabase, clique em **Table Editor**.
-2. Você verá as tabelas:
-   - `triagens`: Registro de pedidos de ajuda pastoral.
-   - `contatos`: Mensagens gerais enviadas pelos visitantes.
-   - `doacoes`: Histórico de intenções de doação.
-   - `newsletters`: Lista de e-mails inscritos para informativos.
-3. Para alterar o status de um atendimento (ex: de `pendente` para `em_atendimento`), basta dar duplo clique na célula e selecionar o novo valor.
+```sql
+-- RLS ligado em todas as tabelas
+select relname, relrowsecurity from pg_class
+ where relnamespace = 'public'::regnamespace and relkind = 'r' order by 1;
+
+-- Nenhum privilégio para as roles públicas
+select grantee, count(*) from information_schema.role_table_grants
+ where table_schema = 'public' and grantee in ('anon', 'authenticated') group by 1;  -- sem linhas
+```
+
+## 5. Ambiente local
+
+Qualquer PostgreSQL 15+ serve para desenvolvimento e testes de integração (ex.: `supabase start`, ou o serviço
+`postgres:17` usado no CI). Para emular o Supabase, crie as roles antes de migrar:
+
+```sql
+CREATE ROLE anon NOLOGIN;
+CREATE ROLE authenticated NOLOGIN;
+```
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres pnpm db:migrate
+TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres pnpm test
+```
+
+!!! warning "Table Editor e dados cifrados"
+    Contato, relato, mensagens e e-mails ficam cifrados (AES-256-GCM): o Table Editor mostra apenas ciphertext.
+    A equipe pastoral lê os registros pela caixa pastoral auditada (`backend/scripts/pastoral-inbox.mjs`).

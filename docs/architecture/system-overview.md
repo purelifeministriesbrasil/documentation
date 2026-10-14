@@ -10,12 +10,11 @@ O sistema Pure Life Ministries Brasil adota uma arquitetura orientada a serviço
 flowchart TD
     subgraph Clients["Camada de Apresentação (Edge & Browser)"]
         Browser["Navegador do Usuário / Mobile"]
-        VercelEdge["Vercel Edge Network (CDN Global)"]
-        VercelProxy["Vercel Reverse Proxy (/api/*)"]
+        PagesEdge["Cloudflare Pages (CDN Global + _headers/CSP)"]
     end
 
     subgraph App["Frontend (Astro 5 SSG + React Islands)"]
-        Pages["Páginas Estáticas Prerenderizadas (16 Rotas)"]
+        Pages["Páginas Estáticas Prerenderizadas (17 Rotas)"]
         Islands["Ilhas React Interativas (Formulários & State)"]
         ZodSchemas["Validação de Entrada com Zod"]
     end
@@ -24,29 +23,28 @@ flowchart TD
         WorkerAPI["Hono API Serverless (Wrangler)"]
         Turnstile["Cloudflare Turnstile (Anti-Bot)"]
         CryptoProvider["Provedor AES-256-GCM + AAD"]
-        AsaasGateway["Gateway Asaas (PIX Dinâmico)"]
+        AsaasGateway["Gateway PIX (Asaas ou Mercado Pago)"]
         CronJob["Cloudflare Cron Trigger (0 3 * * * - Expurgo LGPD)"]
     end
 
     subgraph DataPlatform["Camada de Dados e Gestão (Supabase)"]
         PgBouncer["Supabase Transaction Pooler (Porta 6543)"]
         PostgresDB[(PostgreSQL 16 Gerenciado)]
-        PastoralUI["Table Editor Visual / Dashboard Pastoral"]
+        PastoralUI["Caixa Pastoral CLI (decifra + audit_events)"]
     end
 
-    Browser -->|Requisição HTTPS| VercelEdge
-    VercelEdge -->|Cache Hit Instantâneo| Pages
+    Browser -->|Requisição HTTPS| PagesEdge
+    PagesEdge -->|Cache Hit Instantâneo| Pages
     Browser -->|Hidratação Parcial| Islands
     Islands -->|Validação Local| ZodSchemas
-    Islands -->|Submit via POST /api/*| VercelProxy
-    VercelProxy -->|Proxy Reverso Seguro| WorkerAPI
+    Islands -->|POST https://api.purelifebrasil.org + Idempotency-Key| WorkerAPI
 
     WorkerAPI -->|Validação de Token Anti-Bot| Turnstile
     WorkerAPI -->|Cifragem de Confissões/Contato| CryptoProvider
     WorkerAPI -->|Conexão TCP / Drizzle postgres.js| PgBouncer
     PgBouncer -->|Persistência Transacional Atômica| PostgresDB
 
-    PastoralUI -->|Autenticação Segura 2FA| PostgresDB
+    PastoralUI -->|Leitura auditada com motivo| PostgresDB
 
     WorkerAPI -->|Cobrança PIX Dinâmico| AsaasGateway
     AsaasGateway -->|Webhook Assinado| WorkerAPI
@@ -59,9 +57,9 @@ flowchart TD
 
 ### A. Frontend Web (`frontend`)
 - **Framework**: Astro 5 configurado com `output: 'static'`.
-- **Estilização**: Tailwind CSS v4 com tokens unificados na folha global. Zero CSS inline para compliance estrito com Content Security Policy (`style-src 'self'`).
+- **Estilização**: Tailwind CSS v4 com tokens unificados na folha global. Zero atributos `style` inline (auditado no build).
 - **Acessibilidade & Movimento**: Respeito estrito a `prefers-reduced-motion: reduce`, atributos ARIA dinâmicos (`aria-live`, `role="alert"`, `aria-describedby`) e foco visível em todos os controles interativos.
-- **Roteamento Seguro**: Zero dependências de clientes de banco de dados no bundle (`@supabase/supabase-js` erradicado). Todas as submissões trafegam via Vercel Reverse Proxy (`/api/*`) para o backend na Cloudflare.
+- **Roteamento Seguro**: Zero dependências de clientes de banco de dados no bundle (`@supabase/supabase-js` erradicado). Todas as submissões vão direto à API (`PUBLIC_API_URL`), com CORS restrito à origem do site e CSP gerado com hashes no build.
 - **Formulários Interativos**:
   - `TriageForm.tsx`: Triagem confidencial com consentimento de sigilo pastoral.
   - `ContactForm.tsx`: Formulário de contato institucional.

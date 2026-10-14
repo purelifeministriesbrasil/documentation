@@ -32,9 +32,9 @@ flowchart TD
 
 | Sinal | Métrica Principal | Meta / SLA | Ferramenta de Monitoramento |
 | :--- | :--- | :--- | :--- |
-| **Latência** | Tempo de resposta P95 / P99 | P95 < 200ms (Static), P95 < 400ms (API) | Vercel Analytics / Cloudflare Dashboard |
-| **Tráfego** | Volume total de acessos e requisições/minuto | Escala dinâmica sem degradação | Cloudflare Analytics / Vercel Edge |
-| **Erros** | Percentual de códigos HTTP 5xx | < 0,05% das requisições totais | Cloudflare Logs / Vercel Monitoring |
+| **Latência** | Tempo de resposta P95 / P99 | P95 < 200ms (Static), P95 < 400ms (API) | Cloudflare Web Analytics / Workers Observability |
+| **Tráfego** | Volume total de acessos e requisições/minuto | Escala dinâmica sem degradação | Cloudflare Analytics (Pages e Workers) |
+| **Erros** | Percentual de códigos HTTP 5xx | < 0,05% das requisições totais | Workers Logs (`wrangler tail`) / Pages Analytics |
 | **Saturação** | Utilização de conexões e memória | < 70% de capacidade nos picos | Supabase Metrics Dashboard |
 
 ---
