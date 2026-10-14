@@ -16,17 +16,17 @@ A modelagem de ameaças da Pure Life Ministries Brasil utiliza a metodologia **S
 
 | Categoria STRIDE | Vetor de Ameaça em Potencial | Controles e Mitigações Implementados |
 | :--- | :--- | :--- |
-| **Spoofing** (Falsificação de Identidade) | Ataque simulando webhooks de pagamento PIX para confirmar doações falsas | Verificação de assinatura criptográfica HMAC-SHA256 no webhook e conferência direta de status no gateway |
-| **Tampering** (Adulteração de Dados) | Tentativa de manipular campos ou status de triagens no banco | Row Level Security (RLS) impedindo `UPDATE` pelo público; cifra autenticada AES-GCM com tag de integridade |
-| **Repudiation** (Repúdio) | Doador ou assistido contestando transação ou consentimento fornecido | Registro transacional com carimbo de data/hora (`submitted_at`), versão da política aceita e IP anonimizado |
-| **Information Disclosure** (Vazamento de Informação) | Leitura não autorizada de relatos pastorais por usuários anônimos | Bloqueio total de `SELECT` para a role `anon` no Supabase; cifra em repouso |
-| **Denial of Service** (Negação de Serviço) | Bots inundando formulários com mensagens de spam e scripts automatizados | Cloudflare Turnstile transparente em todos os formulários; limites de tamanho de payload no edge |
-| **Elevation of Privilege** (Elevação de Privilégio) | Usuário público tentando invocar privilégios administrativos via client JS | Chave pública `anon` com permissão estrita de `INSERT`; isolamento total da chave `service_role` |
+| **Spoofing** (Falsificação de Identidade) | Ataque simulando webhooks de pagamento PIX para confirmar doações falsas | Asaas: token comparado em tempo constante; Mercado Pago: HMAC-SHA256 do manifesto + consulta autenticada do pagamento. Divergência de valor é auditada e não confirma a doação |
+| **Tampering** (Adulteração de Dados) | Tentativa de manipular campos ou status de triagens no banco | Nenhum acesso público ao banco (RLS sem políticas + REVOKE); cifra autenticada AES-GCM com AAD; máquina de estados impede regressão de cobranças confirmadas |
+| **Repudiation** (Repúdio) | Doador ou assistido contestando transação ou consentimento fornecido | Consentimento com versão da política, data e rota; `audit_events` registra leituras pastorais (com motivo) e decisões sobre webhooks |
+| **Information Disclosure** (Vazamento de Informação) | Leitura não autorizada de relatos pastorais por usuários anônimos | Roles `anon`/`authenticated` sem privilégios; cifra de campo; logs com scrubber; e-mails só como HMAC com pepper |
+| **Denial of Service** (Negação de Serviço) | Bots inundando formulários com mensagens de spam e scripts automatizados | Turnstile nos formulários; `Content-Length` e corpo limitados em bytes; idempotência; cooldown de reenvio da newsletter; regra de Rate Limiting recomendada na zona |
+| **Elevation of Privilege** (Elevação de Privilégio) | Usuário público tentando invocar privilégios administrativos via client JS | Frontend sem nenhuma chave do Supabase; segredos só no Worker (`wrangler secret`), validados fail-closed |
 
 ---
 
 ## 3. Diretrizes de Desenvolvimento Seguro
 
-- **Zero Inline Script / Zero Inline Style**: O frontend proíbe scripts e estilos inline, viabilizando uma Content Security Policy estrita (`script-src 'self'`).
+- **CSP por hash / Zero Inline Style**: scripts inline gerados pelo Astro são autorizados por hash SHA-256 calculado no build (sem `'unsafe-inline'`); handlers inline e atributos `style` quebram o build.
 - **Validação de Entrada Incondicional**: Todos os dados recebidos são obrigatoriamente passados por validadores estritos Zod (`.strict()`).
 - **Sanitização de Saída**: Prevenção total contra Cross-Site Scripting (XSS) através de escape automático do ecossistema Astro/React.

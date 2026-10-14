@@ -21,7 +21,7 @@ O ecossistema digital da Pure Life Ministries Brasil trata a proteção da priva
 O formulário de triagem requer apenas as informações essenciais para viabilizar o contato inicial. O campo de relato pessoal íntimo é estritamente **opcional**, permitindo que o assistido compartilhe detalhes apenas se e quando se sentir confortável.
 
 ### B. Ciclo de Vida e Política de Retenção (180 Dias)
-Triagens com status concluído ou arquivado são submetidas a um ciclo de expurgo automático periódico. Registros inativos há mais de 180 dias são permanentemente eliminados do banco de dados relacional.
+Triagens e mensagens de contato são submetidas a um ciclo de expurgo automático diário: cada triagem e mensagem de contato recebe `retention_until` de 180 dias a partir do envio; vencido o prazo, o cron diário nulifica todos os identificadores e conteúdos cifrados (ver RN-002 e RN-002-A).
 
 ### C. Direitos do Titular (Art. 18)
 O assistido pode exercer seus direitos (confirmação de tratamento, acesso, correção, eliminação de dados tratados com consentimento) mediante envio de solicitação para o canal de privacidade: `privacidade@purelifebrasil.org`.
