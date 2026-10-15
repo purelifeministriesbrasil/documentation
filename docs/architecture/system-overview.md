@@ -37,7 +37,7 @@ flowchart TD
     PagesEdge -->|Cache Hit Instantâneo| Pages
     Browser -->|Hidratação Parcial| Islands
     Islands -->|Validação Local| ZodSchemas
-    Islands -->|POST https://api.purelifebrasil.org + Idempotency-Key| WorkerAPI
+    Islands -->|POST https://api.purelifeministriesbrasil.org + Idempotency-Key| WorkerAPI
 
     WorkerAPI -->|Validação de Token Anti-Bot| Turnstile
     WorkerAPI -->|Cifragem de Confissões/Contato| CryptoProvider

@@ -24,4 +24,4 @@ O formulário de triagem requer apenas as informações essenciais para viabiliz
 Triagens e mensagens de contato são submetidas a um ciclo de expurgo automático diário: cada triagem e mensagem de contato recebe `retention_until` de 180 dias a partir do envio; vencido o prazo, o cron diário nulifica todos os identificadores e conteúdos cifrados (ver RN-002 e RN-002-A).
 
 ### C. Direitos do Titular (Art. 18)
-O assistido pode exercer seus direitos (confirmação de tratamento, acesso, correção, eliminação de dados tratados com consentimento) mediante envio de solicitação para o canal de privacidade: `privacidade@purelifebrasil.org`.
+O assistido pode exercer seus direitos (confirmação de tratamento, acesso, correção, eliminação de dados tratados com consentimento) mediante envio de solicitação para o canal de privacidade: `privacidade@purelifeministriesbrasil.org`.

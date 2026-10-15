@@ -1,7 +1,7 @@
 # Diagramas de Sequência
 
 Fluxos reais implementados em `backend/src` e `frontend/src`. O navegador **nunca** acessa o Supabase: toda
-escrita passa pelo Worker (`https://api.purelifebrasil.org`).
+escrita passa pelo Worker (`https://api.purelifeministriesbrasil.org`).
 
 ---
 

@@ -16,8 +16,8 @@ Arquivos de referência (sempre atualizados com comentários):
 
 | Variável | Obrigatória | Exemplo | Uso |
 |---|---|---|---|
-| `PUBLIC_SITE_ORIGIN` | sim | `https://purelifebrasil.org` | Origem canônica |
-| `PUBLIC_API_URL` | sim | `https://api.purelifebrasil.org` | Base da API; entra no CSP (`connect-src`, `form-action`) |
+| `PUBLIC_SITE_ORIGIN` | sim | `https://purelifeministriesbrasil.org` | Origem canônica |
+| `PUBLIC_API_URL` | sim | `https://api.purelifeministriesbrasil.org` | Base da API; entra no CSP (`connect-src`, `form-action`) |
 | `PUBLIC_TURNSTILE_SITE_KEY` | sim | `0x4AAAA…` | Widget Turnstile (teste: `1x00000000000000000000AA`) |
 | `NODE_VERSION` | sim (Pages) | `22` | Versão do Node no build |
 
@@ -30,13 +30,13 @@ Arquivos de referência (sempre atualizados com comentários):
 
 | Variável | Exemplo | Descrição |
 |---|---|---|
-| `PUBLIC_SITE_ORIGIN` | `https://purelifebrasil.org` | Única origem aceita (CORS e verificação de `Origin`) |
+| `PUBLIC_SITE_ORIGIN` | `https://purelifeministriesbrasil.org` | Única origem aceita (CORS e verificação de `Origin`) |
 | `ENVIRONMENT` | `production` | `production` proíbe chaves de teste do Turnstile e origens `localhost` |
 | `PAYMENT_PROVIDER` | `asaas` | `asaas` ou `mercadopago` |
 | `PIX_EXPIRATION_MINUTES` | `60` | Validade do QR Code (30 a 43200) |
 | `TRIAGE_KEY_CURRENT_VERSION` | `1` | Versão de chave usada para novas cifras |
-| `EMAIL_FROM` | `Pure Life Ministries Brasil <nao-responda@purelifebrasil.org>` | Remetente |
-| `STAFF_NOTIFICATION_EMAIL` | `contato@purelifebrasil.org` | Recebe avisos (sem dados pessoais) |
+| `EMAIL_FROM` | `Pure Life Ministries Brasil <nao-responda@purelifeministriesbrasil.org>` | Remetente |
+| `STAFF_NOTIFICATION_EMAIL` | `purelifeministriesbrasil1986@gmail.com` | Recebe avisos (sem dados pessoais) |
 | `ASAAS_API_BASE_URL` | `https://api.asaas.com/v3` | Sandbox: `https://api-sandbox.asaas.com/v3` |
 
 ## 3. Backend Worker — segredos (`wrangler secret put <NOME>`)
