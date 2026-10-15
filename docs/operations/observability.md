@@ -101,7 +101,7 @@ O serviço de API expõe uma rota pública e idempotente para checagens automati
 * **Comportamento:** Retorna status `healthy`, timestamp e versão sem tocar no banco de dados, ideal para sondas de liveness do Cloudflare ou uptime monitors externos.
 
 ```bash
-curl -i https://api.purelifebrasil.org/health
+curl -i https://api.purelifeministriesbrasil.org/health
 ```
 
 **Resposta esperada (HTTP 200):**

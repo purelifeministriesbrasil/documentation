@@ -15,14 +15,14 @@ Cloudflare Pages não oferece para hosts externos.
 1. Publicar o frontend Astro (SSG) no **Cloudflare Pages** da conta institucional; remover `vercel.json`.
 2. Headers de segurança em `public/_headers`. O CSP é **gerado no build** (`scripts/generate-csp.mjs`) com hashes
    SHA-256 dos scripts inline do Astro, sem `'unsafe-inline'` em `script-src`.
-3. O frontend chama a API em **`PUBLIC_API_URL`** (`https://api.purelifebrasil.org`) com CORS restrito a
+3. O frontend chama a API em **`PUBLIC_API_URL`** (`https://api.purelifeministriesbrasil.org`) com CORS restrito a
    `PUBLIC_SITE_ORIGIN`; a API usa *custom domain* do Worker na mesma zona.
 4. `backend/drizzle/` passa a ser a **única** fonte do schema; o SQL legado do frontend foi removido.
 
 ## Alternativas consideradas
 
 - **Manter a Vercel (Pro)**: custo recorrente sem ganho funcional para um site estático.
-- **Worker route em `purelifebrasil.org/api/*`** (mesma origem): elimina CORS, mas acopla os deploys e exige
+- **Worker route em `purelifeministriesbrasil.org/api/*`** (mesma origem): elimina CORS, mas acopla os deploys e exige
   regras de rota adicionais; mantido como opção (`PUBLIC_API_URL` vazio usa caminho relativo).
 - **CSP com `'unsafe-inline'`**: mais simples, porém anula a proteção contra XSS de scripts injetados.
 

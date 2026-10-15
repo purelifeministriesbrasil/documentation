@@ -42,7 +42,7 @@ flowchart TD
 ### 2.1. Eliminação do Bypass Client-Side & Centralização na API
 
 - **Remoção de `@supabase/supabase-js` do frontend**: Todas as submissões de dados (Triagem Pastoral, Contato, Newsletter e Doações PIX) foram redirecionadas estritamente para endpoints `/api/*`.
-- **Configuração de Proxy Reverso no `vercel.json`**: Mapeamento seguro das rotas `/api/:path*` diretamente para a borda do Cloudflare Worker (`https://api.purelifebrasil.org/api/:path*`), mitigando problemas de CORS no navegador e mantendo os cabeçalhos de segurança na resposta.
+- **Configuração de Proxy Reverso no `vercel.json`**: Mapeamento seguro das rotas `/api/:path*` diretamente para a borda do Cloudflare Worker (`https://api.purelifeministriesbrasil.org/api/:path*`), mitigando problemas de CORS no navegador e mantendo os cabeçalhos de segurança na resposta.
 - **Cabeçalhos Estritos de Privacidade**: Adição de `Cache-Control: no-store, private` e `Referrer-Policy: no-referrer` para todas as rotas sensíveis (`/triagem/(.*)`).
 
 ### 2.2. Adoção do Hono no Cloudflare Workers

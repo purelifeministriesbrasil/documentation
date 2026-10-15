@@ -10,7 +10,7 @@ Se você identificou uma vulnerabilidade de segurança neste ou em qualquer outr
 
 Envie seu relatório diretamente para nossa equipe de segurança da informação:
 
-- **E-mail de Segurança**: `seguranca@purelifebrasil.org`
+- **E-mail de Segurança**: `purelifeministriesbrasil1986@gmail.com`
 - **Assunto**: `[Divulgação de Vulnerabilidade] <Resumo>`
 
 Solicitamos incluir:

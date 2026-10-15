@@ -9,7 +9,7 @@ A segurança das informações e a estrita confidencialidade de indivíduos que 
 Se você identificou uma vulnerabilidade de segurança neste ou em qualquer outro repositório do ecossistema Pure Life, **NÃO crie uma issue pública**.
 
 Envie seu relatório diretamente para nossa equipe de segurança da informação:
-- **E-mail de Segurança**: `seguranca@purelifebrasil.org`
+- **E-mail de Segurança**: `purelifeministriesbrasil1986@gmail.com`
 - **Assunto**: `[Divulgação de Vulnerabilidade] <Resumo>`
 
 Solicitamos incluir:

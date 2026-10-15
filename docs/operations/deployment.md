@@ -14,7 +14,7 @@ Pure Life Ministries Brasil**, do zero, com o frontend no **Cloudflare Pages** e
 
 | Item | Responsável | Observação |
 |---|---|---|
-| Conta **Cloudflare** da organização (com 2FA) | Administração | Zona `purelifebrasil.org` será movida para ela |
+| Conta **Cloudflare** da organização (com 2FA) | Administração | Zona `purelifeministriesbrasil.org` será movida para ela |
 | Organização **Supabase** do ministério (com 2FA) | Administração | Plano Free atende; Pro habilita PITR |
 | Conta **Resend** com o domínio do ministério | Comunicação | E-mails transacionais (newsletter, avisos à equipe) |
 | Conta **Asaas** (ou **Mercado Pago**) em nome do CNPJ | Financeiro | Gateway PIX |
@@ -86,10 +86,10 @@ Detalhes do endurecimento: [Hardening do Supabase](supabase-hardening.md).
 
 ## 3. Cloudflare: zona DNS e Turnstile
 
-1. **Adicionar a zona** `purelifebrasil.org` à conta da organização e trocar os nameservers no Registro.br
+1. **Adicionar a zona** `purelifeministriesbrasil.org` à conta da organização e trocar os nameservers no registrador (Enom). Antes, confira que os registros A/AAAA apontam para a origem real e que o DNSSEC está desligado
    pelos indicados pela Cloudflare. Aguarde o status **Active**.
 2. **Turnstile** → *Add widget*:
-    - Nome: `purelife-site` · Hostnames: `purelifebrasil.org`, `www.purelifebrasil.org` · Modo: *Managed*.
+    - Nome: `purelife-site` · Hostnames: `purelifeministriesbrasil.org`, `www.purelifeministriesbrasil.org` · Modo: *Managed*.
     - Guarde a **Site Key** (pública → `PUBLIC_TURNSTILE_SITE_KEY`) e a **Secret Key** (cofre → `TURNSTILE_SECRET_KEY`).
 
 !!! note
@@ -99,10 +99,10 @@ Detalhes do endurecimento: [Hardening do Supabase](supabase-hardening.md).
 
 ## 4. Resend (e-mail transacional)
 
-1. *Domains → Add domain* `purelifebrasil.org`; publique na Cloudflare os registros **SPF**, **DKIM** e o
+1. *Domains → Add domain* `purelifeministriesbrasil.org`; publique na Cloudflare os registros **SPF**, **DKIM** e o
    **DMARC** sugeridos e aguarde a verificação.
 2. *API Keys → Create* com permissão **Sending access** restrita ao domínio → `RESEND_API_KEY` (cofre).
-3. Defina o remetente (`EMAIL_FROM`, ex.: `Pure Life Ministries Brasil <nao-responda@purelifebrasil.org>`) e a caixa
+3. Defina o remetente (`EMAIL_FROM`, ex.: `Pure Life Ministries Brasil <nao-responda@purelifeministriesbrasil.org>`) e a caixa
    que recebe avisos (`STAFF_NOTIFICATION_EMAIL`) em `backend/wrangler.toml`.
 
 ---
@@ -119,7 +119,7 @@ Escolha **um** provedor e defina `PAYMENT_PROVIDER` em `backend/wrangler.toml`.
        Copie o ID (`cus_…`) → `ASAAS_DONATION_CUSTOMER_ID`. O Asaas exige cliente com CPF/CNPJ em toda
        cobrança; o e-mail do doador, quando informado, fica cifrado no nosso banco.
     4. *Integrações → Webhooks → Adicionar*:
-        - URL: `https://api.purelifebrasil.org/api/webhooks/payment`
+        - URL: `https://api.purelifeministriesbrasil.org/api/webhooks/payment`
         - Token de autenticação: o valor gerado para `ASAAS_WEBHOOK_SECRET` (**nunca** a chave de API)
         - Eventos de cobrança: `PAYMENT_RECEIVED`, `PAYMENT_CONFIRMED`, `PAYMENT_OVERDUE`, `PAYMENT_DELETED`, `PAYMENT_REFUNDED`
         - Fila de envio: sequencial · Versão da API: v3
@@ -129,7 +129,7 @@ Escolha **um** provedor e defina `PAYMENT_PROVIDER` em `backend/wrangler.toml`.
 
     1. *Suas integrações → Criar aplicação* (Checkout Transparente / Pagamentos online).
     2. *Credenciais de produção*: **Access Token** → `MERCADOPAGO_ACCESS_TOKEN` (cofre).
-    3. *Webhooks*: URL `https://api.purelifebrasil.org/api/webhooks/payment`, evento **Pagamentos**;
+    3. *Webhooks*: URL `https://api.purelifeministriesbrasil.org/api/webhooks/payment`, evento **Pagamentos**;
        revele a **assinatura secreta** → `MERCADOPAGO_WEBHOOK_SECRET` (cofre).
     4. `MERCADOPAGO_PAYER_FALLBACK_EMAIL`: e-mail institucional usado como pagador quando o doador não informa
        o seu (o Mercado Pago exige `payer.email`).
@@ -161,13 +161,13 @@ pnpm exec wrangler secret put ASAAS_DONATION_CUSTOMER_ID
 # pnpm exec wrangler secret put MERCADOPAGO_PAYER_FALLBACK_EMAIL
 
 pnpm verify                          # lint + typecheck + testes
-pnpm deploy                          # publica e associa api.purelifebrasil.org (custom_domain no wrangler.toml)
+pnpm deploy                          # publica e associa api.purelifeministriesbrasil.org (custom_domain no wrangler.toml)
 ```
 
 **Verificação**:
 
 ```bash
-curl -s https://api.purelifebrasil.org/health                 # {"status":"healthy",...}
+curl -s https://api.purelifeministriesbrasil.org/health                 # {"status":"healthy",...}
 pnpm exec wrangler tail --format pretty                       # logs JSON sem PII
 ```
 
@@ -186,19 +186,19 @@ das chaves inválidas.
     | Variável | Valor |
     |---|---|
     | `NODE_VERSION` | `22` |
-    | `PUBLIC_SITE_ORIGIN` | `https://purelifebrasil.org` |
-    | `PUBLIC_API_URL` | `https://api.purelifebrasil.org` |
+    | `PUBLIC_SITE_ORIGIN` | `https://purelifeministriesbrasil.org` |
+    | `PUBLIC_API_URL` | `https://api.purelifeministriesbrasil.org` |
     | `PUBLIC_TURNSTILE_SITE_KEY` | Site Key do passo 3 |
 
-3. *Custom domains*: adicione `purelifebrasil.org` e `www.purelifebrasil.org` (crie uma *Redirect Rule*
+3. *Custom domains*: adicione `purelifeministriesbrasil.org` e `www.purelifeministriesbrasil.org` (crie uma *Redirect Rule*
    `www` → apex, 301).
 4. O build gera `dist/_headers` com o CSP calculado (hashes dos scripts inline + origem da API).
 
 **Verificação**:
 
 ```bash
-curl -sI https://purelifebrasil.org/ | grep -i -E "content-security-policy|strict-transport|x-frame"
-curl -sI https://purelifebrasil.org/triagem/ | grep -i cache-control   # no-store
+curl -sI https://purelifeministriesbrasil.org/ | grep -i -E "content-security-policy|strict-transport|x-frame"
+curl -sI https://purelifeministriesbrasil.org/triagem/ | grep -i cache-control   # no-store
 ```
 
 Abra o site com o DevTools e confirme **zero** violações de CSP no console.

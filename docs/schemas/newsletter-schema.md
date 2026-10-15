@@ -61,7 +61,7 @@ export const IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
 
 ## Invariantes
 
-1. **Double opt-in**: o e-mail recebe um link `https://purelifebrasil.org/newsletter/confirmar/#token=...`. O token fica no **fragmento** (não vai a servidores nem ao `Referer`) e a confirmação exige `POST` explícito da página — scanners de e-mail que fazem `GET` não confirmam inscrições.
+1. **Double opt-in**: o e-mail recebe um link `https://purelifeministriesbrasil.org/newsletter/confirmar/#token=...`. O token fica no **fragmento** (não vai a servidores nem ao `Referer`) e a confirmação exige `POST` explícito da página — scanners de e-mail que fazem `GET` não confirmam inscrições.
 2. **Sem e-mail em claro**: deduplicação por `email_hash` (HMAC-SHA256 com `HASH_PEPPER`); o endereço fica cifrado. Apenas o SHA-256 do token é armazenado (válido por 48 h).
 3. **Anti e-mail bombing**: reenvio de confirmação para o mesmo endereço no máximo a cada 15 minutos; inscrições `bounced`/`suppressed` nunca recebem novo envio.
 4. **Honeypot** (`website`) e, quando há JavaScript disponível no formulário, Turnstile.
