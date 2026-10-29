@@ -1,20 +1,16 @@
-## Descrição da Alteração
+## Descrição
 
-Descrição da Alteração
+<!-- O que esta contribuição adiciona, corrige ou atualiza na documentação. -->
 
-Descreva de forma clara e objetiva o que esta contribuição adiciona, corrige ou atualiza na documentação.
+## Referências
 
-## Relações e Referências
+- Issue: #
+- ADR relacionado: ADR-
 
-Relação com Issues / ADRs
-- Corrige/Resolve: #
-- Relacionado a ADR: ADR-
+## Checklist
 
-## Diretrizes e Checklist
-
-Checklist de Qualidade Documental
-- [ ] O conteúdo está em conformidade com a Especificação Técnica v5.0 (`arquitetura-purelife-v5.md`).
-- [ ] A navegação em `mint.json` foi devidamente atualizada (se novas páginas foram criadas).
-- [ ] Todos os links internos e referências cruzadas foram verificados e estão funcionais.
-- [ ] Não há chaves reais, tokens, segredos ou PII expostos nos exemplos de documentação.
-- [ ] A formatação e os diagramas Mermaid foram validados localmente (`mintlify dev`).
+- [ ] `mkdocs build --strict` passou localmente (sem links quebrados).
+- [ ] Páginas novas foram incluídas na seção `nav` do `mkdocs.yml`.
+- [ ] O conteúdo segue o site novo e o código atual dos repositórios `frontend` e `backend`.
+- [ ] Texto em português do Brasil, revisado.
+- [ ] Nenhuma chave real, token, senha ou dado pessoal nos exemplos.

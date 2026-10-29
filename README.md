@@ -1,112 +1,119 @@
-# purelife-docs — Documentação Técnica & Portal de Arquitetura
-
 <p align="center">
-  <img src="docs/assets/images/PLM_Logo.png" alt="Pure Life Ministries Brasil" width="100" />
+  <img src="docs/assets/images/PLM_Logo.png" alt="Pure Life Ministries Brasil" width="96" />
 </p>
 
-[![Documentation](https://img.shields.io/badge/Docs-MkDocs%20Material-044A82.svg)](https://purelifeministriesbrasil.github.io/documentation/)
-[![Architecture](https://img.shields.io/badge/Architecture-Canonical%20Architecture-success.svg)](./docs/architecture/system-overview.md)
-[![Security Policy](https://img.shields.io/badge/Security-AES--256--GCM%20%2B%20AAD-059669.svg)](./docs/security/threat-model.md)
-[![Compliance](https://img.shields.io/badge/LGPD-Art.%2011%20Compliant-blue.svg)](./docs/security/lgpd-compliance.md)
-[![Accessibility](https://img.shields.io/badge/A11y-WCAG%20AAA-success.svg)](./docs/assets/stylesheets/extra.css)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./docs/governance/license.md)
+<h1 align="center">purelife-docs</h1>
 
-Repositório canônico de documentação arquitetural, especificações formais de requisitos (SRS), registros de decisões de arquitetura (ADRs 001 a 009), runbooks operacionais, contratos de dados e conformidade com a LGPD (Art. 11 — Dados Sensíveis) do ecossistema digital da **Pure Life Ministries Brasil** (`purelifeministriesbrasil.org`).
+<p align="center">
+  Documentação técnica do ecossistema digital do <strong>Pure Life Ministries Brasil</strong>
+</p>
 
-Construído e publicado com **Material for MkDocs**, apresentando tipografia canônica Montserrat e JetBrains Mono, paleta de alto contraste com suporte total aos modos claro e escuro (WCAG AAA), navegação superior centralizada e estrita conformidade com acessibilidade.
+<p align="center">
+  <a href="https://purelifeministriesbrasil.github.io/documentation/"><img src="https://img.shields.io/badge/Docs-online-044A82.svg" alt="Documentação online" /></a>
+  <a href="https://squidfunk.github.io/mkdocs-material/"><img src="https://img.shields.io/badge/MkDocs-Material-526CFE.svg" alt="MkDocs Material" /></a>
+  <a href="./docs/security/lgpd-compliance.md"><img src="https://img.shields.io/badge/LGPD-Art.%2011-blue.svg" alt="LGPD" /></a>
+  <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Seguran%C3%A7a-pol%C3%ADtica-red.svg" alt="Política de segurança" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-blue.svg" alt="Licença MIT" /></a>
+</p>
+
+<p align="center">
+  <strong><a href="https://purelifeministriesbrasil.github.io/documentation/">Abrir a documentação →</a></strong>
+</p>
 
 ---
 
-## 1. Princípios Arquiteturais e Fronteiras
+## Sumário
 
-O ecossistema opera sob a regra de ouro de isolamento de responsabilidades:
-> **"Front com Front, Back com Back e Docs com Docs."**
+1. [O ecossistema](#1-o-ecossistema)
+2. [O que está documentado](#2-o-que-está-documentado)
+3. [Estrutura do repositório](#3-estrutura-do-repositório)
+4. [Como executar localmente](#4-como-executar-localmente)
+5. [Publicação](#5-publicação)
+6. [Governança](#6-governança)
 
-| Repositório | Responsabilidade | Stack Principal | Hospedagem |
+---
+
+## 1. O ecossistema
+
+Regra de ouro: **“Front com Front, Back com Back e Docs com Docs.”**
+
+| Repositório | Responsabilidade | Stack | Hospedagem |
 |---|---|---|---|
-| **`frontend`** | Interface pública, páginas institucionais e ilhas interativas | Astro v5 SSG, Tailwind CSS v4, ilhas Preact | Cloudflare Pages |
-| **`backend`** | API de borda, gateways de pagamento, criptografia e rotinas cron | Cloudflare Worker (Hono), Clean Architecture, Drizzle ORM, Neon Postgres via Hyperdrive | Cloudflare Workers |
-| **`documentation`** | Portal central de especificações técnicas, ADRs, runbooks e governança | Material for MkDocs, PyMdown Extensions, Mermaid.js | GitHub Pages |
+| [`frontend`](https://github.com/purelifeministriesbrasil/frontend) | Site institucional e formulários | Astro 5 (estático), Tailwind v4, ilhas Preact | Cloudflare Pages |
+| [`backend`](https://github.com/purelifeministriesbrasil/backend) | API: formulários, PIX, criptografia, expurgo LGPD | Cloudflare Worker (Hono), Drizzle, Neon via Hyperdrive | Cloudflare Workers |
+| [`documentation`](https://github.com/purelifeministriesbrasil/documentation) | Arquitetura, requisitos, ADRs, runbooks e governança | MkDocs Material, Mermaid | GitHub Pages |
 
 ---
 
-## 2. Estrutura de Diretórios
+## 2. O que está documentado
+
+| Seção | Conteúdo |
+|---|---|
+| **Primeiros passos** | Início rápido, variáveis de ambiente, configuração do banco (Neon) |
+| **Arquitetura** | Visão do sistema, escopo dos repositórios, diagramas de sequência, modelo de dados |
+| **Requisitos** | Requisitos funcionais (RF), não funcionais (RNF) e regras de negócio (RN) |
+| **Decisões (ADRs)** | ADR-001 a ADR-009 — do Astro ao Neon + Hyperdrive |
+| **Contratos de dados** | Triagem, contato, newsletter e doação (gerados do código real) |
+| **Segurança** | Modelo de ameaças, arquitetura criptográfica, LGPD |
+| **Operações** | Implantação, gestão de conteúdo, migração do site antigo, backup, rotação de chaves, observabilidade, comandos |
+| **Design e glossário** | Design system e linguagem ubíqua do domínio |
+
+---
+
+## 3. Estrutura do repositório
 
 ```
 documentation/
-├── mkdocs.yml                  # Configuração declarativa do MkDocs e da navegação por abas
-├── requirements.txt            # Dependências Python (mkdocs-material, pymdown-extensions)
-├── docs/                       # Conteúdo técnico em Markdown
-│   ├── index.md                # Visão Geral e portal do engenheiro
-│   ├── assets/                 # Logotipos institucionais, favicons e folhas de estilo CSS
-│   │   ├── images/             # Ativos visuais (PLM_Logo.png, favicon.png)
-│   │   └── stylesheets/        # extra.css (Regras canônicas de contraste e layout centralizado)
-│   ├── adrs/                   # Architecture Decision Records (ADR-001 a ADR-009)
-│   ├── architecture/           # Topologia, diagramas de sequência, modelo de dados e escopos
-│   ├── design-system/          # Sistema de design, cores corporativas e tipografia
-│   ├── getting-started/        # Guias de início rápido e variáveis de ambiente
-│   ├── glossary/               # Glossário ubíquo de domínio e engenharia
-│   ├── governance/             # Código de conduta, diretrizes de contribuição e licença
-│   ├── operations/             # Runbooks de deploy, observabilidade, backup e rotação de chaves
-│   ├── requirements/           # Especificação formal de requisitos (SRS) e regras de negócio
-│   ├── schemas/                # Documentação técnica dos contratos Zod e cargas úteis
-│   └── security/               # Modelagem STRIDE, conformidade LGPD e arquitetura criptográfica
-└── .github/
-    └── workflows/
-        └── deploy-pages.yml    # Pipeline de validação estrita e publicação no GitHub Pages
+├── docs/
+│   ├── index.md            # Página inicial do portal
+│   ├── getting-started/    # Início rápido, ambiente, banco
+│   ├── architecture/       # Visão geral, repositórios, sequências, modelo de dados
+│   ├── requirements/       # RF, RNF e regras de negócio
+│   ├── adrs/               # Registros de decisão (ADR-001 a ADR-009)
+│   ├── schemas/            # Contratos de dados
+│   ├── security/           # Ameaças, criptografia, LGPD
+│   ├── operations/         # Runbooks
+│   ├── design-system/      # Cores, tipografia e componentes
+│   ├── glossary/           # Glossário
+│   ├── governance/         # Conduta, contribuição, segurança e licença
+│   └── assets/             # Logos, CSS e scripts do tema
+├── mkdocs.yml              # Tema, extensões e navegação (toda página nova entra em `nav`)
+├── requirements.txt        # Dependências Python
+└── .github/                # Publicação no GitHub Pages, modelos de issue e de pull request
 ```
+
+Cada pasta de `docs/` é uma seção do site; a ordem e os títulos vêm do `nav` do `mkdocs.yml`.
 
 ---
 
-## 3. Como Executar Localmente
+## 4. Como executar localmente
 
-### Pré-requisitos
-- Python 3.11+
-- `uv` (recomendado) ou `pip` tradicional
-
-### Opção A: Utilizando `uv` (Rápido e Isolado)
+Pré-requisito: **Python 3.11+**.
 
 ```bash
-# Executar servidor de desenvolvimento local (http://127.0.0.1:8000)
-uv run --with-requirements requirements.txt mkdocs serve
+# com uv (recomendado)
+uv run --with-requirements requirements.txt mkdocs serve          # http://127.0.0.1:8000
+uv run --with-requirements requirements.txt mkdocs build --strict # mesma validação do CI
 
-# Executar compilação com validação estrita (idêntica à esteira de CI)
-uv run --with-requirements requirements.txt mkdocs build --strict
-```
-
-### Opção B: Utilizando Ambiente Virtual Padrão (`venv`)
-
-```bash
-# Criar ambiente virtual
+# ou com venv
 python -m venv .venv
-
-# Ativar ambiente virtual
-# Windows (PowerShell):
-.venv\Scripts\Activate.ps1
-# Linux / macOS:
-source .venv/bin/activate
-
-# Instalar dependências
+.venv\Scripts\Activate.ps1        # Windows (PowerShell)
+source .venv/bin/activate         # Linux / macOS
 pip install -r requirements.txt
-
-# Iniciar servidor local
 mkdocs serve
-
-# Validar compilação estrita
-mkdocs build --strict
 ```
 
 ---
 
-## 4. Publicação e CI/CD
+## 5. Publicação
 
-O portal é compilado e publicado automaticamente no GitHub Pages a cada push na branch `main` através do workflow [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). Qualquer aviso ou link quebrado faz a esteira falhar imediatamente (`--strict`), assegurando integridade total da documentação.
+Todo push no `main` compila com `mkdocs build --strict` e publica no GitHub Pages
+([`deploy-pages.yml`](.github/workflows/deploy-pages.yml)). Qualquer aviso ou link quebrado interrompe a
+publicação.
 
 ---
 
-## 5. Governança e Contribuição
+## 6. Governança
 
-- [Código de Conduta](docs/governance/code-of-conduct.md)
-- [Diretrizes de Contribuição](docs/governance/contributing.md)
-- [Política de Segurança](docs/governance/security-policy.md)
-- [Licença MIT](docs/governance/license.md)
+[Contribuição](CONTRIBUTING.md) · [Segurança](SECURITY.md) · [Código de Conduta](CODE_OF_CONDUCT.md) ·
+[Licença MIT](LICENSE)
