@@ -1,8 +1,12 @@
 # ADR-002: Adoção do Supabase como Plataforma de Dados e Gestão Pastoral
 
-- **Status**: Aprovado
+- **Status**: Substituído pelo [ADR-008](ADR-008-neon-hyperdrive.md) em 2026-10-28
 - **Data**: 2026-09-25
 - **Decisores**: Equipe de Engenharia Pure Life Ministries Brasil
+
+!!! warning "Decisão substituída"
+    O banco migrou para o **Neon Postgres** com **Cloudflare Hyperdrive**: o plano gratuito do Supabase pausa
+    projetos inativos. Este registro é mantido como histórico. Ver [ADR-008](ADR-008-neon-hyperdrive.md).
 
 ---
 

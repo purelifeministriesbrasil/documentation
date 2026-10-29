@@ -6,28 +6,29 @@ Parâmetros arquiteturais de segurança, desempenho, disponibilidade e usabilida
 
 ## 1. Desempenho & Core Web Vitals
 
-### RNF-001: Latência na Borda (Vercel Edge & Cloudflare)
+### RNF-001: Latência na Borda (Cloudflare Pages & Workers)
 * **Métrica:** Tempo de carregamento LCP (Largest Contentful Paint) inferior a **1.0 segundo** em redes 4G nacionais.
 * **Métrica:** INP (Interaction to Next Paint) inferior a **50ms**.
-* **Métrica:** CLS (Cumulative Layout Shift) estritamente igual a **0.00**.
-* **Estratégia:** 100% das 16 páginas institucionais pré-renderizadas estaticamente (Astro 5 SSG), servidas via CDN Anycast global.
+* **Métrica:** CLS (Cumulative Layout Shift) **≤ 0,1** (meta: 0), com dimensões declaradas em todas as imagens.
+* **Estratégia:** 100% das 18 páginas institucionais pré-renderizadas estaticamente (Astro 5 SSG), servidas via CDN Anycast global; imagens AVIF/WebP responsivas, ilhas Preact e `zod/mini` ([ADR-009](../adrs/ADR-009-performance-ilhas-preact-imagens.md)).
+* **Orçamento de JavaScript:** Home sem JavaScript de framework; páginas de formulário com no máximo ~30 KB (gzip).
 
 ### RNF-002: Eficiência e Limpeza de Estilos
 * **Métrica:** **Zero** atributos residuais `style="..."` em HTML compilado.
-* **Métrica:** **Zero** `@import` de fontes em tempo de execução; todas as fontes oficiais (**Montserrat** e **JetBrains Mono**) são pré-carregadas localmente em formato `.woff2`.
+* **Métrica:** **Zero** `@import` de fontes em tempo de execução; as fontes oficiais (**Montserrat** e **Ruda**) são servidas localmente em `.woff2` e pré-carregadas.
 * **Métrica:** Verificação automatizada no pipeline de CI via `verify-no-inline-style.mjs`.
 
 ---
 
 ## 2. Segurança da Informação & Defesa em Profundidade
 
-### RNF-003: Blindagem de Acesso ao Banco de Dados (Supabase RLS)
-* **Métrica:** 100% das tabelas públicas com Row Level Security (RLS) habilitado.
-* **Política:** A chave pública `anon` possui exclusivamente permissões de `INSERT` com validação de colunas (`WITH CHECK`). Qualquer tentativa de leitura `SELECT` anônima retorna conjunto vazio.
+### RNF-003: Blindagem de Acesso ao Banco de Dados (RLS sem políticas)
+* **Métrica:** 100% das tabelas com Row Level Security (RLS) habilitado e **nenhuma política** permissiva.
+* **Política:** O banco não tem API pública de dados; somente a API (Worker), por meio do Hyperdrive, lê e grava. As roles públicas `anon`/`authenticated`, quando existem, não têm nenhum privilégio. Ver [Hardening do Banco](../operations/database-hardening.md).
 
-### RNF-004: Criptografia Homomórfica em Trânsito e Repouso
-* **Em Trânsito:** TLS 1.3 obrigatório com HSTS (`max-age=63072000; includeSubDomains; preload`).
-* **Em Repouso:** Criptografia de envelope AES-256-GCM com Dados Associados Autenticados (AAD) vinculados ao identificador UUID do registro.
+### RNF-004: Criptografia em Trânsito e em Repouso
+* **Em Trânsito:** HTTPS obrigatório com HSTS (`max-age=31536000; includeSubDomains`); conexões com o banco com `sslmode=require`.
+* **Em Repouso:** Criptografia de campo AES-256-GCM com Dados Associados Autenticados (AAD) vinculados a `entidade:id:campo:versão`.
 
 ---
 

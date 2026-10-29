@@ -1,6 +1,6 @@
 # Diagramas de Sequência
 
-Fluxos reais implementados em `backend/src` e `frontend/src`. O navegador **nunca** acessa o Supabase: toda
+Fluxos reais implementados em `backend/src` e `frontend/src`. O navegador **nunca** acessa o banco: toda
 escrita passa pelo Worker (`https://api.purelifeministriesbrasil.org`).
 
 ---
@@ -13,25 +13,25 @@ sequenceDiagram
     participant B as Navegador (TriageForm)
     participant T as Cloudflare Turnstile
     participant W as Worker (Hono)
-    participant DB as Supabase Postgres
+    participant DB as Neon Postgres (via Hyperdrive)
     participant R as Resend
 
     B->>T: Renderiza widget (render explícito)
     T-->>B: token de uso único
-    B->>B: Valida com triageSubmissionSchema (Zod 4)
+    B->>B: Valida com triageSubmissionSchema (zod/mini)
     B->>W: POST /api/forms/triagem + Idempotency-Key (UUID v4)
     W->>W: Origin / Sec-Fetch-Site / Content-Type / tamanho
-    W->>W: Zod .strict() (422 sem ecoar valores)
+    W->>W: zod/mini strictObject (422 sem ecoar valores)
     W->>T: siteverify (timeout 3 s, fail-closed)
     W->>DB: BEGIN; INSERT … ON CONFLICT (idempotency_key) DO NOTHING
     alt nova submissão
         W->>W: AES-256-GCM (AAD = triage_submission:id:campo:v1)
         W->>DB: UPDATE ciphertexts; INSERT triage_consents; COMMIT
-        W->>R: Aviso à equipe só com o código (falha não desfaz a gravação)
     else retentativa com a mesma chave
         W->>DB: SELECT reference_code; COMMIT
     end
     W-->>B: 200 { referenceCode: "PLM-XXXX-XXXX" }
+    W-)R: Aviso à equipe só com o código, após a resposta (waitUntil; falha não desfaz a gravação)
     B->>T: reset() — novo token para um eventual reenvio
 ```
 

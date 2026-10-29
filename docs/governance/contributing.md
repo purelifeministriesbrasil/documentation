@@ -8,9 +8,9 @@ A documentação é a fonte da verdade para todo o ecossistema tecnológico. Por
 
 ## 1. Diretrizes de Contribuição
 
-1. **Documento Canónico**:
+1. **Documento Canônico**:
    - Toda proposta de alteração estrutural ou arquitetural deve estar em harmonia com a arquitetura ativa do ecossistema.
-   - Novas decisões arquiteturais significativas exigem a elaboração de um **ADR (Architecture Decision Record)** numerado na pasta `docs/adrs/`.
+   - Novas decisões arquiteturais significativas exigem a elaboração de um **ADR (Architecture Decision Record)** numerado na pasta `docs/adrs/` (o próximo número livre é o ADR-010).
 
 2. **Formatação e Padrões**:
    - Todos os arquivos devem estar em Markdown com codificação UTF-8 pura.
@@ -24,8 +24,8 @@ A documentação é a fonte da verdade para todo o ecossistema tecnológico. Por
      git checkout -b docs/nova-secao-ou-correcao
      ```
    - Faça commits semânticos atômicos (seguindo *Conventional Commits*):
-     - `docs(adrs): add ADR-006 detailing event streaming`
-     - `fix(compliance): correct retention days in LGPD guide`
+     - `docs(adrs): add ADR-010 sobre <decisão>`
+     - `fix(security): corrige o prazo de retenção no guia da LGPD`
    - Abra um Pull Request detalhando a motivação da alteração e o impacto nos repositórios do ecossistema.
 
 ---

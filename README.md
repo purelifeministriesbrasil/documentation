@@ -11,7 +11,7 @@
 [![Accessibility](https://img.shields.io/badge/A11y-WCAG%20AAA-success.svg)](./docs/assets/stylesheets/extra.css)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./docs/governance/license.md)
 
-Repositório canônico de documentação arquitetural, especificações formais de requisitos (SRS), registros de decisões de arquitetura (ADRs 001 a 005), runbooks operacionais, contratos de dados e conformidade com a LGPD (Art. 11 — Dados Sensíveis) do ecossistema digital da **Pure Life Ministries Brasil** (`purelifeministriesbrasil.org`).
+Repositório canônico de documentação arquitetural, especificações formais de requisitos (SRS), registros de decisões de arquitetura (ADRs 001 a 009), runbooks operacionais, contratos de dados e conformidade com a LGPD (Art. 11 — Dados Sensíveis) do ecossistema digital da **Pure Life Ministries Brasil** (`purelifeministriesbrasil.org`).
 
 Construído e publicado com **Material for MkDocs**, apresentando tipografia canônica Montserrat e JetBrains Mono, paleta de alto contraste com suporte total aos modos claro e escuro (WCAG AAA), navegação superior centralizada e estrita conformidade com acessibilidade.
 
@@ -24,8 +24,8 @@ O ecossistema opera sob a regra de ouro de isolamento de responsabilidades:
 
 | Repositório | Responsabilidade | Stack Principal | Hospedagem |
 |---|---|---|---|
-| **`frontend`** | Interface pública, páginas institucionais e ilhas interativas | Astro v5 SSG, Tailwind CSS v4, React 19 | Cloudflare Pages |
-| **`backend`** | API de borda, gateways de pagamento, criptografia e rotinas cron | Cloudflare Worker, Clean Architecture, Supabase Postgres, Drizzle ORM | Cloudflare Network |
+| **`frontend`** | Interface pública, páginas institucionais e ilhas interativas | Astro v5 SSG, Tailwind CSS v4, ilhas Preact | Cloudflare Pages |
+| **`backend`** | API de borda, gateways de pagamento, criptografia e rotinas cron | Cloudflare Worker (Hono), Clean Architecture, Drizzle ORM, Neon Postgres via Hyperdrive | Cloudflare Workers |
 | **`documentation`** | Portal central de especificações técnicas, ADRs, runbooks e governança | Material for MkDocs, PyMdown Extensions, Mermaid.js | GitHub Pages |
 
 ---
@@ -41,7 +41,7 @@ documentation/
 │   ├── assets/                 # Logotipos institucionais, favicons e folhas de estilo CSS
 │   │   ├── images/             # Ativos visuais (PLM_Logo.png, favicon.png)
 │   │   └── stylesheets/        # extra.css (Regras canônicas de contraste e layout centralizado)
-│   ├── adrs/                   # Architecture Decision Records (ADR-001 a ADR-005)
+│   ├── adrs/                   # Architecture Decision Records (ADR-001 a ADR-009)
 │   ├── architecture/           # Topologia, diagramas de sequência, modelo de dados e escopos
 │   ├── design-system/          # Sistema de design, cores corporativas e tipografia
 │   ├── getting-started/        # Guias de início rápido e variáveis de ambiente

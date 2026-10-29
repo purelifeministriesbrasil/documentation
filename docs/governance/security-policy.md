@@ -35,5 +35,5 @@ Solicitamos incluir:
 
 Este repositório contém exclusivamente documentação pública e especificações arquiteturais.
 
-- **Nenhum segredo em produção** (chaves de API, tokens do Supabase, senhas de banco, chaves privadas AES) deve ser documentado ou commitado aqui.
+- **Nenhum segredo em produção** (chaves de API, strings de conexão e senhas do banco, chaves da Resend e do Turnstile, chaves privadas AES) deve ser documentado ou commitado aqui.
 - Exemplos de código e diagramas devem utilizar exclusivamente valores fictícios ou sentinelas explícitos (ex: `SAMPLE_KEY_HEX_32_BYTES_00000000000000000000000000000000`).

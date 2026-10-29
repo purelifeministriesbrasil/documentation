@@ -8,6 +8,13 @@
 | **Consultados** | Time de Engenharia, Encarregado de Proteção de Dados (DPO) |
 | **Repositórios** | `backend`, `frontend`, `documentation` |
 
+
+!!! info "Partes substituídas"
+    A hospedagem na **Vercel** com proxy `/api/*` foi substituída pelo **Cloudflare Pages** com chamada direta à
+    API ([ADR-007](ADR-007-cloudflare-pages-contas-institucionais.md)), e o banco **Supabase** pelo **Neon** com
+    **Hyperdrive** ([ADR-008](ADR-008-neon-hyperdrive.md)). As decisões sobre Workers, Hono, Drizzle, `postgres.js`
+    via TCP, transações e validação na API continuam valendo.
+
 ---
 
 ## 1. Contexto & Problema

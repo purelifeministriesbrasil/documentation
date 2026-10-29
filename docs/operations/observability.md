@@ -26,7 +26,7 @@ flowchart TD
         Latencia["1. Latência<br>P95 < 200ms na borda<br>P99 < 500ms nas rotas de API"]
         Trafego["2. Tráfego<br>Requisições/segundo (RPS)<br>Distribuição por rota estática vs API"]
         Erros["3. Taxa de Erros<br>4xx: Validação e Bot rejection<br>5xx: Falha de infraestrutura (SLO < 0.1%)"]
-        Saturacao["4. Saturação<br>Pool de conexões Supabase<br>Limites de CPU/Memória Worker"]
+        Saturacao["4. Saturação<br>Conexões do Hyperdrive / Neon<br>Limites de CPU/Memória Worker"]
     end
 ```
 
@@ -35,7 +35,7 @@ flowchart TD
 | **Latência** | Tempo de resposta P95 / P99 | P95 < 200ms (Static), P95 < 400ms (API) | Cloudflare Web Analytics / Workers Observability |
 | **Tráfego** | Volume total de acessos e requisições/minuto | Escala dinâmica sem degradação | Cloudflare Analytics (Pages e Workers) |
 | **Erros** | Percentual de códigos HTTP 5xx | < 0,05% das requisições totais | Workers Logs (`wrangler tail`) / Pages Analytics |
-| **Saturação** | Utilização de conexões e memória | < 70% de capacidade nos picos | Supabase Metrics Dashboard |
+| **Saturação** | Utilização de conexões e memória | < 70% de capacidade nos picos | Painel do Neon (*Monitoring*) e Hyperdrive Analytics |
 
 ---
 
@@ -55,11 +55,11 @@ flowchart LR
 * **`400 Bad Request`**: JSON malformado ou payload sintaticamente inválido.
 * **`403 Forbidden`**: Token Cloudflare Turnstile rejeitado (falha no desafio anti-bot).
 * **`413 Payload Too Large`**: Submissão acima do limite rígido (8 KB para formulários, 4 KB para PIX).
-* **`422 Unprocessable Content`**: Falha na validação semântica do esquema Zod.
+* **`422 Unprocessable Content`**: Falha na validação semântica do esquema (`zod/mini`).
 
 ### B. Erros Inesperados (Server-Side / Infraestrutura)
 * **`502 Bad Gateway`**: Indisponibilidade no gateway Asaas ou Mercado Pago na geração do PIX.
-* **`503 Service Unavailable`**: Supabase inacessível ou falha temporária de pool de conexões.
+* **`503 Service Unavailable`**: configuração ausente ou inválida (o log lista só os **nomes** das variáveis), banco Neon/Hyperdrive inacessível ou provedor de pagamento indisponível ao validar um webhook (o gateway reenvia depois).
 * **`500 Internal Server Error`**: Exceção não capturada no Worker.
 
 ---
@@ -120,7 +120,7 @@ curl -i https://api.purelifeministriesbrasil.org/health
 
 1. **Alerta de Erros 5xx na Borda:**
    * **Gatilho:** > 10 erros 5xx em uma janela contínua de 5 minutos.
-   * **Ação:** Verificar o status do Supabase e credenciais dos gateways de pagamento.
+   * **Ação:** Verificar o status do Neon (neonstatus.com), a configuração do Hyperdrive, os segredos do Worker e as credenciais dos gateways de pagamento.
 2. **Alerta de Expiração de Certificados e Webhooks:**
    * **Gatilho:** Falhas consecutivas de validação de assinatura HMAC em `/api/webhooks/payment`.
    * **Ação:** Inspecionar divergência de segredos ou rotação pendente no portal Asaas/Mercado Pago.

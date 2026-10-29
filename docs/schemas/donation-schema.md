@@ -4,39 +4,37 @@ Valida a criação de cobranças PIX (ilha `DonationForm`) e define os contratos
 
 !!! info "Fonte de verdade"
     Código canônico: [`backend/src/schemas/donations/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/schemas/donations/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
-    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7**. Qualquer alteração deve ser feita nos dois
+    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7** pela API funcional `zod/mini` (menor no navegador, mesmas regras). Qualquer alteração deve ser feita nos dois
     repositórios no mesmo ciclo de release.
 
-## Definição do schema Zod
+## Definição do schema (`zod/mini`)
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/mini";
 import { emailSchema, turnstileTokenSchema } from "../common/schema.js";
 
-export const createPixSchema = z.object({
+export const createPixSchema = z.strictObject({
   amountCents: z
-    .number()
     .int("O valor deve ser um número inteiro em centavos.")
-    .min(500, "Valor mínimo de R$ 5,00.")
-    .max(5_000_000, "Valor máximo de R$ 50.000,00."),
+    .check(z.gte(500, "Valor mínimo de R$ 5,00."), z.lte(5_000_000, "Valor máximo de R$ 50.000,00.")),
   frequency: z.enum(["one_time", "monthly"]),
-  donorEmail: emailSchema.optional(),
+  donorEmail: z.optional(emailSchema),
   turnstileToken: turnstileTokenSchema,
-}).strict();
+});
 
 /** Resposta pública de `POST /api/donations/create-pix`. */
-export const createPixResponseSchema = z.object({
+export const createPixResponseSchema = z.strictObject({
   chargeId: z.uuid(),
   provider: z.enum(["asaas", "mercadopago"]),
-  pixCopyPaste: z.string().min(1),
+  pixCopyPaste: z.string().check(z.minLength(1)),
   expiresAt: z.iso.datetime({ offset: true }),
-  amountCents: z.number().int(),
-}).strict();
+  amountCents: z.int(),
+});
 
 /** Contrato interno de evento de webhook após verificação de assinatura. */
-export const paymentWebhookSchema = z.object({
+export const paymentWebhookSchema = z.strictObject({
   provider: z.enum(["asaas", "mercadopago"]),
-  eventId: z.string().min(1).max(128),
+  eventId: z.string().check(z.minLength(1), z.maxLength(128)),
   eventType: z.enum([
     "payment.confirmed",
     "payment.failed",
@@ -45,33 +43,38 @@ export const paymentWebhookSchema = z.object({
     "payment.refunded",
     "unknown",
   ]),
-  providerChargeId: z.string().min(1).max(128),
-  amountCents: z.number().int().nonnegative(),
+  providerChargeId: z.string().check(z.minLength(1), z.maxLength(128)),
+  amountCents: z.int().check(z.nonnegative()),
   occurredAt: z.iso.datetime({ offset: true }),
-}).strict();
+});
 ```
 
 ## Blocos compartilhados (`common/schema.ts`)
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/mini";
 
 /** Remove separadores visuais comuns ("(61) 90000-0000") antes da validação de dígitos. */
 const stripPhoneSeparators = (value: string): string => value.replace(/[\s().-]/g, "");
 
-export const phoneSchema = z
-  .string()
-  .trim()
-  .overwrite(stripPhoneSeparators)
-  .regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD");
+// zod/mini: mesma validação do Zod 4 com API funcional (tree-shakeable), ~4x menor no navegador.
+export const phoneSchema = z.string().check(
+  z.trim(),
+  z.overwrite(stripPhoneSeparators),
+  z.regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD")
+);
 
-export const emailSchema = z.string().trim().toLowerCase().email("E-mail inválido").max(160);
+/** Normaliza (trim + minúsculas) antes de validar o formato, como no encadeamento do Zod clássico. */
+export const emailSchema = z.pipe(
+  z.string("E-mail inválido").check(z.trim(), z.toLowerCase()),
+  z.email("E-mail inválido").check(z.maxLength(160))
+);
 
 export const policyVersionSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD");
+  .check(z.regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD"));
 
-export const turnstileTokenSchema = z.string().min(10).max(2048);
+export const turnstileTokenSchema = z.string().check(z.minLength(10), z.maxLength(2048));
 
 /** Valor do header `Idempotency-Key`: UUID v4 gerado pelo cliente por tentativa lógica de envio. */
 export const idempotencyKeySchema = z.uuidv4("Idempotency-Key deve ser um UUID v4");
