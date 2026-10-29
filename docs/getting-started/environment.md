@@ -19,10 +19,13 @@ Arquivos de referência (sempre atualizados com comentários):
 | `PUBLIC_SITE_ORIGIN` | sim | `https://purelifeministriesbrasil.org` | Origem canônica |
 | `PUBLIC_API_URL` | sim | `https://api.purelifeministriesbrasil.org` | Base da API; entra no CSP (`connect-src`, `form-action`) |
 | `PUBLIC_TURNSTILE_SITE_KEY` | sim | `0x4AAAA…` | Widget Turnstile (teste: `1x00000000000000000000AA`) |
-| `NODE_VERSION` | sim (Pages) | `22` | Versão do Node no build |
+| `PUBLIC_ENABLE_PIX_GATEWAY` | não | `false` | `true` liga o PIX dinâmico pela API; qualquer outro valor mostra a chave PIX do CNPJ |
+| `NODE_VERSION` | sim (Pages com Git) | `22` | Versão do Node no build |
 
 !!! note
-    `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_ANON_KEY` foram **removidas**: o navegador nunca acessa o Supabase.
+    O navegador nunca acessa o banco: as antigas variáveis `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_ANON_KEY`
+    foram removidas. No projeto Pages por upload direto, as variáveis acima são definidas no terminal antes do
+    `pnpm build` (ver [Runbook](../operations/deployment.md#8-site-cloudflare-pages)).
 
 ---
 
@@ -39,12 +42,18 @@ Arquivos de referência (sempre atualizados com comentários):
 | `STAFF_NOTIFICATION_EMAIL` | `purelifeministriesbrasil1986@gmail.com` | Recebe avisos (sem dados pessoais) |
 | `ASAAS_API_BASE_URL` | `https://api.asaas.com/v3` | Sandbox: `https://api-sandbox.asaas.com/v3` |
 
-## 3. Backend Worker — segredos (`wrangler secret put <NOME>`)
+## 3. Backend Worker — bindings
+
+| Binding | Tipo | Descrição |
+|---|---|---|
+| `HYPERDRIVE` | Hyperdrive (`purelife-db`) | Conexão com o Neon pela borda; quando presente, tem precedência sobre `DATABASE_URL` |
+
+## 4. Backend Worker — segredos (`wrangler secret put <NOME>`)
 
 | Segredo | Obrigatório | Como obter |
 |---|---|---|
-| `DATABASE_URL` | sim | Supabase → *Connect* → **Transaction pooler** (porta 6543) |
-| `TRIAGE_KEY_V1` | sim | `openssl rand -base64 32` (exatamente 32 bytes) |
+| `DATABASE_URL` | sim (reserva) | Neon → *Connect* → conexão **com pooling** (host com `-pooler`), `?sslmode=require` |
+| `TRIAGE_KEY_V1` | sim | `openssl rand -base64 32` ou `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` (exatamente 32 bytes) |
 | `TRIAGE_KEY_V2…` | rotação | Mesma regra; ver [Rotação de Chaves](../operations/key-rotation.md) |
 | `HASH_PEPPER` | sim | `openssl rand -base64 32` (≥ 32 bytes) |
 | `TURNSTILE_SECRET_KEY` | sim | Cloudflare → Turnstile → widget |
@@ -58,7 +67,7 @@ Arquivos de referência (sempre atualizados com comentários):
 
 ---
 
-## 4. Desenvolvimento local
+## 5. Desenvolvimento local
 
 ```bash
 # API
@@ -73,13 +82,18 @@ pnpm dev                                         # http://localhost:4321
 Com o site em `http://localhost:4321`, use `PUBLIC_SITE_ORIGIN=http://localhost:4321` no `.dev.vars`.
 Chaves de teste oficiais do Turnstile: site `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`.
 
+Com o binding do Hyperdrive no `wrangler.toml`, defina também a variável de ambiente
+`CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` com a conexão do banco de desenvolvimento.
+
 ---
 
-## 5. Scripts Node (`backend/.env.example`)
+## 6. Scripts Node (`backend/.env.example`)
 
 | Variável | Uso |
 |---|---|
-| `DATABASE_URL` | `pnpm db:migrate` e caixa pastoral (prefira Session pooler/Direct, porta 5432) |
+| `DATABASE_URL` | `pnpm db:migrate` e caixa pastoral (conexão **direta** do Neon, sem `-pooler`) |
 | `TRIAGE_KEY_V1` (…`Vn`) | Caixa pastoral (decifra localmente) |
 | `OPERATOR` | Identificação de quem lê dados na caixa pastoral (gravada em `audit_events`) |
 | `TEST_DATABASE_URL` | Testes de integração — **somente** banco descartável (tabelas são truncadas) |
+
+Os scripts leem o arquivo com `node --env-file=.env scripts/<script>.mjs`.

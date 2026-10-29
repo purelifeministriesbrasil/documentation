@@ -35,8 +35,8 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
 
 | Repositório | Papel no Ecossistema | Stack Principal | Porta Local | Como Iniciar |
 | :--- | :--- | :--- | :--- | :--- |
-| **[`frontend`](https://github.com/purelifeministriesbrasil/frontend)** | Portal público, páginas institucionais e ilhas de formulários | Astro 5 SSG, Tailwind v4, React 19, Supabase Client | `localhost:4321` | `pnpm dev` |
-| **[`backend`](https://github.com/purelifeministriesbrasil/backend)** | Webhooks PIX, rotinas de expurgo LGPD e API de borda | Cloudflare Worker, Clean Architecture, Supabase Postgres | `localhost:8787` | `pnpm dev` |
+| **[`frontend`](https://github.com/purelifeministriesbrasil/frontend)** | Portal público, páginas institucionais e ilhas de formulários | Astro 5 SSG, Tailwind v4, ilhas Preact, Zod (`zod/mini`) | `localhost:4321` | `pnpm dev` |
+| **[`backend`](https://github.com/purelifeministriesbrasil/backend)** | Webhooks PIX, rotinas de expurgo LGPD e API de borda | Cloudflare Worker (Hono), Clean Architecture, Neon Postgres via Hyperdrive | `localhost:8787` | `pnpm dev` |
 | **[`documentation`](https://github.com/purelifeministriesbrasil/documentation)** | Especificações técnicas, contratos, ADRs e runbooks | Material for MkDocs, PyMdown Extensions, Mermaid | `localhost:8000` | `uv run --with-requirements requirements.txt mkdocs serve` |
 
 > Para o passo a passo detalhado de variáveis de ambiente, dependências e setup de banco, consulte o [Guia de Início Rápido (Quickstart)](getting-started/quickstart.md).
@@ -53,7 +53,7 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
         <span>Decisões Técnicas (ADRs)</span>
       </div>
       <p class="four-card-desc">
-        Fundamentação e trade-offs das escolhas de engenharia: Astro SSG, Supabase Postgres, Cloudflare Pages e Workers, Criptografia AES-GCM e Idempotência.
+        Fundamentação e trade-offs das escolhas de engenharia: Astro SSG, Cloudflare Pages e Workers, Neon Postgres com Hyperdrive, criptografia AES-GCM, idempotência e performance.
       </p>
     </div>
     <a href="adrs/index.md" class="four-card-link">
@@ -83,7 +83,7 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
         <span>Contratos de Dados (Zod)</span>
       </div>
       <p class="four-card-desc">
-        Esquemas TypeScript/Zod para validação rigorosa de formulários de triagem, contato institucional, intenções PIX e payloads de webhook.
+        Esquemas TypeScript com `zod/mini`, idênticos no frontend e no backend, para validação rigorosa de formulários de triagem, contato institucional, intenções PIX e payloads de webhook.
       </p>
     </div>
     <a href="schemas/triage-schema/" class="four-card-link">
@@ -98,7 +98,7 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
         <span>Operações &amp; Runbooks</span>
       </div>
       <p class="four-card-desc">
-        Runbook de implantação nas contas institucionais (Cloudflare e Supabase), monitoramento de liveness e métricas, rotação de chaves e cheatsheet de comandos úteis.
+        Runbook de implantação nas contas institucionais (Cloudflare e Neon), gestão de conteúdo, migração do site antigo, monitoramento de liveness e métricas, rotação de chaves e cheatsheet de comandos úteis.
       </p>
     </div>
     <a href="operations/observability/" class="four-card-link">
@@ -126,10 +126,10 @@ A regra de ouro da arquitetura do ecossistema é simples e categórica:
       Portal institucional focado em máxima performance de carregamento, acessibilidade e envio seguro de dados do usuário.
     </p>
     <ul class="pillar-list">
-      <li>16 rotas institucionais pré-renderizadas com Astro 5 SSG</li>
-      <li>Ilhas React 19 restritas exclusivamente a formulários com estado</li>
+      <li>18 páginas institucionais pré-renderizadas com Astro 5 SSG</li>
+      <li>Ilhas Preact restritas aos formulários com estado (até ~30 KB de JavaScript por página)</li>
       <li>Estilização moderna e sóbria com Tailwind CSS v4</li>
-      <li>Zero credenciais privilegiadas (opera apenas com cliente público anônimo)</li>
+      <li>Nenhuma credencial no navegador: os dados trafegam apenas pela API</li>
       <li>Zero estilos inline e conformidade rígida com Content Security Policy</li>
     </ul>
   </div>
@@ -175,7 +175,7 @@ A regra de ouro da arquitetura do ecossistema é simples e categórica:
     </p>
     <ul class="pillar-list">
       <li>Portal técnico compilado com Material for MkDocs no GitHub Pages</li>
-      <li>Decisões de Arquitetura (ADRs 001 a 005) com motivação e trade-offs</li>
+      <li>Decisões de Arquitetura (ADRs 001 a 009) com motivação e trade-offs</li>
       <li>Especificação formal de requisitos funcionais e não-funcionais (SRS)</li>
       <li>Modelagem de ameaças STRIDE e requisitos de sigilo pastoral</li>
       <li>Runbooks operacionais, guias de deploy e políticas de contingência</li>
@@ -197,37 +197,42 @@ A regra de ouro da arquitetura do ecossistema é simples e categórica:
 O diagrama abaixo ilustra como o fluxo de navegação e as requisições de formulários trafegam entre as camadas do sistema:
 
 ```mermaid
-graph TD
+flowchart TB
     Client["Navegador do Usuário / Dispositivo Móvel"]
-    
+
     subgraph EdgeFrontend ["Repositório: frontend (Cloudflare Pages)"]
-        AstroSSG["Astro 5 SSG (17 Páginas Estáticas)"]
-        ReactIslands["Ilhas React (TriageForm / ContactForm / DonationForm)"]
+        AstroSSG["Astro 5 SSG (18 páginas estáticas)"]
+        Islands["Ilhas Preact (TriageForm / ContactForm / Doação)"]
     end
 
     subgraph ServerlessBackend ["Repositório: backend (Cloudflare Workers)"]
         TurnstileGuard["Validação Anti-Bot Turnstile"]
+        FormsAPI["API de Formulários (Zod + AES-256-GCM)"]
         PaymentWebhooks["Webhooks PIX Idempotentes (Asaas / Mercado Pago)"]
         PurgeCron["Cron de Expurgo Diário (03:00 UTC)"]
     end
 
-    subgraph DataPlatform ["Supabase PostgreSQL"]
-        RLS["Row-Level Security (Políticas Restritas)"]
-        TriageVault["Tabela Triagens (Relato Pastoral Cifrado)"]
-        ContactStore["Tabela Contatos (Canal Institucional)"]
-        DonationStore["Tabela Intenções PIX & Liquidações"]
+    Hyperdrive["Cloudflare Hyperdrive (pool de conexões)"]
+
+    subgraph DataPlatform ["Neon PostgreSQL (São Paulo)"]
+        RLS["RLS sem políticas: só a API acessa"]
+        TriageVault["Triagens (relato pastoral cifrado)"]
+        ContactStore["Contatos (cifrados)"]
+        DonationStore["Intenções e cobranças PIX"]
     end
 
     subgraph GovernanceDocs ["Repositório: documentation (GitHub Pages)"]
-        MkDocsPortal["Portal Técnico Canônico & ADRs"]
+        MkDocsPortal["Portal técnico e ADRs"]
     end
 
-    Client -->|Navegação Estática| AstroSSG
-    AstroSSG --> ReactIslands
-    ReactIslands -->|Validação Anti-Bot| TurnstileGuard
-    ReactIslands -->|Submissão Direta com RLS| RLS
-    PaymentWebhooks -->|Confirmação de Liquidação PIX| DonationStore
-    PurgeCron -->|Expurgo Automático 180d| TriageVault
+    Client -->|Navegação estática| AstroSSG
+    AstroSSG --> Islands
+    Islands -->|POST + Idempotency-Key| FormsAPI
+    FormsAPI --> TurnstileGuard
+    FormsAPI --> Hyperdrive
+    PaymentWebhooks --> Hyperdrive
+    PurgeCron --> Hyperdrive
+    Hyperdrive --> RLS
     RLS --> TriageVault
     RLS --> ContactStore
     RLS --> DonationStore

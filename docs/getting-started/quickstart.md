@@ -95,7 +95,7 @@ Acesse a documentação interativa em: `http://127.0.0.1:8000`.
 
 Antes de enviar commits para revisão:
 
-- [ ] Executar `pnpm ci:verify` no frontend e certificar-se de que todas as 17 rotas estáticas foram compiladas com sucesso.
+- [ ] Executar `pnpm ci:verify` no frontend e certificar-se de que todas as 18 páginas estáticas foram compiladas com sucesso.
 - [ ] Confirmar que nenhum estilo inline residual foi adicionado.
 - [ ] Garantir que nenhum segredo (`.env`, tokens de API ou credenciais) foi incluído no commit.
-- [ ] Seguir o padrão de commits canónicos (*Conventional Commits*), por exemplo: `feat:`, `fix:`, `docs:`, `chore:`.
+- [ ] Seguir o padrão de commits convencionais (*Conventional Commits*), por exemplo: `feat:`, `fix:`, `docs:`, `chore:`.

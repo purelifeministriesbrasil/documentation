@@ -104,12 +104,14 @@ nav:
       - Decisões de Arquitetura (ADRs):
           - Índice de Decisões: adrs/index.md
           - ADR-001 — Astro SSG & Tailwind v4: adrs/ADR-001-astro-ssg-tailwind.md
-          - ADR-002 — Supabase como Plataforma de Dados: adrs/ADR-002-supabase-plataforma-dados.md
+          - ADR-002 — Supabase como Plataforma de Dados (substituído): adrs/ADR-002-supabase-plataforma-dados.md
           - ADR-003 — Hospedagem na Vercel (substituído): adrs/ADR-003-vercel-hospedagem-borda.md
           - ADR-004 — Criptografia AES-256-GCM com AAD: adrs/ADR-004-criptografia-aes-gcm-aad.md
           - ADR-005 — Modelo de Lease e Idempotência: adrs/ADR-005-modelo-lease-idempotencia.md
           - ADR-006 — Modernização Workers, Hono & Supabase: adrs/ADR-006-modernizacao-workers-hono-supabase.md
           - ADR-007 — Cloudflare Pages & Contas Institucionais: adrs/ADR-007-cloudflare-pages-contas-institucionais.md
+          - ADR-008 — Neon Postgres & Hyperdrive: adrs/ADR-008-neon-hyperdrive.md
+          - ADR-009 — Performance (Preact, zod/mini, imagens): adrs/ADR-009-performance-ilhas-preact-imagens.md
   - Segurança & LGPD:
       - Modelagem de Ameaças (Threat Model): security/threat-model.md
       - Conformidade Estrita com a LGPD: security/lgpd-compliance.md
@@ -123,9 +125,11 @@ nav:
   - Operações:
       - Guia Rápido de Instalação: getting-started/quickstart.md
       - Variáveis de Ambiente: getting-started/environment.md
-      - Configuração do Supabase: getting-started/supabase-setup.md
+      - Configuração do Banco (Neon): getting-started/database-setup.md
       - Runbook de Implantação (Contas Institucionais): operations/deployment.md
-      - Hardening do Supabase: operations/supabase-hardening.md
+      - Hardening do Banco: operations/database-hardening.md
+      - Gestão de Conteúdo do Site: operations/content-management.md
+      - Migração do Site Antigo: operations/legacy-migration.md
       - Backup & Recuperação: operations/backup-recovery.md
       - Rotação de Chaves Criptográficas: operations/key-rotation.md
       - CLI Cheatsheet: operations/cli-cheatsheet.md

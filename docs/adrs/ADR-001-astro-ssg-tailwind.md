@@ -16,7 +16,7 @@ SPAs monolíticas tradicionais (Next.js SSR pesado, Nuxt ou Create-React-App) in
 
 ## 2. Decisão
 
-Adotou-se o **Astro 5** com compilação estática pura (`output: 'static'`) combinado com **Tailwind CSS v4** e o modelo de **Ilhas de Arquitetura (React Islands)** para formulários interativos.
+Adotou-se o **Astro 5** com compilação estática pura (`output: 'static'`) combinado com **Tailwind CSS v4** e o modelo de **Ilhas de Arquitetura** para formulários interativos (inicialmente em React; desde o [ADR-009](ADR-009-performance-ilhas-preact-imagens.md), em Preact com camada de compatibilidade).
 
 ### Diretrizes de Implementação:
 1. Todas as páginas informativas são compiladas em HTML estático no momento do build.
@@ -38,7 +38,7 @@ Adotou-se o **Astro 5** com compilação estática pura (`output: 'static'`) com
 ### Impactos Positivos:
 - **Desempenho Imbatível**: Páginas carregadas em menos de 500ms em edge CDN.
 - **Segurança Reforçada**: Superfície de ataque estática nula no frontend; sem dependência de bancos expostos ou servidores vulneráveis.
-- **Custo Operacional Zero**: Hospedagem estática com cache global na Vercel.
+- **Custo Operacional Zero**: Hospedagem estática com cache global (Cloudflare Pages, ver [ADR-007](ADR-007-cloudflare-pages-contas-institucionais.md)).
 
 ### Trade-offs:
-- Conteúdo editorial demanda novo build para atualização de páginas estáticas (executado em ~6 segundos via GitHub Actions / Vercel Deploy Hook).
+- Conteúdo editorial demanda novo build para atualização de páginas estáticas (build de poucos segundos, publicado no Cloudflare Pages).

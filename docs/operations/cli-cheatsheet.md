@@ -1,32 +1,18 @@
 # Cheat Sheet Operacional (CLI)
 
-Referência rápida dos comandos de terminal mais utilizados na manutenção e desenvolvimento do ecossistema.
+Referência rápida dos comandos de terminal mais usados na manutenção e no desenvolvimento do ecossistema.
 
 ---
 
-## 1. Repositório `frontend` (Astro + Tailwind v4)
+## 1. Repositório `frontend` (Astro + Preact + Tailwind v4)
 
 ```bash
-# Instalação de pacotes
-pnpm install
-
-# Iniciar servidor local com Hot Reload
-pnpm dev
-
-# Compilar para produção (gera pasta dist/)
-pnpm build
-
-# Testar localmente a versão compilada
-pnpm preview
-
-# Executar Quality Gate completo (Build + Topologia + Verificação CSS inline)
-pnpm ci:verify
-
-# Adicionar nova dependência de produção
-pnpm add <nome-do-pacote>
-
-# Adicionar dependência de desenvolvimento
-pnpm add -D <nome-do-pacote>
+pnpm install              # instala as dependências
+pnpm dev                  # servidor local com recarga automática (http://localhost:4321)
+pnpm build                # gera dist/ e atualiza a CSP com os hashes dos scripts
+pnpm preview              # serve a versão compilada
+pnpm typecheck            # astro check + tsc
+pnpm ci:verify            # typecheck, build, topologia e ausência de estilos inline
 ```
 
 ---
@@ -34,33 +20,47 @@ pnpm add -D <nome-do-pacote>
 ## 2. Repositório `backend` (Cloudflare Worker)
 
 ```bash
-# Instalação de dependências
 pnpm install
+pnpm dev                  # wrangler dev com .dev.vars (http://localhost:8787)
+pnpm verify               # lint + fronteiras da arquitetura + typecheck + testes (Vitest)
+pnpm test                 # só os testes
 
-# Executar suíte de testes unitários e de criptografia (Vitest)
-pnpm test
+# Migrations (lê DATABASE_URL de backend/.env)
+node --env-file=.env scripts/migrate.mjs --dry-run
+node --env-file=.env scripts/migrate.mjs
 
-# Executar linter e checagem de arquitetura limpa
-pnpm lint
+# Caixa pastoral (decifra localmente; toda leitura exige --reason e é auditada)
+node --env-file=.env scripts/pastoral-inbox.mjs list
 
-# Compilar TypeScript
-pnpm build
+# Deploy da API
+pnpm deploy                                            # usa wrangler.toml (rota api.purelifeministriesbrasil.org)
+pnpm exec wrangler deploy -c wrangler.workersdev.toml  # só antes da virada do domínio (arquivo local, fora do Git)
 
-# Deploy do Worker para ambiente de desenvolvimento/produção
-npx wrangler deploy
+# Segredos e logs
+pnpm exec wrangler secret put <NOME>
+pnpm exec wrangler secret list
+pnpm exec wrangler tail purelife-api --format pretty
+
+# Hyperdrive
+pnpm exec wrangler hyperdrive get 9194030c37b94749ba819e8428d40edf
+pnpm exec wrangler hyperdrive update 9194030c37b94749ba819e8428d40edf --connection-string="<URL direta do Neon>"
 ```
 
 ---
 
-## 3. Repositório `documentation` (MkDocs Material)
+## 3. Site no Cloudflare Pages (upload direto)
 
 ```bash
-# Instalar dependências no ambiente virtual Python
-pip install -r requirements.txt
+cd frontend && pnpm ci:verify && cd ../backend
+pnpm exec wrangler pages deploy ../frontend/dist --project-name purelife-site --branch main   # produção
+pnpm exec wrangler pages deploy ../frontend/dist --project-name purelife-site --branch revisao # prévia
+```
 
-# Iniciar servidor local de documentação com live-reload (http://127.0.0.1:8000)
-mkdocs serve
+---
 
-# Compilar a documentação estática (gera pasta site/)
-mkdocs build --strict
+## 4. Repositório `documentation` (MkDocs Material)
+
+```bash
+uv run --with-requirements requirements.txt mkdocs serve          # http://127.0.0.1:8000
+uv run --with-requirements requirements.txt mkdocs build --strict # mesma validação do CI
 ```

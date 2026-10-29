@@ -4,44 +4,49 @@ Valida inscrições do formulário progressivo (`NewsletterForm.astro` + `newsle
 
 !!! info "Fonte de verdade"
     Código canônico: [`backend/src/schemas/newsletter/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/schemas/newsletter/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
-    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7**. Qualquer alteração deve ser feita nos dois
+    em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7** pela API funcional `zod/mini` (menor no navegador, mesmas regras). Qualquer alteração deve ser feita nos dois
     repositórios no mesmo ciclo de release.
 
-## Definição do schema Zod
+## Definição do schema (`zod/mini`)
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/mini";
 import { emailSchema, policyVersionSchema, turnstileTokenSchema } from "../common/schema.js";
 
-export const newsletterSchema = z.object({
+export const newsletterSchema = z.strictObject({
   email: emailSchema,
-  website: z.string().max(0, "Campo de segurança inválido").optional(), // honeypot
+  website: z.optional(z.string().check(z.maxLength(0, "Campo de segurança inválido"))), // honeypot
   policyVersion: policyVersionSchema,
-  turnstileToken: turnstileTokenSchema.optional(), // ausente no fallback sem JS
-}).strict();
+  turnstileToken: z.optional(turnstileTokenSchema), // ausente no fallback sem JS
+});
 ```
 
 ## Blocos compartilhados (`common/schema.ts`)
 
 ```typescript
-import { z } from "zod";
+import { z } from "zod/mini";
 
 /** Remove separadores visuais comuns ("(61) 90000-0000") antes da validação de dígitos. */
 const stripPhoneSeparators = (value: string): string => value.replace(/[\s().-]/g, "");
 
-export const phoneSchema = z
-  .string()
-  .trim()
-  .overwrite(stripPhoneSeparators)
-  .regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD");
+// zod/mini: mesma validação do Zod 4 com API funcional (tree-shakeable), ~4x menor no navegador.
+export const phoneSchema = z.string().check(
+  z.trim(),
+  z.overwrite(stripPhoneSeparators),
+  z.regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD")
+);
 
-export const emailSchema = z.string().trim().toLowerCase().email("E-mail inválido").max(160);
+/** Normaliza (trim + minúsculas) antes de validar o formato, como no encadeamento do Zod clássico. */
+export const emailSchema = z.pipe(
+  z.string("E-mail inválido").check(z.trim(), z.toLowerCase()),
+  z.email("E-mail inválido").check(z.maxLength(160))
+);
 
 export const policyVersionSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD");
+  .check(z.regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD"));
 
-export const turnstileTokenSchema = z.string().min(10).max(2048);
+export const turnstileTokenSchema = z.string().check(z.minLength(10), z.maxLength(2048));
 
 /** Valor do header `Idempotency-Key`: UUID v4 gerado pelo cliente por tentativa lógica de envio. */
 export const idempotencyKeySchema = z.uuidv4("Idempotency-Key deve ser um UUID v4");

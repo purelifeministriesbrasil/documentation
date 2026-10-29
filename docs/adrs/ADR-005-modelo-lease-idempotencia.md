@@ -1,4 +1,4 @@
-# ADR-005: Modelo de Lease Atómico para Idempotência de Webhooks
+# ADR-005: Modelo de Lease Atômico para Idempotência de Webhooks
 
 - **Status**: Aprovado
 - **Data**: 2026-09-24
@@ -20,11 +20,11 @@ A ausência de tratamento de concorrência estrita pode provocar:
 
 ## 2. Decisão
 
-Adotar o **Padrão de Lease Atómico de Idempotência** no processamento de webhooks financeiros:
+Adotar o **Padrão de Lease Atômico de Idempotência** no processamento de webhooks financeiros:
 
 ```mermaid
 flowchart TD
-    Webhook[Webhook de Pagamento Recebido] --> CheckLock{Tenta Adquirir Lease Atómico com TTL}
+    Webhook[Webhook de Pagamento Recebido] --> CheckLock{Tenta Adquirir Lease Atômico com TTL}
     CheckLock -->|Sucesso: Lock Adquirido| Process[Executa Lógica de Negócio e Atualiza Status]
     Process --> Release[Salva Resultado e Libera Lease]
     CheckLock -->|Falha: Em Processamento| Reject409[Retorna 409 Conflict ou 200 OK Idempotente]
@@ -32,7 +32,7 @@ flowchart TD
 ```
 
 ### Regras do Mecanismo:
-1. **Identificador Canónico**: Baseado no `id` único do evento ou chave de idempotência fornecida pelo gateway.
+1. **Identificador Canônico**: Baseado no `id` único do evento ou chave de idempotência fornecida pelo gateway.
 2. **Lease com TTL (Time-To-Live)**: O lock expira automaticamente em 120 segundos caso o worker falhe catastroficamente durante a execução, evitando deadlocks permanentes.
 3. **Persistência do Resultado**: Após a conclusão bem-sucedida, a resposta de sucesso é armazenada para responder requisições repetidas sem reprocessar a lógica de negócio.
 

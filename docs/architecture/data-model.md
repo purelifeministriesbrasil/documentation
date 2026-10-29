@@ -1,4 +1,4 @@
-# Modelo de Dados Relacional (Supabase Postgres)
+# Modelo de Dados Relacional (Neon Postgres)
 
 Fonte de verdade: [`backend/drizzle/`](https://github.com/purelifeministriesbrasil/backend/tree/main/drizzle)
 (`0001_initial.sql` + `0002_supabase_hardening_and_rls.sql`), espelhada coluna a coluna em

@@ -46,7 +46,7 @@ de exposição; nesse cenário, recalcule os hashes decifrando os e-mails (scrip
 
 | Segredo | Onde gerar | Passos |
 |---|---|---|
-| `DATABASE_URL` | Supabase → *Database* → *Reset database password* | `wrangler secret put DATABASE_URL` e atualize o cofre |
+| `DATABASE_URL` / Hyperdrive | Neon → *Branches → main → Roles → Reset password* | `wrangler hyperdrive update 9194030c37b94749ba819e8428d40edf --connection-string="<URL direta nova>"`, `wrangler secret put DATABASE_URL` (URL *pooled* nova), atualize `backend/.env` e o cofre |
 | `TURNSTILE_SECRET_KEY` | Cloudflare → Turnstile → widget → *Rotate secret* | `wrangler secret put TURNSTILE_SECRET_KEY` |
 | `RESEND_API_KEY` | Resend → API Keys | Crie a nova, publique com `wrangler secret put`, depois revogue a antiga |
 | `ASAAS_API_KEY` / `ASAAS_WEBHOOK_SECRET` | Asaas → Integrações | Atualize o token no cadastro do webhook **e** no Worker na mesma janela |
