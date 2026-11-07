@@ -1,5 +1,5 @@
 site_name: Pure Life Ministries Brasil
-site_description: Arquitetura de software, especificações de requisitos LGPD (Art. 11), contratos de dados e runbooks do ecossistema Pure Life Ministries Brasil.
+site_description: Arquitetura de software, especificações de requisitos, controles de privacidade (LGPD), contratos de dados e runbooks do ecossistema Pure Life Ministries Brasil.
 site_author: Pure Life Ministries Brasil
 site_url: https://purelifeministriesbrasil.github.io/documentation/
 
@@ -98,6 +98,8 @@ nav:
   - Arquitetura:
       - Visão Geral do Sistema: architecture/system-overview.md
       - Fronteiras dos Repositórios: architecture/repositories-scope.md
+      - Camadas do Backend: architecture/backend-layers.md
+      - Estrutura do Frontend: architecture/frontend-structure.md
       - Diagramas de Sequência: architecture/sequence-diagrams.md
       - Modelo de Dados Relacional: architecture/data-model.md
       - Design System & Componentes: design-system/design-system.md
@@ -114,10 +116,11 @@ nav:
           - ADR-009 — Performance (Preact, zod/mini, imagens): adrs/ADR-009-performance-ilhas-preact-imagens.md
   - Segurança & LGPD:
       - Modelagem de Ameaças (Threat Model): security/threat-model.md
-      - Conformidade Estrita com a LGPD: security/lgpd-compliance.md
+      - Controles de Privacidade (LGPD): security/lgpd-compliance.md
       - Arquitetura Criptográfica: security/crypto-architecture.md
       - Política de Segurança da Informação: governance/security-policy.md
   - Contratos:
+      - Contratos Comuns: schemas/common-schema.md
       - Formulário de Triagem: schemas/triage-schema.md
       - Formulário de Contato: schemas/contact-schema.md
       - Doações & PIX Dinâmico: schemas/donation-schema.md
@@ -134,11 +137,12 @@ nav:
       - Rotação de Chaves Criptográficas: operations/key-rotation.md
       - CLI Cheatsheet: operations/cli-cheatsheet.md
       - Observabilidade & Monitoramento: operations/observability.md
+      - Testes e CI/CD: quality/testing-and-cicd.md
   - Governança:
       - Visão Geral (SRS): requirements/index.md
       - Requisitos Funcionais: requirements/functional.md
       - Regras de Negócio: requirements/business-rules.md
-      - Requisitos Não-Funcionais & LGPD: requirements/non-functional.md
+      - Requisitos Não-Funcionais: requirements/non-functional.md
       - Glossário Técnico: glossary/glossary.md
       - Código de Conduta: governance/code-of-conduct.md
       - Diretrizes de Contribuição: governance/contributing.md

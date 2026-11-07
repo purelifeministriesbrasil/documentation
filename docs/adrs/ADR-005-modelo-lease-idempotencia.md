@@ -4,6 +4,16 @@
 - **Data**: 2026-09-24
 - **Decisores**: Equipe de Engenharia Pure Life Ministries Brasil
 
+
+!!! info "Situação atual da implementação (auditoria de 07/11/2026)"
+    O modelo de lease continua vigente, mas os valores abaixo são os da decisão original. No código:
+
+    - Lease de **60 segundos** e no máximo **5 tentativas** (depois, `dead_letter`), não 120 s
+      ([`presentation/webhooks/payment.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/presentation/webhooks/payment.ts)).
+    - Só o **status** do evento é persistido (`received`, `processing`, `processed`, `ignored`, `failed`, `dead_letter`);
+      não há resposta em cache. Duplicado já processado: `200 {"duplicate": true}`; lease ativo: `409`.
+    - Implementação: [`infrastructure/db/idempotency.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/db/idempotency.ts) (`INSERT … ON CONFLICT DO UPDATE` condicional).
+
 ---
 
 ## 1. Contexto e Motivação

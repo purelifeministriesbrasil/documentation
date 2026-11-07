@@ -16,7 +16,7 @@ hide:
   </h1>
   
   <p class="docs-hero-subtitle">
-    O ecossistema digital da Pure Life Ministries Brasil apoia a missão de restauração espiritual e aconselhamento bíblico de homens, esposas e famílias. Esta documentação foi feita por e para desenvolvedores: reúne a arquitetura, contratos de dados, runbooks operacionais e decisões técnicas do portal institucional, do sistema confidencial de triagem pastoral (LGPD Art. 11) e da emissão de doações PIX.
+    O ecossistema digital da Pure Life Ministries Brasil apoia a missão de restauração espiritual e aconselhamento bíblico de homens, esposas e famílias. Esta documentação foi feita por e para desenvolvedores: reúne a arquitetura, contratos de dados, runbooks operacionais e decisões técnicas do portal institucional, do sistema confidencial de triagem pastoral (com controles de privacidade sob a LGPD) e da emissão de doações PIX.
   </p>
 
   <div class="docs-hero-actions">
@@ -56,7 +56,7 @@ O ecossistema opera sob três repositórios independentes. Cada projeto possui s
         Fundamentação e trade-offs das escolhas de engenharia: Astro SSG, Cloudflare Pages e Workers, Neon Postgres com Hyperdrive, criptografia AES-GCM, idempotência e performance.
       </p>
     </div>
-    <a href="adrs/index.md" class="four-card-link">
+    <a href="adrs/" class="four-card-link">
       Consultar ADRs &rarr;
     </a>
   </div>

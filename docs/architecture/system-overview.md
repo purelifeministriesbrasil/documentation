@@ -29,7 +29,7 @@ flowchart TD
 
     subgraph DataPlatform["Camada de Dados e Gestão (Neon, São Paulo)"]
         PgBouncer["Cloudflare Hyperdrive (pool de conexões na borda)"]
-        PostgresDB[(Neon PostgreSQL 18)]
+        PostgresDB[(Neon PostgreSQL)]
         PastoralUI["Caixa Pastoral CLI (decifra + audit_events)"]
     end
 
@@ -62,7 +62,7 @@ flowchart TD
 - **Roteamento Seguro**: Nenhum cliente de banco de dados no bundle. Todas as submissões vão direto à API (`PUBLIC_API_URL`), com CORS restrito à origem do site e CSP gerado com hashes no build.
 - **Performance**: ilhas em **Preact** (`preact/compat`), schemas com **`zod/mini`**, imagens com `astro:assets`
   (AVIF + WebP responsivos) e prefetch por `hover` ([ADR-009](../adrs/ADR-009-performance-ilhas-preact-imagens.md)).
-  A Home não carrega JavaScript de framework; as páginas de formulário ficam entre 19 e 30 KB (gzip).
+  A Home não carrega JavaScript de framework; as páginas de formulário ficam entre 19 e 30 KB (gzip) segundo o ADR-009 (medidas não reverificadas nesta auditoria).
 - **Formulários Interativos**:
   - `TriageForm.tsx`: Triagem confidencial com consentimento de sigilo pastoral.
   - `ContactForm.tsx`: Formulário de contato institucional.
@@ -75,18 +75,26 @@ flowchart TD
 
 ### B. Backend na Borda (`backend`)
 - **Runtime**: Cloudflare Workers com `compatibility_flags = ["nodejs_compat"]`.
-- **Roteador & Middlewares**: **Hono** gerenciando cabeçalhos de segurança OWASP (`secureHeaders`), controle rigoroso de CORS por ambiente e limites de payload por rota (`bodyLimit`).
-- **Criptografia de Campo em Repouso**: Provedor AES-256-GCM com Dados Adicionais Autenticados (AAD vinculando `entityType`, `entityId`, `field` e `keyVersion`) para proteção de dados confidenciais (Art. 11 LGPD).
+- **Roteador & Middlewares**: **Hono** gerenciando cabeçalhos de segurança OWASP (`secureHeaders`), controle rigoroso de CORS por ambiente e limites de tamanho de corpo por rota aplicados por `guardRequest`/`readJson` ([`request-guards.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/security/request-guards.ts)); o middleware `bodyLimit` do Hono **não** é usado.
+- **Criptografia de Campo em Repouso**: Provedor AES-256-GCM com Dados Adicionais Autenticados (AAD vinculando `entityType`, `entityId`, `field` e `keyVersion`) para proteção de campos confidenciais em repouso ([detalhes](../security/crypto-architecture.md)).
 - **Proteção Anti-Bot**: Porta hexagonal `BotProtectionPort` acoplada ao Cloudflare Turnstile com limite de tempo (`AbortSignal.timeout(3000)`).
 - **Driver de Persistência**: `postgres.js` com `drizzle-orm/postgres-js`, habilitando suporte nativo a transações atômicas interativas (`db.transaction`) por meio do **Cloudflare Hyperdrive** (binding `HYPERDRIVE`), com `prepare: false`; sem o binding, usa o segredo `DATABASE_URL` (Neon com pooling).
 - **Idempotência**: Processamento de webhooks de pagamento baseado no modelo de lease atômico.
-- **Expurgo Criptográfico Agendado**: Cloudflare Cron Trigger executando diariamente às 03:00 UTC em lotes seguros (`LIMIT 500`) com nulificação de dados em conformidade com o Artigo 16 da LGPD.
+- **Expurgo Criptográfico Agendado**: Cloudflare Cron Trigger executando diariamente às 03:00 UTC em lotes seguros (`LIMIT 500`) com nulificação dos campos de triagens e contatos vencidos (180 dias); as demais tabelas não expiram, ver [Controles de Privacidade](../security/lgpd-compliance.md#3-retencao-comportamento-atual-por-tabela).
 
 ### C. Plataforma de Dados (Neon)
-- **Hospedagem**: Neon Postgres na região AWS São Paulo; o processamento é desligado quando ocioso e religado
+- **Hospedagem**: Neon Postgres na região AWS São Paulo (a versão principal do PostgreSQL em produção não é verificável pelo repositório; a CI usa 17); o processamento é desligado quando ocioso e religado
   automaticamente na próxima conexão ([ADR-008](../adrs/ADR-008-neon-hyperdrive.md)).
 - **Segurança de Linha (RLS)**: RLS ligado em todas as tabelas, **sem políticas**: somente a API acessa os dados.
 - **Isolamento de Segredos**: Não há API pública de dados; todas as gravações passam pela validação, pelo Turnstile
   e pela cifragem do Worker.
 - **Leitura pastoral**: A equipe usa a caixa pastoral (`scripts/pastoral-inbox.mjs`), que decifra localmente e
   registra cada leitura com motivo em `audit_events`.
+
+---
+
+## 3. Mais detalhes
+
+- Camadas do Worker e regras de dependência: [Camadas do Backend](backend-layers.md).
+- Estrutura do site: [Estrutura do Frontend](frontend-structure.md).
+- Testes e pipelines: [Testes e CI/CD](../quality/testing-and-cicd.md).

@@ -1,8 +1,19 @@
 # ADR-004: Criptografia de Campo em Repouso com AES-256-GCM e AAD
 
-- **Status**: Aprovado
+- **Status**: Aprovado (vigente; detalhes de implementação atualizados abaixo)
 - **Data**: 2026-09-24
 - **Decisores**: Equipe de Engenharia Pure Life Ministries Brasil
+
+
+!!! info "Situação atual da implementação (auditoria de 07/11/2026)"
+    A decisão (AES-256-GCM com AAD, IV aleatório de 96 bits, tag de 128 bits, chaveiro versionado) continua vigente.
+    Os itens 4 e 5 da seção 2 foram escritos antes da implementação e diferem dela em detalhes:
+
+    - O AAD **não** é só o `id`: é `entityType:entityId:field:v<versão>`
+      ([`aes-gcm.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/crypto/aes-gcm.ts)).
+    - Não existe `keyId` no pacote: ciphertext e IV ficam em colunas Base64 separadas e a versão em `key_version`.
+
+    Ver [Arquitetura Criptográfica](../security/crypto-architecture.md).
 
 ---
 

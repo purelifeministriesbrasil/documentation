@@ -2,12 +2,25 @@
 
 | Metadado | Detalhe |
 | :--- | :--- |
-| **Status** | **Aprovado** |
+| **Status** | **Aprovado, parcialmente substituído** (hospedagem → ADR-007; banco → ADR-008) |
 | **Data** | 2026-09-29 |
 | **Decisores** | Senior Principal Engineer, Software Architect & AppSec Lead |
 | **Consultados** | Time de Engenharia, Encarregado de Proteção de Dados (DPO) |
 | **Repositórios** | `backend`, `frontend`, `documentation` |
 
+
+!!! abstract "Situação atual (auditoria de 07/11/2026)"
+    | Decisão deste ADR | Situação |
+    | :--- | :--- |
+    | Cloudflare Workers + Hono (`secureHeaders`, `cors`) | **Vigente** |
+    | Drizzle com `postgres.js`, `max: 1`, `prepare: false`, transações interativas | **Vigente** |
+    | Remoção do bypass `@supabase/supabase-js` do frontend; tudo passa pela API | **Vigente** |
+    | `BotProtectionPort` e Turnstile com `AbortSignal.timeout(3000)` | **Vigente** (o timeout está em `turnstile.ts`) |
+    | Expurgo em lotes de `LIMIT 500` | **Vigente** |
+    | Hospedagem na Vercel com proxy `/api/*` (`vercel.json`) | **Superada** pelo ADR-007 |
+    | Banco Supabase via Transaction Pooler | **Superada** pelo ADR-008 (Neon + Hyperdrive) |
+
+    O contexto e o diagrama abaixo registram a arquitetura da época e não foram reescritos.
 
 !!! info "Partes substituídas"
     A hospedagem na **Vercel** com proxy `/api/*` foi substituída pelo **Cloudflare Pages** com chamada direta à

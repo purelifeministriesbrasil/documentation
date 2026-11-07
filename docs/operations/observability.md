@@ -1,129 +1,85 @@
 # Observabilidade, Telemetria & Monitoramento
 
-A estratégia de observabilidade da **Pure Life Ministries Brasil** é orientada pela estrita proteção de privacidade pastoral e conformidade legal com a **LGPD (Art. 11 — Dados Sensíveis)**. Nosso modelo garante visibilidade proativa do estado da infraestrutura sem violar o sigilo ministerial.
+Esta página descreve o que o backend **realmente emite** (baseline `ca9737f`) e separa o que é implementado do que depende de configuração externa. A regra central é a privacidade pastoral: a telemetria mede a saúde técnica, nunca o conteúdo dos relatos.
 
 ---
 
-## 1. Princípio Fundamental de Sigilo de Dados
+## 1. Princípio de sigilo
 
-!!! danger "Regra Inviolável de Telemetria"
-    **Nenhum dado confidencial de aconselhamento, nome de aconselhado, relato de pecado, telefone, e-mail ou cabeçalho de autorização pode constar em logs legíveis por humanos, traces APM ou relatórios de erro.**
-    
-    A observabilidade mede a saúde e a integridade dos processos técnicos, nunca o conteúdo espiritual ou pessoal dos fiéis.
+!!! danger "Regra inviolável"
+    Nenhum relato, nome, telefone, e-mail ou cabeçalho de autorização pode ir para logs. O Worker passa todo contexto de log por [`scrubber.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/observability/scrubber.ts).
 
-O ecossistema implementa o componente canônico `scrubber.ts` no `backend`, que remove automaticamente quaisquer chaves sensíveis na camada de geração de eventos.
+O scrubber substitui por `[REDACTED]` chaves como `fullName`, `name`, `email`, `phone`, `report`, `message`, `pixCopyPaste`, `authorization`, `cookie`, `x-signature` e qualquer chave que **contenha** `email`, `phone`, `token`, `secret`, `password`, `cipher`, `plaintext` ou `apikey`. Funciona recursivamente. Testes: [`scrubber.test.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/tests/scrubber.test.ts) e [`canary.test.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/tests/canary.test.ts).
 
----
+Além disso, o código evita colocar mensagens de erro de drivers nos logs: [`errorCode()`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/observability/logger.ts) registra só o `code` ou o nome do erro.
 
-## 2. Os Quatro Sinais Dourados (Golden Signals)
+## 2. Formato real do log
 
-O monitoramento operacional é centralizado nos quatro pilares essenciais:
-
-```mermaid
-flowchart TD
-    subgraph GoldenSignals["Golden Signals da Infraestrutura"]
-        direction TB
-        Latencia["1. Latência<br>P95 < 200ms na borda<br>P99 < 500ms nas rotas de API"]
-        Trafego["2. Tráfego<br>Requisições/segundo (RPS)<br>Distribuição por rota estática vs API"]
-        Erros["3. Taxa de Erros<br>4xx: Validação e Bot rejection<br>5xx: Falha de infraestrutura (SLO < 0.1%)"]
-        Saturacao["4. Saturação<br>Conexões do Hyperdrive / Neon<br>Limites de CPU/Memória Worker"]
-    end
-```
-
-| Sinal | Métrica Principal | Meta / SLA | Ferramenta de Monitoramento |
-| :--- | :--- | :--- | :--- |
-| **Latência** | Tempo de resposta P95 / P99 | P95 < 200ms (Static), P95 < 400ms (API) | Cloudflare Web Analytics / Workers Observability |
-| **Tráfego** | Volume total de acessos e requisições/minuto | Escala dinâmica sem degradação | Cloudflare Analytics (Pages e Workers) |
-| **Erros** | Percentual de códigos HTTP 5xx | < 0,05% das requisições totais | Workers Logs (`wrangler tail`) / Pages Analytics |
-| **Saturação** | Utilização de conexões e memória | < 70% de capacidade nos picos | Painel do Neon (*Monitoring*) e Hyperdrive Analytics |
-
----
-
-## 3. Taxonomia de Erros e Respostas
-
-Para facilitar a triagem de incidentes sem poluir os alertas com ruído, o sistema classifica as falhas em duas macrocategorias:
-
-```mermaid
-flowchart LR
-    Requisicao["Requisição do Cliente"] --> Validador["Guarda de Requisição & Schemas"]
-    Validador -- "Dados inválidos / Bot" --> ErroEsperado["Erros Esperados (4xx)<br>Log nível: INFO / WARN<br>Sem disparo de alarme crítico"]
-    Validador -- "Válida" --> Execucao["Processamento de Aplicação"]
-    Execucao -- "Falha de DB / Gateway" --> ErroInesperado["Erros Inesperados (5xx)<br>Log nível: ERROR<br>Notificação imediata para Engenharia"]
-```
-
-### A. Erros Esperados (Client-Side / Bot Traps)
-* **`400 Bad Request`**: JSON malformado ou payload sintaticamente inválido.
-* **`403 Forbidden`**: Token Cloudflare Turnstile rejeitado (falha no desafio anti-bot).
-* **`413 Payload Too Large`**: Submissão acima do limite rígido (8 KB para formulários, 4 KB para PIX).
-* **`422 Unprocessable Content`**: Falha na validação semântica do esquema (`zod/mini`).
-
-### B. Erros Inesperados (Server-Side / Infraestrutura)
-* **`502 Bad Gateway`**: Indisponibilidade no gateway Asaas ou Mercado Pago na geração do PIX.
-* **`503 Service Unavailable`**: configuração ausente ou inválida (o log lista só os **nomes** das variáveis), banco Neon/Hyperdrive inacessível ou provedor de pagamento indisponível ao validar um webhook (o gateway reenvia depois).
-* **`500 Internal Server Error`**: Exceção não capturada no Worker.
-
----
-
-## 4. Estrutura Canônica de Log Sanitizado
-
-Todos os eventos emitidos pelo backend seguem o formato JSON estruturado com correlação por `requestId`:
+[`logger.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/observability/logger.ts) escreve **uma linha JSON** por evento em `console.log/warn/error`. O Worker tem `[observability] enabled = true` em [`wrangler.toml`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/wrangler.toml), então as linhas ficam no Workers Logs da Cloudflare.
 
 ```json
-{
-  "timestamp": "2026-09-25T23:20:00.000Z",
-  "requestId": "cf-ray-8eefce12345",
-  "environment": "production",
-  "service": "purelife-api",
-  "method": "POST",
-  "path": "/api/forms/triagem",
-  "statusCode": 200,
-  "durationMs": 142,
-  "clientIp": "203.0.113.195",
-  "turnstileStatus": "verified",
-  "payload": {
-    "programInterest": "residencial",
-    "isAdult": true,
-    "fullName": "[REDACTED]",
-    "email": "[REDACTED]",
-    "phone": "[REDACTED]",
-    "report": "[REDACTED]"
-  }
-}
+{"level":"info","event":"cron.purge_completed","ts":"2026-11-07T03:00:01.234Z","triagePurged":3,"contactsPurged":1}
 ```
 
----
+| Campo | Origem |
+|---|---|
+| `level` | `info`, `warn` ou `error` |
+| `event` | Nome do evento (catálogo abaixo) |
+| `ts` | ISO 8601 no momento da emissão |
+| demais | Contexto do evento, após o scrubber |
 
-## 5. Verificação de Saúde (Health Check Endpoint)
+!!! warning "Campos que não existem"
+    Versões anteriores desta página mostravam `requestId`, `clientIp`, `method`, `path`, `statusCode`, `durationMs`, `turnstileStatus` e `version`. **O código não registra log por requisição nem esses campos.** Não há correlação por `requestId` implementada, e o IP do cliente não é registrado.
 
-O serviço de API expõe uma rota pública e idempotente para checagens automatizadas de disponibilidade:
+## 3. Catálogo de eventos
 
-* **Endpoint:** `GET /health`
-* **Comportamento:** Retorna status `healthy`, timestamp e versão sem tocar no banco de dados, ideal para sondas de liveness do Cloudflare ou uptime monitors externos.
+| Evento | Nível | Contexto | Origem |
+|---|---|---|---|
+| `request.unhandled_error` | error | `code` | [`index.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/index.ts) |
+| `config.invalid` | error | `feature`, `invalidKeys` (só nomes) | `index.ts` |
+| `turnstile.rejected` | info | `codes` | [`turnstile.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/security/turnstile.ts) |
+| `turnstile.siteverify_http_error` | warn | `status` | `turnstile.ts` |
+| `turnstile.siteverify_unreachable` | warn | `reason` | `turnstile.ts` |
+| `email.notifications_disabled` | warn | `invalidKeys` | `index.ts` |
+| `email.send_failed` | warn | `kind`, `status`/`reason` | [`resend.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/email/resend.ts) |
+| `asaas.request_failed` / `asaas.charge_rejected` / `asaas.qrcode_rejected` | warn | `path`, `status`, `reason` | [`asaas.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/payments/asaas.ts) |
+| `mercadopago.request_failed` / `mercadopago.charge_rejected` | warn | `status`, `reason` | [`mercadopago.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/payments/mercadopago.ts) |
+| `webhook.rejected` | warn | `provider`, `reason` | [`webhooks/payment.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/presentation/webhooks/payment.ts) |
+| `webhook.event_ignored` | warn | `provider`, `eventId`, `reason` | `webhooks/payment.ts` |
+| `webhook.dead_letter` | error | `provider`, `eventId` | `webhooks/payment.ts` |
+| `cron.purge_completed` | info | `triagePurged`, `contactsPurged` | [`cron/purge.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/presentation/cron/purge.ts) |
+| `cron.purge_skipped` | error | `reason` | `index.ts` |
+| `cron.purge_failed` | error | `code` | `index.ts` |
 
-```bash
-curl -i https://api.purelifeministriesbrasil.org/health
-```
+## 4. Respostas HTTP e classificação
 
-**Resposta esperada (HTTP 200):**
-```json
-{
-  "status": "healthy",
-  "service": "purelife-api",
-  "timestamp": "2026-09-25T23:21:00.000Z",
-  "version": "5.0.0"
-}
-```
+| Status | Quando | Observação |
+|---|---|---|
+| 400 | JSON inválido; assinatura de webhook inválida ou payload malformado | |
+| 405 | Método diferente de POST no webhook | |
+| 403 | Turnstile rejeitado, origem/`Sec-Fetch-Site` inválidos | Ver [Fluxos](../architecture/sequence-diagrams.md) |
+| 409 | Webhook com lease ativo | O provedor reenvia |
+| 413 | Corpo acima do limite de bytes | |
+| 422 | Falha de validação do schema | |
+| 502 | Gateway de pagamento indisponível ao criar PIX | |
+| 503 | Configuração ausente/inválida da funcionalidade, banco indisponível, provedor indisponível ao validar webhook | Falha fechada |
+| 500 | Exceção não tratada (`request.unhandled_error`) ou falha ao processar evento de webhook (o gateway reenvia) | |
 
----
+Os limites exatos de bytes por rota estão na página de [Schemas comuns](../schemas/common-schema.md).
 
-## 6. Procedimento de Alertas e Limiares Operacionais
+## 5. Health check
 
-1. **Alerta de Erros 5xx na Borda:**
-   * **Gatilho:** > 10 erros 5xx em uma janela contínua de 5 minutos.
-   * **Ação:** Verificar o status do Neon (neonstatus.com), a configuração do Hyperdrive, os segredos do Worker e as credenciais dos gateways de pagamento.
-2. **Alerta de Expiração de Certificados e Webhooks:**
-   * **Gatilho:** Falhas consecutivas de validação de assinatura HMAC em `/api/webhooks/payment`.
-   * **Ação:** Inspecionar divergência de segredos ou rotação pendente no portal Asaas/Mercado Pago.
-3. **Alerta de Expurgo LGPD Incompleto:**
-   * **Gatilho:** Cron trigger `0 3 * * *` com falha de execução reportada.
-   * **Ação:** Consultar o log do Worker agendado e executar a rotina de expurgo manualmente se necessário.
+`GET /health` ([`health.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/presentation/health.ts)) responde 200 com `{"status":"healthy","service":"purelife-api","timestamp":"…"}` e `Cache-Control: no-store`, **sem tocar no banco** (portanto não prova que o banco está acessível). Não há campo `version`.
+
+## 6. O que não está implementado ou verificado
+
+| Item | Situação |
+|---|---|
+| Métricas, tracing, SLOs numéricos (latência, taxa de erro) | **Não implementados no repositório.** Valores citados em versões antigas eram metas sem medição |
+| Alertas (5xx, falha de webhook, falha de expurgo) | **Não configurados no código.** Podem existir no painel da Cloudflare; não verificado nesta auditoria |
+| Retenção e destino dos Workers Logs | Dependem do plano e da configuração da conta; não verificado |
+| Alerta para `cron.purge_failed` / `cron.purge_skipped` | Apenas o log; sem notificação automática |
+
+### Recomendação operacional (pendente de decisão)
+
+Definir, na conta Cloudflare, alertas sobre os eventos `webhook.dead_letter`, `cron.purge_failed`, `cron.purge_skipped` e `request.unhandled_error`, e consultar com `wrangler tail`. Ver [Deploy](deployment.md).

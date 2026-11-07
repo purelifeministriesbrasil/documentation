@@ -16,7 +16,7 @@ openssl rand -base64 32                       # nova chave → cofre da organiza
 cd backend
 pnpm exec wrangler secret put TRIAGE_KEY_V2
 # wrangler.toml: TRIAGE_KEY_CURRENT_VERSION = "2"
-pnpm deploy
+pnpm run deploy
 ```
 
 Verificação: envie uma triagem de teste e confirme `key_version = 2` no banco.
@@ -34,8 +34,8 @@ union all select 'donation', count(*) from donation_intents where key_version = 
 
 !!! danger "Exposição de chave"
     Se uma chave **vazou**, adicionar uma nova não protege os dados antigos. É preciso re-cifrar os registros
-    existentes (decifrar com Vn, cifrar com Vn+1 com o novo AAD) — operação ainda não automatizada; trate como
-    incidente de segurança.
+    existentes (decifrar com Vn, cifrar com Vn+1 com o novo AAD) — **não existe script nem teste** para isso no repositório (R7); trate como
+    incidente de segurança. A caixa pastoral apenas decifra e não re-cifra.
 
 ## 2. Pepper de e-mail (`HASH_PEPPER`)
 
@@ -52,4 +52,4 @@ de exposição; nesse cenário, recalcule os hashes decifrando os e-mails (scrip
 | `ASAAS_API_KEY` / `ASAAS_WEBHOOK_SECRET` | Asaas → Integrações | Atualize o token no cadastro do webhook **e** no Worker na mesma janela |
 | `MERCADOPAGO_*` | Mercado Pago → Suas integrações | Renove credenciais / assinatura secreta e publique no Worker |
 
-`wrangler secret put` publica uma nova versão do Worker imediatamente; não é preciso `pnpm deploy`.
+`wrangler secret put` publica uma nova versão do Worker imediatamente; não é preciso `pnpm run deploy`.

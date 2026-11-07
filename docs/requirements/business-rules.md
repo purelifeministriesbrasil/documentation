@@ -6,8 +6,8 @@ Conjunto de diretrizes mandatórias que orientam o tratamento de dados, limites 
 
 ## 1. Proteção de Dados Sensíveis & Privacidade
 
-### RN-001: Sigilo Pastoral Inviolável (LGPD Art. 11)
-* **Regra:** Relatos de aconselhamento, confissões espirituais, histórico de pecados de controle e notas pastorais são classificados como dados ultrassensíveis.
+### RN-001: Sigilo Pastoral Inviolável
+* **Regra:** Relatos de aconselhamento, confissões espirituais, histórico de pecados de controle e notas pastorais são tratados pela organização como dados ultrassensíveis. A classificação e a hipótese legal sob a LGPD estão **pendentes de validação** pelo encarregado e pela assessoria jurídica ([Controles de Privacidade](../security/lgpd-compliance.md)).
 * **Aplicação:** Devem ser cifrados em repouso com algoritmo AES-256-GCM. A chave mestra nunca é exposta no cliente público.
 * **Exceção:** Comunicações obrigatórias por lei em situações de iminente risco à integridade física de menores ou terceiros vulneráveis, conforme protocolo jurídico institucional.
 
@@ -23,6 +23,10 @@ Conjunto de diretrizes mandatórias que orientam o tratamento de dados, limites 
 * **Regra:** Mensagens do formulário de contato institucional são retidas por 180 dias a partir do envio.
 * **Aplicação:** Mesmo cron da RN-002; dados de contato e mensagem são nulificados e o registro marcado `purged` (CHECK `contact_purged_clean`).
 
+### RN-002-B: Dados que Não Expiram (limitação conhecida)
+* **Situação implementada:** apenas triagens e contatos expiram. **Não expiram:** inscrições da newsletter, intenções de doação (e-mail cifrado e hash), cobranças, eventos de webhook, auditoria e registros de consentimento. Não existe rota de descadastro da newsletter.
+* **Status:** limitação conhecida e **decisão pendente** (R1). Nenhum prazo foi definido nem implementado. Ver [Retenção por tabela](../security/lgpd-compliance.md#3-retencao-comportamento-atual-por-tabela).
+
 ### RN-003: Restrição Estrita de Maioridade Legal (18+ Anos)
 * **Regra:** A submissão autônoma de triagem é permitida exclusivamente para indivíduos civilmente capazes (maiores de 18 anos).
 * **Aplicação:** O formulário de triagem implementa uma etapa de confirmação de maioridade obrigatória (*age-gate*). Menores de 18 anos devem ser encaminhados para acompanhamento presencial com os pais ou responsáveis legais.
@@ -33,7 +37,7 @@ Conjunto de diretrizes mandatórias que orientam o tratamento de dados, limites 
 
 ### RN-004: Idempotência de Pagamentos e Webhooks
 * **Regra:** Nenhuma notificação de confirmação de PIX pode ser processada mais de uma vez, mesmo em caso de retentativas insistentes do gateway bancário.
-* **Aplicação:** Cada evento é registrado em `payment_webhook_events` com chave única (provedor + ID do evento) e reivindicado por um *lease* de 60 segundos (`INSERT … ON CONFLICT DO UPDATE` condicional), com no máximo 5 tentativas. Reenvios de um evento já processado respondem `200 duplicate`; uma doação `confirmed` nunca regride.
+* **Aplicação:** Cada evento (corpo limitado a 64 000 bytes) é registrado em `payment_webhook_events` com chave única (provedor + ID do evento) e reivindicado por um *lease* de 60 segundos (`INSERT … ON CONFLICT DO UPDATE` condicional), com no máximo 5 tentativas. Reenvios de um evento já processado respondem `200 duplicate`; com lease ativo, `409`; esgotadas as 5 tentativas o evento vai para `dead_letter` (`200` e log de erro, sem reprocessar). Uma doação `confirmed` nunca regride. A idempotência na **criação** da cobrança não vale igualmente para os dois provedores: o Asaas não recebe a `Idempotency-Key` (R2).
 
 ### RN-005: Limite Rígido de Submissão de Payload
 * **Regra:** Para mitigar ataques de negação de serviço e sobrecarga de memória, todas as submissões públicas possuem limite máximo inegociável de tamanho:
@@ -41,9 +45,17 @@ Conjunto de diretrizes mandatórias que orientam o tratamento de dados, limites 
   * Intenções de Doação PIX: **máximo de 4 KB**.
   * Inscrição na newsletter: **máximo de 1 KB**; confirmação: **máximo de 256 bytes**.
 
+### RN-005-A: Newsletter: Confirmação e Reenvio
+* **Regra:** a inscrição só vale após confirmação por e-mail (*double opt-in*). O token tem validade de **48 horas** e o reenvio da confirmação para o mesmo endereço só ocorre após **15 minutos**.
+* **Aplicação:** `NEWSLETTER_CONFIRM_TTL_HOURS` e `NEWSLETTER_RESEND_COOLDOWN_SECONDS` em [`subscribe-newsletter.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/application/usecases/subscribe-newsletter.ts).
+
+### RN-005-B: Códigos de Referência
+* **Regra:** triagem usa `PLM-XXXX-XXXX` e contato `CTT-XXXX-XXXX`, com caracteres do alfabeto Crockford Base32 (sem I, L, O, U) e 40 bits de entropia de CSPRNG.
+* **Aplicação:** [`reference-code.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/application/reference-code.ts). O código é anulado no expurgo.
+
 ### RN-006: Higienização de Logs (Zero PII em Telemetria)
 * **Regra:** Nenhum dado pessoal identificável (nome, e-mail, telefone, relato, token bancário ou cookie) pode ser registrado em logs da Cloudflare ou de plataformas de APM.
-* **Aplicação:** O módulo `scrubber.ts` substitui automaticamente campos confidenciais por `[REDACTED]` antes de qualquer emissão de log.
+* **Aplicação:** O módulo `scrubber.ts` substitui automaticamente campos confidenciais por `[REDACTED]` antes de qualquer emissão de log, e o logger não registra o IP do cliente. Ver [Observabilidade](../operations/observability.md).
 
 ---
 

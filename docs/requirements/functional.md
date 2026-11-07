@@ -51,6 +51,7 @@ repositórios `frontend` e `backend`. Os valores exibidos no site (preços, cont
 ### RF-008: Inscrição na Newsletter Ministerial
 * **Descrição:** Inscrição com e-mail no rodapé e na Home, com **confirmação dupla** (link enviado por e-mail para `/newsletter/confirmar/`).
 * **Validação:** e-mail válido e campo-armadilha (*honeypot*); deduplicação por HMAC do e-mail, sem guardá-lo em claro; funciona também sem JavaScript.
+* **Limitação conhecida (R1):** **não há descadastro** (nem rota, nem link de cancelamento) e as inscrições não expiram. O status `unsubscribed` existe no banco, mas nenhum código o grava. Decisão pendente do encarregado e da liderança; ver [Controles de Privacidade](../security/lgpd-compliance.md#3-retencao-comportamento-atual-por-tabela).
 
 ---
 
@@ -107,4 +108,6 @@ repositórios `frontend` e `backend`. Os valores exibidos no site (preços, cont
 
 ### RF-018: Caixa Pastoral Auditada
 * **Descrição:** A equipe autorizada lista, lê e atualiza o status de triagens e contatos pela CLI `scripts/pastoral-inbox.mjs`, que decifra localmente.
-* **Regras:** toda leitura exige motivo (`--reason`) e é registrada em `audit_events` com o operador; status possíveis: `in_review`, `contacted` e `closed`.
+* **Regras:** `show` exige motivo (`--reason`, mínimo de 5 caracteres) e cada comando grava `audit_events` com o operador (`list` grava sem motivo).
+* **Status no banco:** triagem aceita `received`, `in_review`, `contacted`, `closed` e `purged`; contato aceita `received`, `answered`, `closed` e `purged`.
+* **Limitação conhecida (R4):** `set-status` **não valida** o valor informado nem exige justificativa; um valor inválido para o tipo (por exemplo `in_review` em um contato) só falha no CHECK do banco. Ver [CLI](../operations/cli-cheatsheet.md#caixa-pastoral).
