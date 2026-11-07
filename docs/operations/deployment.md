@@ -143,6 +143,9 @@ binding presente, a API usa a conexão do Hyperdrive; sem ele, usa o segredo `DA
    `resend._domainkey` (TXT) e os CNAMEs `send` e `rsend`; **não altere** o MX nem o SPF do Zoho na raiz.
 2. *API Keys → Create* com permissão **Sending access** restrita ao domínio → `RESEND_API_KEY` (cofre).
 3. Remetente (`EMAIL_FROM`) e destinatário dos avisos (`STAFF_NOTIFICATION_EMAIL`) ficam em `backend/wrangler.toml`.
+
+!!! note "Proteção contra abuso (R5)"
+    `RATE_LIMIT_MODE` em `backend/wrangler.toml` está em `"log"`: o Worker só registra `rate_limit.would_block` e não bloqueia. Trocar para `"enforce"` (429 com `Retry-After: 60`) é decisão deliberada, depois de avaliar os logs. Os quatro bindings `[[unsafe.bindings]]` do tipo `ratelimit` (`RL_CONTACT`, `RL_TRIAGE`, `RL_NEWSLETTER`, `RL_DONATION`, `namespace_id` 1001 a 1004) precisam de conferência na conta Cloudflare para não colidir com outros. Desde o primeiro deploy após o merge, as rotas de formulário e de criação de doação exigem `Origin` ou `Sec-Fetch-Site` válidos (403 sem nenhum); webhooks não são afetados.
 4. A verificação do domínio só conclui depois que a zona ficar **Active** (etapa 9).
 
 ---

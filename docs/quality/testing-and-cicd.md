@@ -8,9 +8,9 @@ O que cada repositório testa, o que cada pipeline executa e o que **não** é v
 
 | Repositório | Ferramenta | O que existe | O que não existe |
 |---|---|---|---|
-| `backend` | Vitest (17 arquivos em `tests/`, 114 casos; 6 exigem banco) | Casos de uso ponta a ponta com portas simuladas, cripto, scrubber, guardas de requisição, rotas Hono, configuração fail-closed, máquina de estados, webhooks e lease, expurgo, canário de PII e integração com Postgres real | Teste da CLI `pastoral-inbox.mjs`; teste de re-cifragem; teste de deriva de schemas entre repositórios |
+| `backend` | Vitest (21 arquivos em `tests/`, 182 casos com banco descartável; os que exigem banco são pulados sem `TEST_DATABASE_URL`) | Casos de uso ponta a ponta com portas simuladas, cripto, scrubber, guardas de requisição, rotas Hono, configuração fail-closed, máquina de estados, webhooks e lease, expurgo, canário de PII e integração com Postgres real | Teste do ramo SQL da CLI `pastoral-inbox.mjs` (só as regras puras são testadas); teste de re-cifragem; teste de gateways contra sandbox real |
 | `frontend` | Verificações estruturais (sem framework de testes) | `astro check` + `tsc`, build, topologia (18 páginas estáticas, `_headers` com CSP), ausência de estilo inline | **Sem testes unitários** nem de componentes; sem teste de acessibilidade ou de desempenho |
-| `documentation` | `mkdocs build --strict` | Links, nav e avisos do MkDocs | Verificação de Mermaid; verificação automática contra o código |
+| `documentation` | `mkdocs build --strict` (local e em PR) | Links, nav e avisos do MkDocs | Verificação de Mermaid; verificação automática contra o código |
 
 Mapa dos arquivos do backend: [`tests/README.md`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/tests/README.md). Regra do projeto: fluxo novo que manipula dado sensível precisa de um caso em [`canary.test.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/tests/canary.test.ts).
 
@@ -24,12 +24,17 @@ Mapa dos arquivos do backend: [`tests/README.md`](https://github.com/purelifemin
 
 O deploy do Worker é **manual** (`pnpm run deploy`), conforme o [runbook](../operations/deployment.md).
 
-### Lacuna conhecida: documentação sem validação em PR
+Workflows adicionados nos PRs de R7 e R8 (2026-11-07):
 
-O workflow da documentação **não roda em `pull_request`**. Um PR com link quebrado ou aviso do MkDocs só falha depois do merge, no `push` para `main`. Esta atividade **não criou nem alterou workflows**.
+| Repositório | Workflow | Gatilhos | O que faz |
+|---|---|---|---|
+| `documentation` | `validate-docs.yml` | `pull_request` para `main` e manual | `pip install -r requirements.txt` e `mkdocs build --strict` em diretório temporário; não publica nada |
+| `backend`, `frontend` | `schema-sync.yml` | `pull_request` (só avisa), `push` em `main`, semanal e manual (falha) | Compara `src/schemas/` com o do repositório irmão; em PR só emite aviso, porque a outra metade da mudança ainda não está na `main` |
+| `backend`, `frontend` | `ci.yml` | (já existente) | Passo `verify-package-manager` garante que o pnpm em uso é o de `packageManager` (12.18.0) e que a action não declara `version:` |
 
-!!! tip "Recomendação futura (pendente de autorização)"
-    Adicionar um workflow com gatilho `pull_request` que execute `pip install -r requirements.txt` e `mkdocs build --strict` (sem publicar). Opcionalmente, validar os diagramas Mermaid. Isso exige autorização, pois altera `.github/workflows` (R8).
+### Validação da documentação em PR
+
+Resolvida em R8: antes, um link quebrado só falhava depois do merge. O workflow `validate-docs.yml` roda `mkdocs build --strict` em todo PR para `main`. Ainda não há validação dos diagramas Mermaid.
 
 ## 3. Critérios antes de publicar
 
@@ -46,7 +51,7 @@ O workflow da documentação **não roda em `pull_request`**. Um PR com link que
 | Item | Declarado nos workflows | Validação local da auditoria (07/11/2026) |
 |---|---|---|
 | Node | 22 (`actions/setup-node`) | 22.23.4 |
-| pnpm | **12** (`pnpm/action-setup`, `version: 12`) | 10.28.0 (primeira rodada) **e 12.18.0** (reprodução com a versão da CI) |
+| pnpm | **12.18.0** (campo `packageManager`; `pnpm/action-setup` sem `version:`) | 10.28.0 (primeira rodada) **e 12.18.0** (reprodução com a versão da CI) |
 | PostgreSQL | **17** (`postgres:17`) | 16 (primeira rodada) **e 17.5** (reprodução, binário embutido descartável) |
 | Python (docs) | 3.12 | 3.11+ |
 
@@ -61,7 +66,7 @@ Executada em cópias de trabalho descartáveis (`git archive` dos commits audita
 | Backend `anon` sem acesso a `triage_submissions` | PASS | PASS (`permission denied`) |
 | Backend testes com banco real | PASS (114/114) | PASS (114/114, 17 arquivos) |
 | Frontend `pnpm ci:verify` | PASS (18 páginas, 9 hashes de CSP) | PASS (18 páginas, 9 hashes de CSP) |
-| Backend `wrangler deploy --dry-run` (bundle) | PASS | **Não repetido** com pnpm 12 |
+| Backend `wrangler deploy --dry-run` (bundle) | PASS | **Não repetido** com pnpm 12 (repetido depois, com pnpm 12.18 e Wrangler 4: PASS) |
 | `pnpm deploy` sem `run` | Falha (`ERR_PNPM_NOTHING_TO_DEPLOY`), comando nativo | Também é comando **nativo** (`pnpm help deploy`: "Deploy a package from a workspace"); use `pnpm run deploy` |
 
 Limitações da reprodução: o PostgreSQL 17.5 veio de um binário embutido (`embedded-postgres`) e não da imagem `postgres:17` do GitHub Actions (o Docker não estava disponível); `pnpm 12.18.0` é a versão mais recente do major 12 no registro, e o workflow pede apenas `12`.
@@ -71,7 +76,6 @@ Limitações da reprodução: o PostgreSQL 17.5 veio de um binário embutido (`e
 - Estado real de produção (Cloudflare, Neon, Resend, DNS, gateways).
 - Existência do segredo `CLOUDFLARE_API_TOKEN`, da variável `PUBLIC_TURNSTILE_SITE_KEY` e do ambiente `production` no GitHub.
 - Core Web Vitals, acessibilidade e as medidas de tamanho do ADR-009 (R9).
-- Deriva entre `schemas/` dos dois repositórios (R7).
-- Wrangler 3: o repositório usa Wrangler 3 (`3.114.x`) com `compatibility_date` `2026-09-19`; atualizar para o Wrangler 4 é recomendado em mudança dedicada.
+- Wrangler: o backend foi atualizado para o Wrangler 4 (`^4.158.0`, PR #14) e validado com `wrangler deploy --dry-run`, sem deploy real; o primeiro deploy manual deve ser conferido. O deploy do frontend na CI ainda usa `wrangler@3.114.0 pages deploy`, fora do escopo desta mudança.
 
 Riscos relacionados: [R1–R9](../security/threat-model.md#5-riscos-e-pendencias-conhecidos).
