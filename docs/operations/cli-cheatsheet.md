@@ -54,10 +54,10 @@ node --env-file=.env scripts/migrate.mjs
 |---|---|---|
 | `list` | Lista triagens e contatos com status diferente de `closed`/`purged` (sem decifrar) | Grava `inbox.list` (sem motivo) |
 | `show <CÓDIGO> --reason "motivo" [--include-report]` | Decifra contato (triagem) ou contato e mensagem (contato); `--include-report` também decifra o relato | `--reason` com no mínimo 5 caracteres; grava `triage.contact_read`, `triage.report_read` ou `contact.read` |
-| `set-status <CÓDIGO> <status>` | Atualiza o status | Grava `*.status_changed` com o próprio status como motivo |
+| `set-status <CÓDIGO> <status> --reason "motivo"` | Atualiza o status (triagem: `received`, `in_review`, `contacted`, `closed`; contato: `received`, `answered`, `closed`) | `--reason` com no mínimo 5 caracteres; grava `*.status_changed` com a justificativa em `reason` e `from_status`/`to_status` em `metadata`; recusa `purged`, status repetido e registro já expurgado; UPDATE e auditoria na mesma transação |
 
-!!! danger "Limitação conhecida (R4)"
-    `set-status` **não valida** o valor nem exige justificativa. Valores aceitos pelo banco: triagem `received`, `in_review`, `contacted`, `closed`, `purged`; contato `received`, `answered`, `closed`, `purged`. Um valor fora da lista falha no CHECK do banco, mas valores válidos para o tipo errado (por exemplo `in_review` em um contato) só são descobertos pelo erro do banco. O status `purged` é recusado pelo CHECK `*_purged_clean` enquanto o registro tiver dados. Não rode a CLI contra dados reais para testes: use banco descartável.
+!!! info "R4 mitigado"
+    `set-status` valida o status por tipo e exige `--reason`. O status `purged` só é definido pelo expurgo automático. Os testes cobrem as regras puras (`pastoral-status.test.ts`); o ramo SQL da CLI não é testado automaticamente. Não rode a CLI contra dados reais para testes: use banco descartável.
 
 ## 3. Site no Cloudflare Pages
 

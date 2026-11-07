@@ -49,7 +49,14 @@ Além disso, o código evita colocar mensagens de erro de drivers nos logs: [`er
 | `webhook.dead_letter` | error | `provider`, `eventId` | `webhooks/payment.ts` |
 | `cron.purge_completed` | info | `triagePurged`, `contactsPurged` | [`cron/purge.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/presentation/cron/purge.ts) |
 | `cron.purge_skipped` | error | `reason` | `index.ts` |
+| `cron.purge_step_failed` | error | `step`, `reference`, `code`, `purgedSoFar` | `cron/purge.ts` |
 | `cron.purge_failed` | error | `code` | `index.ts` |
+| `cron.purge_alert_suppressed` / `cron.purge_alert_not_sent` / `cron.purge_alert_failed` / `cron.purge_alert_unavailable` | info / warn | `step`, `reference` | `cron/purge.ts` |
+| `cron.purge_budget_reached` / `cron.purge_batch_cap_reached` | warn | `step` | `cron/purge.ts` |
+| `rate_limit.would_block` / `rate_limit.blocked` | warn | `endpoint`, `mode` | `index.ts` (`would_block` no modo `log`; `blocked` em `enforce`, com resposta 429) |
+| `rate_limit.binding_missing` / `rate_limit.check_failed` | warn | `endpoint` | `infrastructure/security/rate-limit.ts` (fail-open) |
+| `asaas.reconcile_blocked` | warn | `reason` | `infrastructure/payments/asaas.ts` |
+| `asaas.charge_reused` / `asaas.stale_charge_cancelled` | info | (sem PII) | `asaas.ts` |
 
 ## 4. Respostas HTTP e classificação
 
@@ -78,7 +85,7 @@ Os limites exatos de bytes por rota estão na página de [Schemas comuns](../sch
 | Métricas, tracing, SLOs numéricos (latência, taxa de erro) | **Não implementados no repositório.** Valores citados em versões antigas eram metas sem medição |
 | Alertas (5xx, falha de webhook, falha de expurgo) | **Não configurados no código.** Podem existir no painel da Cloudflare; não verificado nesta auditoria |
 | Retenção e destino dos Workers Logs | Dependem do plano e da configuração da conta; não verificado |
-| Alerta para `cron.purge_failed` / `cron.purge_skipped` | Apenas o log; sem notificação automática |
+| Alerta para `cron.purge_failed` / `cron.purge_skipped` | Falha de uma etapa do expurgo envia e-mail (Resend, sem PII) para `STAFF_NOTIFICATION_EMAIL`, no máximo um a cada 3 dias por etapa; o envio real ainda não foi exercitado. O evento `cron.purge_skipped` continua só em log |
 
 ### Recomendação operacional (pendente de decisão)
 
