@@ -3,7 +3,7 @@
 Valida a criação de cobranças PIX (ilha `DonationForm`) e define os contratos de resposta e de eventos de webhook.
 
 !!! info "Fonte de verdade"
-    Código canônico: [`backend/src/schemas/donations/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/schemas/donations/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
+    Código canônico: [`backend/src/schemas/donations/schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/schemas/donations/schema.ts). O repositório `frontend` mantém cópia **byte a byte**
     em `src/schemas/`, e os dois usam exatamente **Zod 4.6.7** pela API funcional `zod/mini` (menor no navegador, mesmas regras). Qualquer alteração deve ser feita nos dois
     repositórios no mesmo ciclo de release.
 
@@ -49,38 +49,9 @@ export const paymentWebhookSchema = z.strictObject({
 });
 ```
 
-## Blocos compartilhados (`common/schema.ts`)
+## Blocos compartilhados
 
-```typescript
-import { z } from "zod/mini";
-
-/** Remove separadores visuais comuns ("(61) 90000-0000") antes da validação de dígitos. */
-const stripPhoneSeparators = (value: string): string => value.replace(/[\s().-]/g, "");
-
-// zod/mini: mesma validação do Zod 4 com API funcional (tree-shakeable), ~4x menor no navegador.
-export const phoneSchema = z.string().check(
-  z.trim(),
-  z.overwrite(stripPhoneSeparators),
-  z.regex(/^\+?\d{10,15}$/, "Telefone deve conter de 10 a 15 dígitos com DDD")
-);
-
-/** Normaliza (trim + minúsculas) antes de validar o formato, como no encadeamento do Zod clássico. */
-export const emailSchema = z.pipe(
-  z.string("E-mail inválido").check(z.trim(), z.toLowerCase()),
-  z.email("E-mail inválido").check(z.maxLength(160))
-);
-
-export const policyVersionSchema = z
-  .string()
-  .check(z.regex(/^\d{4}-\d{2}-\d{2}$/, "Versão da política deve estar no formato YYYY-MM-DD"));
-
-export const turnstileTokenSchema = z.string().check(z.minLength(10), z.maxLength(2048));
-
-/** Valor do header `Idempotency-Key`: UUID v4 gerado pelo cliente por tentativa lógica de envio. */
-export const idempotencyKeySchema = z.uuidv4("Idempotency-Key deve ser um UUID v4");
-
-export const IDEMPOTENCY_KEY_HEADER = "Idempotency-Key";
-```
+Veja [Contratos Comuns](common-schema.md): telefone, e-mail, versão da política, token do Turnstile e `Idempotency-Key`, com exemplos validados e o contrato HTTP comum (403, 413, 415, 422, 503).
 
 ## Contrato HTTP
 
@@ -99,12 +70,13 @@ O QR Code é desenhado no navegador a partir de `pixCopyPaste` (mesmo conteúdo 
 
 - **Asaas**: header `asaas-access-token` comparado em tempo constante com `ASAAS_WEBHOOK_SECRET`. Eventos: `PAYMENT_RECEIVED`/`PAYMENT_CONFIRMED` → `payment.confirmed`; `PAYMENT_OVERDUE` → `payment.expired`; `PAYMENT_DELETED` → `payment.cancelled`; `PAYMENT_REFUNDED` → `payment.refunded`.
 - **Mercado Pago**: `x-signature` (`ts`, `v1`) validado por HMAC-SHA256 do manifesto `id:{data.id};request-id:{x-request-id};ts:{ts};`; em seguida o pagamento é consultado em `GET /v1/payments/{id}` (a notificação não traz status nem valor).
-- Respostas: `200` processado/ignorado/duplicado · `400` assinatura inválida · `409` lease ativo · `500`/`503` falha transitória (o provedor reenvia).
+- Corpo limitado a **64 000 bytes** (`413`); método diferente de POST responde `405`.
+- Respostas: `200` processado/ignorado/duplicado/`dead_letter` · `400` assinatura inválida ou payload malformado · `409` lease ativo · `500` falha ao processar · `503` provedor indisponível na consulta (o provedor reenvia nos dois últimos casos). Fluxo completo em [Diagramas de Sequência](../architecture/sequence-diagrams.md#3-webhook-de-pagamento).
 
 ## Invariantes
 
 1. **Valores em centavos inteiros**: mínimo R$ 5,00, máximo R$ 50.000,00 (também `CHECK intent_amount_chk`).
-2. **Idempotência dupla**: `Idempotency-Key` do cliente → `donation_intents.idempotency_key` (único) e repassada ao provedor (`X-Idempotency-Key` no Mercado Pago).
+2. **Idempotência dupla**: `Idempotency-Key` do cliente → `donation_intents.idempotency_key` (único) e repassada ao provedor **somente no Mercado Pago** (`X-Idempotency-Key`). A cobrança Asaas **não recebe** a chave (só `externalReference`): se o processo falhar entre criar a cobrança no Asaas e gravar `payment_charges`, uma nova tentativa pode criar outra cobrança (**R2**, ver [Modelagem de Ameaças](../security/threat-model.md#5-riscos-e-pendencias-conhecidos)).
 3. **Máquina de estados** (`domains/donations/state-machine.ts`): `confirmed` só pode ir para `refunded`; eventos que regrediriam a doação (`failed`, `expired`) são ignorados e auditados (`charge.transition_rejected`).
 4. **Divergência de valor**: não altera o estado; registra `charge.amount_mismatch` em `audit_events` para conciliação manual.
 5. **Frequência `monthly`**: registra a intenção e emite a **primeira** cobrança; a recorrência automática ainda não é implementada (ver limitações no runbook de deploy).

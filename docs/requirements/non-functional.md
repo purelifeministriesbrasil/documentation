@@ -2,11 +2,14 @@
 
 Parâmetros arquiteturais de segurança, desempenho, disponibilidade e usabilidade que regem a plataforma.
 
+!!! warning "Metas × evidência"
+    Os valores de desempenho (LCP, INP, CLS, orçamento de JavaScript) e de acessibilidade (WCAG 2.1 AA) são **metas de projeto**. Os repositórios **não contêm** medição automatizada de Core Web Vitals nem auditoria de acessibilidade, e as medidas do ADR-009 não foram reverificadas (R9). Já os itens verificados automaticamente estão marcados como tal.
+
 ---
 
 ## 1. Desempenho & Core Web Vitals
 
-### RNF-001: Latência na Borda (Cloudflare Pages & Workers)
+### RNF-001: Latência na Borda (Cloudflare Pages & Workers) — metas não medidas
 * **Métrica:** Tempo de carregamento LCP (Largest Contentful Paint) inferior a **1.0 segundo** em redes 4G nacionais.
 * **Métrica:** INP (Interaction to Next Paint) inferior a **50ms**.
 * **Métrica:** CLS (Cumulative Layout Shift) **≤ 0,1** (meta: 0), com dimensões declaradas em todas as imagens.
@@ -16,7 +19,7 @@ Parâmetros arquiteturais de segurança, desempenho, disponibilidade e usabilida
 ### RNF-002: Eficiência e Limpeza de Estilos
 * **Métrica:** **Zero** atributos residuais `style="..."` em HTML compilado.
 * **Métrica:** **Zero** `@import` de fontes em tempo de execução; as fontes oficiais (**Montserrat** e **Ruda**) são servidas localmente em `.woff2` e pré-carregadas.
-* **Métrica:** Verificação automatizada no pipeline de CI via `verify-no-inline-style.mjs`.
+* **Métrica:** Verificação automatizada no pipeline de CI via `verify-no-inline-style.mjs` (**verificado por script**).
 
 ---
 
@@ -34,7 +37,7 @@ Parâmetros arquiteturais de segurança, desempenho, disponibilidade e usabilida
 
 ## 3. Acessibilidade & Usabilidade
 
-### RNF-005: Conformidade WCAG 2.1 Nível AA
+### RNF-005: Conformidade WCAG 2.1 Nível AA — meta, sem auditoria no repositório
 * **Métrica:** Contraste mínimo de 4.5:1 para texto normal e 3:1 para elementos de interface e textos em grande escala.
 * **Métrica:** Navegação completa por teclado, sem armadilhas de foco (*no keyboard traps*).
 * **Métrica:** Suporte pleno a leitores de tela com marcos semânticos (`<banner>`, `<main>`, `<contentinfo>`, `<nav>`) e atalho inicial para o conteúdo principal.

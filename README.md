@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://purelifeministriesbrasil.github.io/documentation/"><img src="https://img.shields.io/badge/Docs-online-044A82.svg" alt="Documentação online" /></a>
   <a href="https://squidfunk.github.io/mkdocs-material/"><img src="https://img.shields.io/badge/MkDocs-Material-526CFE.svg" alt="MkDocs Material" /></a>
-  <a href="./docs/security/lgpd-compliance.md"><img src="https://img.shields.io/badge/LGPD-Art.%2011-blue.svg" alt="LGPD" /></a>
+  <a href="./docs/security/lgpd-compliance.md"><img src="https://img.shields.io/badge/LGPD-controles%20t%C3%A9cnicos-blue.svg" alt="Controles de privacidade (LGPD)" /></a>
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Seguran%C3%A7a-pol%C3%ADtica-red.svg" alt="Política de segurança" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-blue.svg" alt="Licença MIT" /></a>
 </p>
@@ -49,12 +49,13 @@ Regra de ouro: **“Front com Front, Back com Back e Docs com Docs.”**
 
 | Seção | Conteúdo |
 |---|---|
-| **Primeiros passos** | Início rápido, variáveis de ambiente, configuração do banco (Neon) |
-| **Arquitetura** | Visão do sistema, escopo dos repositórios, diagramas de sequência, modelo de dados |
+| **Primeiros passos** | Início rápido, matriz de variáveis de ambiente, configuração do banco (Neon) |
+| **Arquitetura** | Visão do sistema, escopo dos repositórios, camadas do backend, estrutura do frontend, diagramas de sequência, modelo de dados |
 | **Requisitos** | Requisitos funcionais (RF), não funcionais (RNF) e regras de negócio (RN) |
 | **Decisões (ADRs)** | ADR-001 a ADR-009 — do Astro ao Neon + Hyperdrive |
 | **Contratos de dados** | Triagem, contato, newsletter e doação (gerados do código real) |
-| **Segurança** | Modelo de ameaças, arquitetura criptográfica, LGPD |
+| **Segurança** | Modelo de ameaças (matriz com evidências e riscos R1–R9), arquitetura criptográfica, controles de privacidade (LGPD) |
+| **Qualidade** | Testes, pipelines de CI/CD e limitações conhecidas |
 | **Operações** | Implantação, gestão de conteúdo, migração do site antigo, backup, rotação de chaves, observabilidade, comandos |
 | **Design e glossário** | Design system e linguagem ubíqua do domínio |
 
@@ -67,7 +68,8 @@ documentation/
 ├── docs/
 │   ├── index.md            # Página inicial do portal
 │   ├── getting-started/    # Início rápido, ambiente, banco
-│   ├── architecture/       # Visão geral, repositórios, sequências, modelo de dados
+│   ├── architecture/       # Visão geral, repositórios, camadas, frontend, sequências, modelo de dados
+│   ├── quality/            # Testes e CI/CD
 │   ├── requirements/       # RF, RNF e regras de negócio
 │   ├── adrs/               # Registros de decisão (ADR-001 a ADR-009)
 │   ├── schemas/            # Contratos de dados
@@ -88,7 +90,7 @@ Cada pasta de `docs/` é uma seção do site; a ordem e os títulos vêm do `nav
 
 ## 4. Como executar localmente
 
-Pré-requisito: **Python 3.11+**.
+Pré-requisito: **Python 3.11+** (a CI usa 3.12).
 
 ```bash
 # com uv (recomendado)
@@ -109,7 +111,7 @@ mkdocs serve
 
 Todo push no `main` compila com `mkdocs build --strict` e publica no GitHub Pages
 ([`deploy-pages.yml`](.github/workflows/deploy-pages.yml)). Qualquer aviso ou link quebrado interrompe a
-publicação.
+publicação. **Pull requests não são validados automaticamente** (não há workflow em `pull_request`): rode `mkdocs build --strict` localmente antes de abrir o PR.
 
 ---
 

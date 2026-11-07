@@ -4,28 +4,41 @@ Segurança por padrão: o frontend só recebe valores **públicos**; todos os se
 (`wrangler secret put`) ou no cofre da organização. O Worker valida a configuração de cada funcionalidade a cada
 requisição e **falha fechado** (`503` + log com os nomes das chaves inválidas, nunca os valores).
 
-Arquivos de referência (sempre atualizados com comentários):
-
-- `frontend/.env.example`
-- `backend/.dev.vars.example` (Worker em desenvolvimento)
-- `backend/.env.example` (scripts Node: migrations, caixa pastoral, testes de integração)
+Arquivos de referência no código: [`frontend/.env.example`](https://github.com/purelifeministriesbrasil/frontend/blob/4a08dfc03ef6f5cc6adf907da5bfa454960a9add/.env.example), [`backend/.dev.vars.example`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/.dev.vars.example) (Worker em desenvolvimento) e [`backend/.env.example`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/.env.example) (scripts Node: migrations, caixa pastoral, testes de integração).
 
 ---
 
-## 1. Frontend (Cloudflare Pages — variáveis de build)
+## 0. Matriz por funcionalidade (backend)
 
-| Variável | Obrigatória | Exemplo | Uso |
+O Worker valida cada grupo de configuração por requisição ([`env.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/config/env.ts)). Uma funcionalidade só responde se **todas** as variáveis do seu grupo estiverem válidas; caso contrário, `503` e log `config.invalid` com os **nomes** (nunca os valores).
+
+| Rota / função | Banco | Cripto (`TRIAGE_KEY_V*`, `HASH_PEPPER`) | Turnstile | E-mail (3 chaves) | Pagamento |
+|---|---|---|---|---|---|
+| `POST /api/forms/triagem` | sim | sim | sim | opcional (aviso à equipe) | — |
+| `POST /api/forms/contato` | sim | sim | sim | opcional (aviso à equipe) | — |
+| `POST /api/forms/newsletter` | sim | sim | sim (se houver token) | **obrigatório** | — |
+| `POST /api/forms/newsletter/confirm` | sim | sim | — | — | — |
+| `POST /api/donations/create-pix` | sim | sim | sim | — | sim |
+| `POST /api/webhooks/payment` | sim | — | — | — | sim |
+| Cron de expurgo | sim | — | — | — | — |
+
+O grupo **e-mail** exige as **três** variáveis juntas: `RESEND_API_KEY`, `EMAIL_FROM` e `STAFF_NOTIFICATION_EMAIL`. Com qualquer uma ausente, os avisos à equipe de triagem e contato são desativados (log `email.notifications_disabled`) e a newsletter responde 503.
+
+---
+
+## 1. Frontend (variáveis de build)
+
+No pipeline, os valores vêm do workflow [`ci.yml`](https://github.com/purelifeministriesbrasil/frontend/blob/4a08dfc03ef6f5cc6adf907da5bfa454960a9add/.github/workflows/ci.yml) (ver [Deploy, §8](../operations/deployment.md#8-site-cloudflare-pages)); localmente, de `frontend/.env`.
+
+| Variável | Lida pelo código? | Exemplo | Uso |
 |---|---|---|---|
-| `PUBLIC_SITE_ORIGIN` | sim | `https://purelifeministriesbrasil.org` | Origem canônica |
-| `PUBLIC_API_URL` | sim | `https://api.purelifeministriesbrasil.org` | Base da API; entra no CSP (`connect-src`, `form-action`) |
-| `PUBLIC_TURNSTILE_SITE_KEY` | sim | `0x4AAAA…` | Widget Turnstile (teste: `1x00000000000000000000AA`) |
-| `PUBLIC_ENABLE_PIX_GATEWAY` | não | `false` | `true` liga o PIX dinâmico pela API; qualquer outro valor mostra a chave PIX do CNPJ |
-| `NODE_VERSION` | sim (Pages com Git) | `22` | Versão do Node no build |
+| `PUBLIC_API_URL` | sim | `https://api.purelifeministriesbrasil.org` | Base da API; entra no CSP (`connect-src`, `form-action`) pelo `generate-csp.mjs` |
+| `PUBLIC_TURNSTILE_SITE_KEY` | sim | `0x4AAAA…` | Widget Turnstile (teste: `1x00000000000000000000AA`). No job `deploy`, vem da variável do repositório e o build falha se estiver vazia |
+| `PUBLIC_ENABLE_PIX_GATEWAY` | sim | `false` | `true` liga o PIX dinâmico pela API; qualquer outro valor mostra a chave PIX do CNPJ. O workflow fixa `"false"` |
+| `PUBLIC_SITE_ORIGIN` | **não** (somente declarada em `env.d.ts` e definida na CI) | `https://purelifeministriesbrasil.org` | Nenhum código a lê: a origem está fixa em `site-config.ts` e `astro.config.mjs`. Mantida por convenção |
 
 !!! note
-    O navegador nunca acessa o banco: as antigas variáveis `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_ANON_KEY`
-    foram removidas. No projeto Pages por upload direto, as variáveis acima são definidas no terminal antes do
-    `pnpm build` (ver [Runbook](../operations/deployment.md#8-site-cloudflare-pages)).
+    `NODE_VERSION` **não** é variável deste projeto (não aparece nos repositórios). Node 22 e pnpm 12 são declarados nos workflows. O navegador nunca acessa o banco: as antigas `PUBLIC_SUPABASE_*` foram removidas.
 
 ---
 
@@ -33,7 +46,7 @@ Arquivos de referência (sempre atualizados com comentários):
 
 | Variável | Exemplo | Descrição |
 |---|---|---|
-| `PUBLIC_SITE_ORIGIN` | `https://purelifeministriesbrasil.org` | Única origem aceita (CORS e verificação de `Origin`) |
+| `PUBLIC_SITE_ORIGIN` | `https://purelifeministriesbrasil.org` | Única origem aceita (CORS e verificação de `Origin`); também monta o link de confirmação da newsletter |
 | `ENVIRONMENT` | `production` | `production` proíbe chaves de teste do Turnstile e origens `localhost` |
 | `PAYMENT_PROVIDER` | `asaas` | `asaas` ou `mercadopago` |
 | `PIX_EXPIRATION_MINUTES` | `60` | Validade do QR Code (30 a 43200) |
@@ -57,7 +70,7 @@ Arquivos de referência (sempre atualizados com comentários):
 | `TRIAGE_KEY_V2…` | rotação | Mesma regra; ver [Rotação de Chaves](../operations/key-rotation.md) |
 | `HASH_PEPPER` | sim | `openssl rand -base64 32` (≥ 32 bytes) |
 | `TURNSTILE_SECRET_KEY` | sim | Cloudflare → Turnstile → widget |
-| `RESEND_API_KEY` | newsletter | Resend → API Keys (*Sending access*). Sem ela, triagem/contato funcionam sem aviso à equipe e a newsletter responde 503 |
+| `RESEND_API_KEY` | newsletter (com `EMAIL_FROM` e `STAFF_NOTIFICATION_EMAIL`) | Resend → API Keys (*Sending access*). Sem o trio completo, triagem/contato funcionam sem aviso à equipe e a newsletter responde 503 |
 | `ASAAS_API_KEY` | se Asaas | Asaas → Integrações → API |
 | `ASAAS_WEBHOOK_SECRET` | se Asaas | Valor aleatório definido por você no cadastro do webhook |
 | `ASAAS_DONATION_CUSTOMER_ID` | se Asaas | ID `cus_…` do cliente “Doador Anônimo” |

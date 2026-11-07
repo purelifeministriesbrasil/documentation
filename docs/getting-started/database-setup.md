@@ -3,7 +3,7 @@
 O PostgreSQL do ecossistema fica no **Neon**, na região **AWS São Paulo (`aws-sa-east-1`)**. A API acessa o
 banco por meio do **Cloudflare Hyperdrive** (conexões mantidas abertas na borda). O schema é provisionado
 **exclusivamente** pelas migrations versionadas em
-[`backend/drizzle/`](https://github.com/purelifeministriesbrasil/backend/tree/main/drizzle), a fonte única de
+[`backend/drizzle/`](https://github.com/purelifeministriesbrasil/backend/tree/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/drizzle), a fonte única de
 verdade. Não há SQL de banco no repositório `frontend`.
 
 !!! info "Por que Neon (e não Supabase)"
@@ -79,8 +79,7 @@ select filename, applied_at from schema_migrations order by 1;
 
 ## 6. Ambiente local
 
-Qualquer PostgreSQL 15+ serve para desenvolvimento e testes de integração (ex.: o serviço `postgres:17` usado
-no CI). Para reproduzir a revogação das roles públicas, crie-as antes de migrar:
+Versões **verificadas**: PostgreSQL 16 (execução local da auditoria desta documentação) e PostgreSQL 17 (serviço `postgres:17` do CI do backend). Versões anteriores não foram testadas. Use um banco **descartável**. Para reproduzir a revogação das roles públicas, crie-as antes de migrar:
 
 ```sql
 CREATE ROLE anon NOLOGIN;

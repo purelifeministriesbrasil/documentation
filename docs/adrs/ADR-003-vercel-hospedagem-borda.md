@@ -5,7 +5,7 @@
     agora é publicado no Cloudflare Pages da conta institucional.
 
 
-- **Status**: Aprovado
+- **Status**: Substituído pelo [ADR-007](ADR-007-cloudflare-pages-contas-institucionais.md) (registro histórico; estava Aprovado em 2026-09-25)
 - **Data**: 2026-09-25
 - **Decisores**: Equipe de Engenharia Pure Life Ministries Brasil
 

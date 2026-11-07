@@ -2,7 +2,7 @@
 
 **Documento Canônico de Engenharia de Requisitos e Governança de Dados**  
 **Versão:** 2026-10-28 (Cloudflare Pages & Workers, Neon Postgres)  
-**Conformidade:** LGPD (Lei Federal nº 13.709/2018), ASVS v4.0.3, ISO/IEC/IEEE 29148  
+**Referências:** LGPD (Lei Federal nº 13.709/2018; hipóteses legais pendentes de validação jurídica), ASVS v4.0.3 e ISO/IEC/IEEE 29148 (adotadas como referência, sem certificação ou auditoria de conformidade)  
 
 ---
 
@@ -50,7 +50,7 @@ O ecossistema atende perfis com demandas heterogêneas de sigilo, usabilidade e 
 | **PER-003** | Doador / Mantenedor Ministerial | Público (Anon) | PIX dinâmico instantâneo, recibo transparente, sem fricção |
 | **PER-004** | Aluno / Participante de Conferência ou Viagem | Público (Anon) | Informações claras, contato rápido pelo WhatsApp e pagamento seguro em plataforma parceira |
 | **PER-005** | Conselheiro / Equipe Pastoral Interna | Restrito (Staff) | Decodificação segura de triagens autorizadas, sem exportação em massa |
-| **PER-006** | Encarregado de Dados (DPO / Auditor) | Governança | Relatório de conformidade LGPD, logs de expurgo e integridade |
+| **PER-006** | Encarregado de Dados (DPO / Auditor) | Governança | Relatório dos controles de privacidade LGPD, logs de expurgo e integridade |
 
 ---
 
@@ -60,4 +60,4 @@ Para consulta rápida e manutenção objetiva, a especificação é dividida nos
 
 * [**Requisitos Funcionais (RFs)**](functional.md): Regras de formulários, doações, conferência e editora.
 * [**Regras de Negócio (RNs)**](business-rules.md): Políticas pastorais, maioridade legal (18+), expurgo e limites.
-* [**Requisitos Não-Funcionais & LGPD**](non-functional.md): Padrões de segurança, latência, acessibilidade e conformidade legal.
+* [**Requisitos Não-Funcionais**](non-functional.md): Padrões de segurança, latência, acessibilidade e privacidade (metas e controles; ver as ressalvas na página).

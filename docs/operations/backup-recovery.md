@@ -7,14 +7,18 @@ restauração de serviços em caso de desastre.
 
 ## 1. Metas de Recuperação
 
-- **RPO (Recovery Point Objective)**: dentro da janela de restauração do plano do Neon; complementado por
-  exportação manual semanal (seção 3), o RPO máximo é de 7 dias.
-- **RTO (Recovery Time Objective)**: ≤ 1 hora para restaurar o banco e reapontar o Hyperdrive.
+!!! warning "Objetivos internos, não verificados"
+    Os valores abaixo são **objetivos de planejamento**. Nada no código ou na configuração dos repositórios os comprova, e não há registro de teste de restauração. Confirme no painel do Neon qual é a janela de restauração do plano em uso antes de depender dela.
 
-!!! info "Janela de restauração do Neon"
-    O Neon guarda o histórico do banco e permite restaurar qualquer ponto dentro da janela do plano
-    (*Settings → Instant restore / History retention*). No plano gratuito essa janela é curta (horas), por isso a
-    exportação manual semanal é obrigatória enquanto o plano não mudar.
+| Objetivo | Valor proposto | Situação |
+|---|---|---|
+| RPO | Até 7 dias, **se** a exportação manual semanal (seção 3) for de fato executada; dentro da janela do plano, o histórico do Neon pode ser mais fino | Não verificado; depende de execução humana e do plano do Neon |
+| RTO | 1 hora para restaurar o banco e reapontar o Hyperdrive | Nunca medido; sem simulação registrada |
+
+A janela de histórico do plano gratuito do Neon **não foi confirmada** em fonte oficial nesta auditoria. Consulte *Settings → Instant restore / History retention* no painel.
+
+!!! note "Retenção e backups"
+    Dumps e pontos de restauração podem conter registros que o expurgo diário já removeu do banco ativo. A política de retenção desses arquivos é uma decisão pendente (ver [Controles de Privacidade](../security/lgpd-compliance.md#3-retencao-comportamento-atual-por-tabela)).
 
 ---
 
@@ -31,7 +35,7 @@ restauração de serviços em caso de desastre.
 
 ## 3. Exportação manual (semanal e antes de manutenções)
 
-Use a conexão **direta** do Neon (sem `-pooler`) e um `pg_dump` da mesma versão principal do servidor (18):
+Use a conexão **direta** do Neon (sem `-pooler`) e um `pg_dump` da mesma versão principal do servidor (consulte-a no painel do Neon; a CI do backend usa PostgreSQL 17):
 
 ```bash
 pg_dump "postgresql://<usuario>:<senha>@ep-<endpoint>.c-2.sa-east-1.aws.neon.tech/neondb?sslmode=require" \
@@ -39,7 +43,7 @@ pg_dump "postgresql://<usuario>:<senha>@ep-<endpoint>.c-2.sa-east-1.aws.neon.tec
 ```
 
 O arquivo contém apenas **ciphertext** nos campos sensíveis, mas ainda assim é dado pessoal: guarde-o em
-armazenamento institucional com acesso restrito e apague cópias antigas conforme a política de retenção.
+armazenamento institucional com acesso restrito e apague cópias antigas conforme a política de retenção (ainda não definida).
 
 ---
 

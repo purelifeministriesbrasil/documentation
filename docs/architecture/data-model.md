@@ -1,8 +1,8 @@
 # Modelo de Dados Relacional (Neon Postgres)
 
-Fonte de verdade: [`backend/drizzle/`](https://github.com/purelifeministriesbrasil/backend/tree/main/drizzle)
+Fonte de verdade: [`backend/drizzle/`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/drizzle)
 (`0001_initial.sql` + `0002_supabase_hardening_and_rls.sql`), espelhada coluna a coluna em
-`backend/src/infrastructure/db/schema.ts`. Campos `*_ciphertext` / `*_cipher` são AES-256-GCM com IV próprio
+[`schema.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/infrastructure/db/schema.ts) (baseline `ca9737f`). Campos `*_ciphertext` / `*_cipher` são AES-256-GCM com IV próprio
 (`*_iv`) e `key_version`; o AAD vincula `entidade:id:campo:versão`.
 
 ---
@@ -29,6 +29,8 @@ erDiagram
         date created_month "métrica que sobrevive ao expurgo"
         timestamptz retention_until "created_at + 180 dias"
         timestamptz purged_at
+        text purge_reason
+        text purge_policy_version
     }
     triage_consents {
         uuid id PK
@@ -90,6 +92,11 @@ erDiagram
         text confirm_token_hash "SHA-256 do token"
         text policy_version
         timestamptz consented_at
+        timestamptz confirm_sent_at
+        timestamptz confirm_expires_at
+        timestamptz unsubscribed_at "nenhum código grava"
+        smallint bounce_count
+        timestamptz suppressed_at
     }
     audit_events {
         uuid id PK
@@ -124,7 +131,7 @@ erDiagram
 
 | Ator | Acesso |
 |---|---|
-| Worker (`postgres` via pooler) | Leitura/escrita conforme casos de uso; dados sensíveis só chegam cifrados |
+| Worker (`postgres` via Hyperdrive; o pooler do Neon só entra como reserva se o binding faltar) | Leitura/escrita conforme casos de uso; dados sensíveis só chegam cifrados |
 | `anon`, `authenticated` (Data API) | **Nenhum**: RLS sem políticas + `REVOKE ALL` (inclusive privilégios padrão) |
 | Equipe pastoral | Caixa pastoral (`scripts/pastoral-inbox.mjs`) com motivo obrigatório e registro em `audit_events` |
 | Cron diário | Expurgo de triagens e contatos com `retention_until` vencido |
@@ -133,10 +140,16 @@ erDiagram
 
 ## 4. Retenção (LGPD)
 
-| Dado | Retenção | Mecanismo |
+Resumo do comportamento **implementado**. A tabela completa, os detalhes do expurgo e as decisões pendentes estão em [Controles de Privacidade](../security/lgpd-compliance.md#3-retencao-comportamento-atual-por-tabela).
+
+| Tabela | Expira? | Mecanismo |
 |---|---|---|
-| Triagem (contato + relato) | 180 dias | Cron `0 3 * * *` nulifica e marca `purged`; `created_month` permanece para métricas |
-| Contato institucional | 180 dias | Mesmo cron |
-| Newsletter | Até descadastro | Status `unsubscribed`/`suppressed` |
-| Doações | Obrigação fiscal/contábil | Valores e status; e-mail do doador cifrado |
-| Auditoria | Indeterminada (sem PII) | `ip_hash` pseudonimizado quando usado |
+| `triage_submissions` | Sim, 180 dias | Cron `0 3 * * *` nulifica código, programa, canal, ciphertexts, IVs e versão e marca `purged`; `created_month` permanece |
+| `contact_submissions` | Sim, 180 dias | Mesmo cron; o `subject` não é nulificado |
+| `triage_consents`, `contact_consents` | Não | `revoked_at` existe, mas nenhum código o preenche |
+| `newsletter_subscriptions` | **Não** | Sem rota de descadastro; `unsubscribed_at` nunca é gravado |
+| `donation_intents`, `payment_charges` | **Não** | Prazo contábil/fiscal a definir pela organização |
+| `payment_webhook_events` | **Não** | Sem expurgo |
+| `audit_events` | **Não** | Sem expurgo; `ip_hash` existe e não é preenchido |
+
+Os itens "Não" são **limitações conhecidas e decisões pendentes** (R1 em [Modelagem de Ameaças](../security/threat-model.md#5-riscos-e-pendencias-conhecidos)); nenhum prazo foi definido.

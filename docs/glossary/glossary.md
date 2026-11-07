@@ -1,7 +1,7 @@
 # Glossário de Domínio (DDD) e Engenharia
 
 **Linguagem Ubíqua (*Ubiquitous Language*) do Ecossistema Pure Life Ministries Brasil**  
-**Atualizado em:** 28/10/2026  
+**Atualizado em:** 07/11/2026 (auditoria documental; baseline backend `ca9737f`, frontend `4a08dfc`)  
 **Classificação:** Referência Terminológica para Engenharia e Ministério
 
 ---
@@ -37,9 +37,22 @@
 | **Cloudflare Turnstile** | Verificação anti-robô sem captcha visual. | Protege triagem, contato, doação e newsletter (RF-002). |
 | **Neon Postgres** | PostgreSQL gerenciado e *serverless*, que suspende o processamento quando ocioso e o retoma na conexão seguinte. | Camada de persistência central (região São Paulo), acessada somente pela API (ADR-008). |
 | **Row Level Security (RLS)** | Mecanismo do PostgreSQL que controla, linha a linha, quem pode inserir, consultar ou modificar dados. | Ligado em todas as tabelas **sem políticas**: nenhuma role pública acessa os dados; só a API. |
-| **Expurgo Automático LGPD** | Destruição irreversível de dados sensíveis após a janela máxima de retenção de 180 dias. | Cron diário do Worker sobre o banco Neon. |
-| **Idempotência (Lease Atômico)** | Mecanismo que impede que um mesmo evento de webhook de pagamento seja processado mais de uma vez. | Webhooks de cobrança PIX (ADR-005). |
+| **Expurgo Automático** | Nulificação irreversível dos campos pessoais de triagens e contatos após 180 dias. | Cron diário do Worker sobre o Neon. **Só triagens e contatos** expiram; as demais tabelas não têm expurgo (limitação conhecida, R1). |
+| **Idempotência** | Propriedade de repetir uma operação sem repetir seu efeito. | `Idempotency-Key` nos formulários e na criação de PIX; lease nos webhooks (ADR-005). |
+| **Lease** | Reserva temporária (60 s, máx. 5 tentativas) de um evento de webhook por uma execução do Worker; esgotadas as tentativas, o evento vai para `dead_letter`. | Tabela `payment_webhook_events`. |
 | **Caixa Pastoral** | CLI auditada (`backend/scripts/pastoral-inbox.mjs`) que decifra localmente triagens e contatos e registra cada leitura em `audit_events`. | Substitui o editor de tabelas do banco, que exibe apenas ciphertext. |
 | **Zod (`zod/mini`)** | Biblioteca de esquemas tipados em TypeScript; `zod/mini` é a API funcional e mais leve da mesma versão. | Validação idêntica no navegador e na API (`src/schemas/` nos dois repositórios). |
 | **Redirecionamento 301** | Resposta HTTP que indica mudança permanente de endereço. | `public/_redirects` com os endereços do site antigo (RF-017). |
 | **CSP (*Content Security Policy*)** | Cabeçalho que restringe as origens de scripts, estilos e conexões que a página pode usar. | Gerada no build com *hashes* dos scripts inline (`scripts/generate-csp.mjs`). |
+| **Porta (*port*)** | Interface em `application/ports/` que descreve o que um caso de uso precisa do mundo externo. | Ex.: `EncryptionProvider`, `PaymentGateway`, `Notifier`. Ver [Camadas do Backend](../architecture/backend-layers.md). |
+| **Adaptador** | Implementação de uma porta em `infrastructure/`. | Ex.: `createAesGcmProvider`, `createTurnstileAdapter`. |
+| **Caso de uso** | Função de `application/usecases/` que executa uma regra de negócio usando portas. | Ex.: `submit-triage`, `create-pix-charge`. |
+| **Composition root** | Único ponto que instancia adaptadores e os liga aos handlers. | `backend/src/index.ts`. |
+| **Unit of Work** | Operação que agrupa várias gravações numa transação. | `triage-unit-of-work` (insere a triagem, cifra, grava consentimento). |
+| **HMAC e pepper** | Hash com chave: o HMAC-SHA256 do e-mail usa o segredo `HASH_PEPPER`, o que permite deduplicar sem guardar o e-mail em claro. | `email_hash`, `donor_email_hash`. |
+| **PII** | Informação pessoalmente identificável (nome, e-mail, telefone, relato). | Removida dos logs pelo scrubber. |
+| **Double opt-in** | Inscrição que só vale após confirmação por link enviado ao e-mail. | Newsletter (token de 48 h). |
+| **Migration e checksum** | Arquivo SQL versionado em `backend/drizzle/`; o runner grava o SHA-256 e recusa migration já aplicada que tenha sido editada. | `scripts/migrate.mjs`, tabela `schema_migrations`. |
+| **Cron Trigger** | Agendamento do Cloudflare Worker (`0 3 * * *`, 03:00 UTC). | Dispara `scheduled()` para o expurgo. |
+| **Ilha Preact × componente Astro** | Componente `.astro` é renderizado no build e não envia JavaScript; ilha Preact (`.tsx` com `client:*`) é hidratada no navegador. | Ver [Estrutura do Frontend](../architecture/frontend-structure.md). |
+| **Dead letter** | Estado final de um evento de webhook que esgotou as tentativas. | Gera o log `webhook.dead_letter` e exige ação manual. |

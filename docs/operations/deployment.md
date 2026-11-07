@@ -13,6 +13,9 @@ Pure Life Ministries Brasil**, com o site no **Cloudflare Pages**, a API no **Cl
 
 ## Situação atual (28/10/2026)
 
+!!! warning "Registro histórico"
+    A tabela abaixo é o **registro de 28/10/2026**, preservado como histórico. Ela **não** representa uma verificação do ambiente de produção feita em 07/11/2026 (data desta auditoria da documentação), que não teve acesso às contas Cloudflare, Neon, Resend nem ao registrador. Confirme o estado atual no painel de cada serviço antes de agir com base nela.
+
 | Etapa | Situação | Observação |
 |---|---|---|
 | 1. Chaves criptográficas | ✅ Concluída | `TRIAGE_KEY_V1` e `HASH_PEPPER` no cofre |
@@ -195,7 +198,7 @@ pnpm exec wrangler secret put RESEND_API_KEY
 # Gateway (somente se ligado): ASAAS_* ou MERCADOPAGO_*
 
 pnpm verify                          # lint + fronteiras + typecheck + testes
-pnpm deploy                          # publica e associa api.purelifeministriesbrasil.org
+pnpm run deploy                      # publica e associa api.purelifeministriesbrasil.org
 ```
 
 !!! info "Antes da zona ficar ativa"
@@ -223,8 +226,25 @@ das chaves inválidas.
 
 ## 8. Site: Cloudflare Pages
 
-O projeto `purelife-site` foi criado por **upload direto** (sem integração com o GitHub). Cada publicação é
-feita a partir de um build local:
+O projeto `purelife-site` recebe o site de duas formas. O caminho normal é o **pipeline do GitHub Actions** do repositório `frontend`; o upload manual fica como contingência.
+
+### 8.1 Pipeline automático (padrão)
+
+[`.github/workflows/ci.yml`](https://github.com/purelifeministriesbrasil/frontend/blob/4a08dfc03ef6f5cc6adf907da5bfa454960a9add/.github/workflows/ci.yml) do `frontend`:
+
+| Job | Quando roda | O que faz |
+|---|---|---|
+| `verify` | `push` e `pull_request` para `main` | pnpm 12 + Node 22, `pnpm install --frozen-lockfile`, `pnpm ci:verify` (typecheck, build com geração do CSP, verificações de topologia e de estilo inline) com valores públicos de teste |
+| `deploy` | somente `push` em `main`, depois de `verify`, no *environment* `production` | Repete o build com `PUBLIC_TURNSTILE_SITE_KEY` vinda da variável do repositório (falha se vazia) e executa `npx wrangler@3.114.0 pages deploy dist --project-name=purelife-site --branch=main` |
+
+O deploy usa o segredo `CLOUDFLARE_API_TOKEN` do repositório e o `concurrency` `pages-production` (sem cancelar execuções em andamento). `PUBLIC_ENABLE_PIX_GATEWAY` fica `"false"` no pipeline: **ligar o PIX dinâmico exige alterar o workflow** (alteração fora do escopo desta documentação).
+
+!!! info "O que não foi verificado"
+    A existência do segredo `CLOUDFLARE_API_TOKEN`, da variável `PUBLIC_TURNSTILE_SITE_KEY` e do *environment* `production` no GitHub, e o resultado de execuções reais do job `deploy`, **não foram verificados** nesta auditoria; o fluxo acima descreve o que o workflow declara.
+
+### 8.2 Publicação manual (contingência)
+
+A partir de um build local:
 
 ```bash
 cd frontend
@@ -241,8 +261,7 @@ pnpm exec wrangler pages deploy ../frontend/dist --project-name purelife-site --
   `https://<branch>.purelife-site.pages.dev`, útil para revisão antes do merge.
 - O build gera `dist/_headers` com o CSP calculado (hashes dos scripts inline + origem da API) e copia
   `public/_redirects` com os redirecionamentos 301 do site antigo.
-- Para publicar automaticamente a cada merge, crie um **API Token** da Cloudflare (permissão *Cloudflare Pages:
-  Edit*) e use-o num workflow do GitHub Actions com o mesmo comando acima.
+- `PUBLIC_SITE_ORIGIN` é definida no pipeline mas **nenhum código do frontend a lê** (a origem está fixa em `site-config.ts` e `astro.config.mjs`).
 
 **Verificação**:
 
@@ -277,7 +296,7 @@ antigo continua abrindo e os e-mails do Zoho continuam chegando.
 
 Com a zona ativa:
 
-1. **API**: `cd backend && pnpm deploy` associa `api.purelifeministriesbrasil.org`.
+1. **API**: `cd backend && pnpm run deploy` associa `api.purelifeministriesbrasil.org`.
 2. **Resend**: clique em *Verify* (ou aguarde a verificação automática).
 3. **Site**: em *Workers & Pages → purelife-site → Custom domains*, adicione `purelifeministriesbrasil.org` e
    `www.purelifeministriesbrasil.org`. A Cloudflare substitui o registro A do WordPress. Crie uma *Redirect
@@ -336,7 +355,6 @@ Com a zona ativa:
   recorrência automática (assinatura no gateway) ainda não foi implementada.
 - **Painel pastoral**: a leitura de dados cifrados é feita pela CLI auditada `scripts/pastoral-inbox.mjs`; um
   painel web (ex.: protegido por Cloudflare Access) é evolução recomendada.
-- **Publicação do site**: o projeto Pages usa upload direto; a automação por GitHub Actions depende de um API
-  Token da Cloudflare.
+- **Publicação do site**: o deploy automático existe no workflow do `frontend` (seção 8.1); depende do segredo `CLOUDFLARE_API_TOKEN`, cuja configuração não foi verificada.
 - **Wrangler 3**: o repositório usa Wrangler 3; localmente o runtime cai para `compatibility_date` 2025-07-18.
   Atualizar para Wrangler 4 é recomendado em uma mudança dedicada.
