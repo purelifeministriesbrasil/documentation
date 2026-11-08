@@ -48,7 +48,7 @@ No pipeline, os valores vêm do workflow [`ci.yml`](https://github.com/purelifem
 |---|---|---|
 | `PUBLIC_SITE_ORIGIN` | `https://purelifeministriesbrasil.org` | Única origem aceita (CORS e verificação de `Origin`); também monta o link de confirmação da newsletter |
 | `ENVIRONMENT` | `production` | `production` proíbe chaves de teste do Turnstile e origens `localhost` |
-| `PAYMENT_PROVIDER` | `asaas` | `asaas` ou `mercadopago` |
+| `PAYMENT_PROVIDER` | (não definido) | `asaas` ou `mercadopago`. **Gateway ainda não escolhido:** sem a variável, doações dinâmicas e webhook respondem 503 e o site usa a chave PIX manual |
 | `PIX_EXPIRATION_MINUTES` | `60` | Validade do QR Code (30 a 43200) |
 | `TRIAGE_KEY_CURRENT_VERSION` | `1` | Versão de chave usada para novas cifras |
 | `EMAIL_FROM` | `Pure Life Ministries Brasil <nao-responda@purelifeministriesbrasil.org>` | Remetente |

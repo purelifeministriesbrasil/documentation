@@ -87,6 +87,38 @@ Os limites exatos de bytes por rota estão na página de [Schemas comuns](../sch
 | Retenção e destino dos Workers Logs | Dependem do plano e da configuração da conta; não verificado |
 | Alerta para `cron.purge_failed` / `cron.purge_skipped` | Falha de uma etapa do expurgo envia e-mail (Resend, sem PII) para `STAFF_NOTIFICATION_EMAIL`, no máximo um a cada 3 dias por etapa; o envio real ainda não foi exercitado. O evento `cron.purge_skipped` continua só em log |
 
-### Recomendação operacional (pendente de decisão)
+## 7. Monitoramento externo e alertas (guia de configuração)
 
-Definir, na conta Cloudflare, alertas sobre os eventos `webhook.dead_letter`, `cron.purge_failed`, `cron.purge_skipped` e `request.unhandled_error`, e consultar com `wrangler tail`. Ver [Deploy](deployment.md).
+!!! warning "Recomendação, não configurado"
+    Nada desta seção existe hoje no código ou foi verificado nas contas. O passo a passo para o responsável está em `entrega-cliente/guia-pedro.md` (pasta de arquivos do projeto). Os nomes de menu variam conforme o plano; confirme no painel.
+
+### 7.1 Monitor de disponibilidade (uptime)
+
+| O que monitorar | URL | Critério de sucesso | Intervalo sugerido |
+|---|---|---|---|
+| Site | `https://purelifeministriesbrasil.org/` | HTTP 200 e texto "Pure Life Ministries" | 5 min |
+| API (Worker no ar) | `https://api.purelifeministriesbrasil.org/health` | HTTP 200 e `"status":"healthy"` | 5 min |
+| Sitemap | `https://purelifeministriesbrasil.org/sitemap-index.xml` | HTTP 200 | 1 h |
+
+Qualquer serviço de uptime com alerta por e-mail serve (Cloudflare Health Checks, se o plano incluir, ou um serviço externo com plano gratuito). O destino do alerta deve ser uma caixa que alguém lê (a mesma de `STAFF_NOTIFICATION_EMAIL` ou outra definida pelo ministério). **Limite:** `/health` não consulta o banco; 200 prova só que o Worker responde. Um erro de banco só aparece nos logs (`request.unhandled_error`) ou no teste ponta a ponta.
+
+### 7.2 Alertas sobre os logs
+
+| Evento | Gravidade | Ação esperada |
+|---|---|---|
+| `cron.purge_failed`, `cron.purge_step_failed`, `cron.purge_skipped` | Alta | Expurgo não rodou ou falhou numa etapa: conferir o e-mail de alerta e os logs do período (ainda não há runbook de execução manual; pendência R3) |
+| `config.invalid` | Alta | Segredo ausente ou inválido (aparecem só os nomes); corrigir o segredo |
+| `request.unhandled_error` | Alta | Abrir o log do período e identificar o `code` |
+| `webhook.dead_letter` | Média | Só relevante se um gateway for adotado |
+| `rate_limit.would_block` / `rate_limit.blocked` | Informativa | Avaliar volume antes de trocar `RATE_LIMIT_MODE` para `enforce` |
+| `email.send_failed` | Média | Verificar domínio e chave no Resend |
+
+Consulta manual, sem painel: `cd backend && pnpm exec wrangler tail --format json` (somente leitura) e filtre por `event`. No painel: *Workers e Pages → purelife-api → Observabilidade*, filtro por `event`.
+
+### 7.3 O que fazer quando um alerta chegar
+
+1. Registrar data/hora e o evento.
+2. Reproduzir com `curl` o endpoint afetado (apenas leitura).
+3. Se for segredo/configuração, corrigir pelo painel ou `wrangler secret put` (nunca colar valores em chats ou issues).
+4. Se for o banco, ver o status do Neon e o [runbook de backup](backup-recovery.md).
+5. Anotar a causa e o que mudou.

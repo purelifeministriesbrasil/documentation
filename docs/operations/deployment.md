@@ -156,7 +156,7 @@ Por decisão da diretoria, o site exibe a **chave PIX do CNPJ** com botão de co
 WhatsApp (`PUBLIC_ENABLE_PIX_GATEWAY=false`). Para ligar o PIX dinâmico, escolha **um** provedor, defina
 `PAYMENT_PROVIDER` em `backend/wrangler.toml` e publique o site com `PUBLIC_ENABLE_PIX_GATEWAY=true`.
 
-=== "Asaas (padrão)"
+=== "Asaas"
 
     1. Conta Asaas aprovada no CNPJ do ministério, com **chave PIX** cadastrada.
     2. *Integrações → API*: gere a chave de produção → `ASAAS_API_KEY` (cofre).

@@ -79,3 +79,17 @@ Limitações da reprodução: o PostgreSQL 17.5 veio de um binário embutido (`e
 - Wrangler: o backend foi atualizado para o Wrangler 4 (`^4.158.0`, PR #14) e validado com `wrangler deploy --dry-run`, sem deploy real; o primeiro deploy manual deve ser conferido. O deploy do frontend na CI ainda usa `wrangler@3.114.0 pages deploy`, fora do escopo desta mudança.
 
 Riscos relacionados: [R1–R9](../security/threat-model.md#5-riscos-e-pendencias-conhecidos).
+
+---
+
+## 6. Acessibilidade e desempenho: medição local (07-08/11/2026)
+
+Método, repetível: `pnpm build` no frontend; servir `dist/` com um servidor estático (`python3 -m http.server`); abrir cada página no Chromium (Playwright) em 1280 px e 375 px; rodar `axe-core` com as regras WCAG 2.0/2.1 A e AA e *best-practices*; rodar Lighthouse (mobile e desktop) em sete páginas.
+
+| Medida | Resultado | Limite |
+|---|---|---|
+| axe-core, 16 páginas × 2 larguras | 4 regras violadas antes; **0 violações** depois das correções (frontend #13) | Teste automático cobre só parte do WCAG; não substitui leitor de tela e navegação por teclado feitos por pessoas |
+| Lighthouse local | Acessibilidade 100 e SEO 100 nas 7 páginas; desempenho 96 a 100; melhor prática 96 a 100 | Sem CDN, sem os cabeçalhos do Cloudflare e sem rede real: **não é medição do site publicado** |
+
+**Pendente (R6):** repetir Lighthouse (PageSpeed Insights) e axe contra o domínio publicado, e testar leitor de tela (NVDA ou VoiceOver) nos formulários de contato, triagem e newsletter.
+
