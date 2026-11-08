@@ -29,7 +29,7 @@ Pure Life Ministries Brasil**, com o site no **Cloudflare Pages**, a API no **Cl
 | 9. Zona DNS e troca de nameservers | ⏳ Aguardando registrador | Registro A de origem criado; falta trocar os nameservers na eNom |
 | 10. Domínio no site e na API | ⏳ Depende da etapa 9 | Ver [Virada do domínio](#10-virada-do-dominio) |
 | 11. Testes de fumaça | ⏳ Depende da etapa 10 | — |
-| 12. Desativação do legado | ⏳ Após a virada | WordPress, Supabase, Vercel e contas pessoais |
+| 12. Desativação do legado | ⏳ Após a virada | WordPress, Supabase e contas pessoais (a Vercel já não faz parte do projeto) |
 
 ---
 
@@ -328,7 +328,7 @@ Com a zona ativa:
    da diretoria, **nenhum dado** do site antigo (clientes, pedidos, doações, newsletter) é importado ou mantido;
    o backup recebido deve ser descartado. Ver [Migração do Site Antigo](legacy-migration.md).
 2. **Supabase**: o projeto foi substituído pelo Neon; exclua-o em *Settings → General → Delete project*.
-3. **Vercel**: remova o projeto e os domínios; o `vercel.json` foi retirado do repositório.
+3. **Vercel**: não faz mais parte do projeto (confirmado pelo responsável em 07/11/2026); o `vercel.json` foi retirado do repositório. Nada a fazer, exceto conferir que nenhum domínio ainda aponta para ela.
 4. **Cloudflare pessoal**: remova Workers, rotas e widgets Turnstile antigos.
 5. **Rotacione** qualquer credencial que tenha circulado fora do cofre (senhas de contas, chaves de API,
    senha do banco). Após trocar a senha do Neon, atualize o Hyperdrive e o segredo:
