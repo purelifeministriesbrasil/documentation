@@ -111,7 +111,8 @@ mkdocs serve
 
 Todo push no `main` compila com `mkdocs build --strict` e publica no GitHub Pages
 ([`deploy-pages.yml`](.github/workflows/deploy-pages.yml)). Qualquer aviso ou link quebrado interrompe a
-publicação. **Pull requests não são validados automaticamente** (não há workflow em `pull_request`): rode `mkdocs build --strict` localmente antes de abrir o PR.
+publicação. Pull requests para `main` são validados por [`validate-docs.yml`](.github/workflows/validate-docs.yml)
+(check **`mkdocs build --strict`**), que compila sem publicar; rodar o mesmo comando localmente antes do PR continua recomendado.
 
 ---
 

@@ -56,6 +56,7 @@ Além disso, o código evita colocar mensagens de erro de drivers nos logs: [`er
 | `rate_limit.would_block` / `rate_limit.blocked` | warn | `endpoint`, `mode` | `index.ts` (`would_block` no modo `log`; `blocked` em `enforce`, com resposta 429) |
 | `rate_limit.binding_missing` / `rate_limit.check_failed` | warn | `endpoint` | `infrastructure/security/rate-limit.ts` (fail-open) |
 | `asaas.reconcile_blocked` | warn | `reason` | `infrastructure/payments/asaas.ts` |
+| `usecase.infrastructure_failure` | error | `operation`, `error`, `cause` (só código/nome do erro) | `presentation/http.ts` — após backend#16; antes, falhas de banco nos casos de uso não geravam log |
 | `asaas.charge_reused` / `asaas.stale_charge_cancelled` | info | (sem PII) | `asaas.ts` |
 
 ## 4. Respostas HTTP e classificação
