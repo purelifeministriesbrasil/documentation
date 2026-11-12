@@ -93,3 +93,22 @@ Método, repetível: `pnpm build` no frontend; servir `dist/` com um servidor es
 
 **Pendente (R6):** repetir Lighthouse (PageSpeed Insights) e axe contra o domínio publicado, e testar leitor de tela (NVDA ou VoiceOver) nos formulários de contato, triagem e newsletter.
 
+
+## Verificações acrescentadas no fechamento técnico (2026-11-12)
+
+Valem após o merge de backend#16 e frontend#15.
+
+| Repositório | Verificação | O que prova |
+|---|---|---|
+| `backend` | `tests/migrate-lib.test.ts`, `tests/migrate.db.test.ts` | Checksum independente de EOL, dry-run sem escrita, lock contra execução concorrente, recusa de nome inválido/órfão/fora de ordem |
+| `backend` | `tests/rls.db.test.ts` | Com `GRANT SELECT` explícito, `anon` lê 0 linhas nas 9 tabelas (RLS ativa), com controle negativo |
+| `backend` | `tests/pastoral-inbox.db.test.ts` | `pastoral-inbox list` não exibe nada se a auditoria falhar |
+| `backend` | `tests/rate-limit.test.ts` | Modos `log` (só registra) e `enforce` (429) nas três rotas da newsletter, com contadores independentes |
+| `backend` | `tests/scrubber-values.test.ts` | PII redigida pelo valor; campos reservados do log não sobrescritos |
+| `frontend` | `verify-dist-secrets.mjs` (em `ci:verify`) | Nenhum padrão de credencial de servidor no build |
+| `frontend` | `verify-topology.mjs` | Falha se `'unsafe-inline'`/`'unsafe-eval'` voltar à CSP |
+| `frontend` | job `deploy` | Recusa chave de teste do Turnstile |
+
+Os testes `*.db.test.ts` criam um banco descartável a partir de `TEST_DATABASE_URL` e o removem ao final;
+sem a variável eles são pulados — no CI ela é sempre definida, e um run com testes pulados não conta como
+aprovação.

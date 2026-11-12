@@ -118,6 +118,7 @@ nav:
       - Modelagem de Ameaças (Threat Model): security/threat-model.md
       - Controles de Privacidade (LGPD): security/lgpd-compliance.md
       - Arquitetura Criptográfica: security/crypto-architecture.md
+      - Inventário de Retenção: security/data-retention.md
       - Política de Segurança da Informação: governance/security-policy.md
   - Contratos:
       - Contratos Comuns: schemas/common-schema.md
@@ -130,6 +131,9 @@ nav:
       - Variáveis de Ambiente: getting-started/environment.md
       - Configuração do Banco (Neon): getting-started/database-setup.md
       - Runbook de Implantação (Contas Institucionais): operations/deployment.md
+      - Checklist de Go-live: operations/go-live-checklist.md
+      - Proteção de Branches: operations/branch-protection.md
+      - Resposta a Incidentes: operations/incident-response.md
       - Hardening do Banco: operations/database-hardening.md
       - Gestão de Conteúdo do Site: operations/content-management.md
       - Migração do Site Antigo: operations/legacy-migration.md

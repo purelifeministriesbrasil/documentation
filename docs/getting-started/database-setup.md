@@ -47,6 +47,19 @@ O runner (`scripts/migrate.mjs`) aplica cada arquivo `drizzle/NNNN_nome.sql` em 
 arquivo, registra nome e SHA-256 em `public.schema_migrations` e **recusa** migrations já aplicadas que tenham
 sido editadas (crie sempre uma nova migration).
 
+!!! info "Comportamento do runner (branch `plm/closure/backend-hardening`, backend#16 — vale após o merge)"
+    - **Checksum independente do fim de linha:** o SHA-256 é calculado sobre o conteúdo normalizado para LF.
+      Registros gravados pela versão anterior (hash dos bytes crus, LF no CI/Linux ou CRLF num Windows com
+      `core.autocrlf`) continuam aceitos. Antes, rodar a migration a partir do Windows e depois no CI acusava
+      "checksum divergente".
+    - **`--dry-run` só lê:** não cria `schema_migrations` nem toma lock.
+    - **Advisory lock** (`pg_advisory_lock`) serializa execuções concorrentes.
+    - **Falha sem aplicar nada** quando há arquivo `.sql` com nome fora do padrão, registro em
+      `schema_migrations` sem arquivo correspondente, ou migration pendente que ordena antes de uma já aplicada.
+    - O diretório `drizzle/` é resolvido a partir do script, não do diretório atual.
+    - Faça sempre backup verificado antes de aplicar em produção (ver [Backup & Recuperação](../operations/backup-recovery.md)
+      e o [checklist de go-live](../operations/go-live-checklist.md)).
+
 | Migration | Conteúdo |
 |---|---|
 | `0001_initial.sql` | Extensão `pgcrypto`, tabelas, constraints de domínio, índices |

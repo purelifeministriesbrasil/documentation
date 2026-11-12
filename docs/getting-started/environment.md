@@ -47,13 +47,13 @@ No pipeline, os valores vêm do workflow [`ci.yml`](https://github.com/purelifem
 | Variável | Exemplo | Descrição |
 |---|---|---|
 | `PUBLIC_SITE_ORIGIN` | `https://purelifeministriesbrasil.org` | Única origem aceita (CORS e verificação de `Origin`); também monta o link de confirmação da newsletter |
-| `ENVIRONMENT` | `production` | `production` proíbe chaves de teste do Turnstile e origens `localhost` |
+| `ENVIRONMENT` | `production` | `production` proíbe chaves de teste do Turnstile e origens `localhost`. Após backend#16: só `development` ou `test` relaxam esses controles; ausente, vazio ou desconhecido conta como produção |
 | `PAYMENT_PROVIDER` | (não definido) | `asaas` ou `mercadopago`. **Gateway ainda não escolhido:** sem a variável, doações dinâmicas e webhook respondem 503 e o site usa a chave PIX manual |
 | `PIX_EXPIRATION_MINUTES` | `60` | Validade do QR Code (30 a 43200) |
 | `TRIAGE_KEY_CURRENT_VERSION` | `1` | Versão de chave usada para novas cifras |
 | `EMAIL_FROM` | `Pure Life Ministries Brasil <nao-responda@purelifeministriesbrasil.org>` | Remetente |
 | `STAFF_NOTIFICATION_EMAIL` | `purelifeministriesbrasil1986@gmail.com` | Recebe avisos (sem dados pessoais) |
-| `ASAAS_API_BASE_URL` | `https://api.asaas.com/v3` | Sandbox: `https://api-sandbox.asaas.com/v3` |
+| `ASAAS_API_BASE_URL` | `https://api.asaas.com/v3` | Sandbox: `https://api-sandbox.asaas.com/v3`. Após backend#16 é **obrigatório** com `PAYMENT_PROVIDER=asaas` (sem padrão; ausente → 503) |
 
 ## 3. Backend Worker — bindings
 
