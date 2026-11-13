@@ -1,122 +1,173 @@
-<p align="center">
-  <img src="docs/assets/images/PLM_Logo.png" alt="Pure Life Ministries Brasil" width="96" />
-</p>
+# purelife-docs
 
-<h1 align="center">purelife-docs</h1>
+Documentação técnica do ecossistema digital do **Pure Life Ministries Brasil**: arquitetura, requisitos, ADRs, contratos de dados, segurança, operação e governança.
 
-<p align="center">
-  Documentação técnica do ecossistema digital do <strong>Pure Life Ministries Brasil</strong>
-</p>
+[![Validate docs](https://github.com/purelifeministriesbrasil/documentation/actions/workflows/validate-docs.yml/badge.svg)](https://github.com/purelifeministriesbrasil/documentation/actions/workflows/validate-docs.yml)
+[![Deploy MkDocs to GitHub Pages](https://github.com/purelifeministriesbrasil/documentation/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/purelifeministriesbrasil/documentation/actions/workflows/deploy-pages.yml)
+[![Licença MIT](https://img.shields.io/badge/Licen%C3%A7a-MIT-blue.svg)](LICENSE)
 
-<p align="center">
-  <a href="https://purelifeministriesbrasil.github.io/documentation/"><img src="https://img.shields.io/badge/Docs-online-044A82.svg" alt="Documentação online" /></a>
-  <a href="https://squidfunk.github.io/mkdocs-material/"><img src="https://img.shields.io/badge/MkDocs-Material-526CFE.svg" alt="MkDocs Material" /></a>
-  <a href="./docs/security/lgpd-compliance.md"><img src="https://img.shields.io/badge/LGPD-controles%20t%C3%A9cnicos-blue.svg" alt="Controles de privacidade (LGPD)" /></a>
-  <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Seguran%C3%A7a-pol%C3%ADtica-red.svg" alt="Política de segurança" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-blue.svg" alt="Licença MIT" /></a>
-</p>
-
-<p align="center">
-  <strong><a href="https://purelifeministriesbrasil.github.io/documentation/">Abrir a documentação →</a></strong>
-</p>
-
----
+> Parte do ecossistema Pure Life Ministries Brasil: [backend](https://github.com/purelifeministriesbrasil/backend) · [frontend](https://github.com/purelifeministriesbrasil/frontend) · [documentação](https://github.com/purelifeministriesbrasil/documentation)
 
 ## Sumário
 
-1. [O ecossistema](#1-o-ecossistema)
-2. [O que está documentado](#2-o-que-está-documentado)
-3. [Estrutura do repositório](#3-estrutura-do-repositório)
-4. [Como executar localmente](#4-como-executar-localmente)
-5. [Publicação](#5-publicação)
-6. [Governança](#6-governança)
+1. [Visão geral](#1-visão-geral)
+2. [Início rápido](#2-início-rápido)
+3. [Comandos](#3-comandos)
+4. [Estrutura do repositório](#4-estrutura-do-repositório)
+5. [Configuração](#5-configuração)
+6. [Qualidade e CI](#6-qualidade-e-ci)
+7. [Publicação e reversão](#7-publicação-e-reversão)
+8. [Manutenção](#8-manutenção)
+9. [Governança](#9-governança)
 
----
+## 1. Visão geral
 
-## 1. O ecossistema
-
-Regra de ouro: **“Front com Front, Back com Back e Docs com Docs.”**
+Site MkDocs Material publicado no GitHub Pages: **<https://purelifeministriesbrasil.github.io/documentation/>**.
 
 | Repositório | Responsabilidade | Stack | Hospedagem |
 |---|---|---|---|
-| [`frontend`](https://github.com/purelifeministriesbrasil/frontend) | Site institucional e formulários | Astro 5 (estático), Tailwind v4, ilhas Preact | Cloudflare Pages |
-| [`backend`](https://github.com/purelifeministriesbrasil/backend) | API: formulários, PIX, criptografia, expurgo LGPD | Cloudflare Worker (Hono), Drizzle, Neon via Hyperdrive | Cloudflare Workers |
-| [`documentation`](https://github.com/purelifeministriesbrasil/documentation) | Arquitetura, requisitos, ADRs, runbooks e governança | MkDocs Material, Mermaid | GitHub Pages |
+| [`backend`](https://github.com/purelifeministriesbrasil/backend) | API: formulários, PIX, criptografia, expurgo LGPD | Cloudflare Worker (Hono), Neon | Cloudflare Workers |
+| [`frontend`](https://github.com/purelifeministriesbrasil/frontend) | Site institucional e formulários | Astro (estático) | Cloudflare Pages |
+| [`documentation`](https://github.com/purelifeministriesbrasil/documentation) | Este repositório | MkDocs Material, Mermaid | GitHub Pages |
 
----
-
-## 2. O que está documentado
+### O que está documentado
 
 | Seção | Conteúdo |
 |---|---|
-| **Primeiros passos** | Início rápido, matriz de variáveis de ambiente, configuração do banco (Neon) |
-| **Arquitetura** | Visão do sistema, escopo dos repositórios, camadas do backend, estrutura do frontend, diagramas de sequência, modelo de dados |
-| **Requisitos** | Requisitos funcionais (RF), não funcionais (RNF) e regras de negócio (RN) |
-| **Decisões (ADRs)** | ADR-001 a ADR-009 — do Astro ao Neon + Hyperdrive |
-| **Contratos de dados** | Triagem, contato, newsletter e doação (gerados do código real) |
-| **Segurança** | Modelo de ameaças (matriz com evidências e riscos R1–R9), arquitetura criptográfica, controles de privacidade (LGPD) |
-| **Qualidade** | Testes, pipelines de CI/CD e limitações conhecidas |
-| **Operações** | Implantação, gestão de conteúdo, migração do site antigo, backup, rotação de chaves, observabilidade, comandos |
-| **Design e glossário** | Design system e linguagem ubíqua do domínio |
+| Início | Página inicial do portal |
+| Começar | Início rápido, ambiente, banco de dados |
+| Manutenção do site | Guia do Mantenedor, gestão de conteúdo |
+| Arquitetura | Visão do sistema, camadas, modelo de dados e ADRs |
+| Contratos de dados | Esquemas dos formulários e integrações |
+| Segurança & LGPD | Modelo de ameaças, criptografia, controles de privacidade |
+| Operação | Implantação, go-live, backup, rotação de chaves, incidentes, observabilidade, banco |
+| Qualidade & DevOps | Testes e CI/CD, proteção de branches, dependências |
+| Requisitos | RF, RNF e regras de negócio |
+| Governança | Contribuição, estilo da documentação, código de conduta, política de segurança, licença, glossário |
 
----
+## 2. Início rápido
 
-## 3. Estrutura do repositório
+Pré-requisito: Python (a CI usa 3.12).
 
-```
-documentation/
-├── docs/
-│   ├── index.md            # Página inicial do portal
-│   ├── getting-started/    # Início rápido, ambiente, banco
-│   ├── architecture/       # Visão geral, repositórios, camadas, frontend, sequências, modelo de dados
-│   ├── quality/            # Testes e CI/CD
-│   ├── requirements/       # RF, RNF e regras de negócio
-│   ├── adrs/               # Registros de decisão (ADR-001 a ADR-009)
-│   ├── schemas/            # Contratos de dados
-│   ├── security/           # Ameaças, criptografia, LGPD
-│   ├── operations/         # Runbooks
-│   ├── design-system/      # Cores, tipografia e componentes
-│   ├── glossary/           # Glossário
-│   ├── governance/         # Conduta, contribuição, segurança e licença
-│   └── assets/             # Logos, CSS e scripts do tema
-├── mkdocs.yml              # Tema, extensões e navegação (toda página nova entra em `nav`)
-├── requirements.txt        # Dependências Python
-└── .github/                # Publicação no GitHub Pages, modelos de issue e de pull request
-```
-
-Cada pasta de `docs/` é uma seção do site; a ordem e os títulos vêm do `nav` do `mkdocs.yml`.
-
----
-
-## 4. Como executar localmente
-
-Pré-requisito: **Python 3.11+** (a CI usa 3.12).
+Com `uv` (recomendado):
 
 ```bash
-# com uv (recomendado)
-uv run --with-requirements requirements.txt mkdocs serve          # http://127.0.0.1:8000
-uv run --with-requirements requirements.txt mkdocs build --strict # mesma validação do CI
+uv run --with-requirements requirements.txt mkdocs serve
+```
 
-# ou com venv
+```bash
+uv run --with-requirements requirements.txt mkdocs build --strict
+```
+
+Alternativa com `venv`:
+
+```bash
 python -m venv .venv
-.venv\Scripts\Activate.ps1        # Windows (PowerShell)
-source .venv/bin/activate         # Linux / macOS
+```
+
+```bash
+source .venv/bin/activate
+```
+
+No Windows (PowerShell), use `.venv\Scripts\Activate.ps1` no lugar do comando acima.
+
+```bash
 pip install -r requirements.txt
+```
+
+```bash
 mkdocs serve
 ```
 
----
+```bash
+mkdocs build --strict
+```
 
-## 5. Publicação
+O servidor local responde em `http://127.0.0.1:8000`.
 
-Todo push no `main` compila com `mkdocs build --strict` e publica no GitHub Pages
-([`deploy-pages.yml`](.github/workflows/deploy-pages.yml)). Qualquer aviso ou link quebrado interrompe a
-publicação. Pull requests para `main` são validados por [`validate-docs.yml`](.github/workflows/validate-docs.yml)
-(check **`mkdocs build --strict`**), que compila sem publicar; rodar o mesmo comando localmente antes do PR continua recomendado.
+## 3. Comandos
 
----
+| Comando | Efeito |
+|---|---|
+| `mkdocs serve` | Servidor local com recarga automática |
+| `mkdocs build --strict` | Compila em `site/`; qualquer aviso (link quebrado, página fora do `nav`) falha o build. Mesma validação da CI |
+| `pip install -r requirements.txt` | Instala as dependências |
 
-## 6. Governança
+## 4. Estrutura do repositório
 
-[Contribuição](CONTRIBUTING.md) · [Segurança](SECURITY.md) · [Código de Conduta](CODE_OF_CONDUCT.md) ·
-[Licença MIT](LICENSE)
+```text
+documentation/
+├── docs/                   # Conteúdo do site (cada pasta é uma seção)
+│   ├── index.md            # Página inicial
+│   ├── adrs/               # Registros de decisão (ADR-NNN)
+│   ├── governance/         # Contribuição, estilo da documentação, conduta, segurança, licença
+│   └── assets/             # Imagens, CSS e scripts do tema
+├── mkdocs.yml              # Tema, extensões e navegação (nav)
+├── requirements.txt        # Dependências Python
+├── .editorconfig           # Convenções de formatação de arquivos
+└── .github/
+    ├── workflows/          # validate-docs.yml, deploy-pages.yml
+    ├── dependabot.yml      # Atualizações de pip e github-actions
+    ├── CODEOWNERS          # Revisores obrigatórios
+    ├── ISSUE_TEMPLATE/
+    └── PULL_REQUEST_TEMPLATE.md
+```
+
+A ordem e os títulos das páginas vêm do `nav` do `mkdocs.yml`.
+
+## 5. Configuração
+
+| Item | Valor |
+|---|---|
+| Tema | `material`, idioma `pt-BR` |
+| `site_url` | `https://purelifeministriesbrasil.github.io/documentation/` |
+| `edit_uri` | `edit/main/docs/` |
+| Plugins | `search` (`lang: pt`) |
+| Extensões | `admonition`, `pymdownx.details`, `pymdownx.arithmatex`, `pymdownx.superfences` com Mermaid, entre outras |
+| Dependências | `mkdocs>=1.6.0,<2.0`, `mkdocs-material>=9.5.0`, `pymdown-extensions>=10.7` |
+| Python da CI | 3.12 (`actions/setup-python@v5`) |
+
+## 6. Qualidade e CI
+
+| Arquivo | Gatilho | Check | Garantia |
+|---|---|---|---|
+| [`validate-docs.yml`](.github/workflows/validate-docs.yml) | `pull_request` para `main`, `workflow_dispatch` | `mkdocs build --strict` | O site compila sem avisos; nada é publicado |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | `push` em `main`, `workflow_dispatch` | `build-and-deploy` | Compila com `--strict` e publica no GitHub Pages |
+| [`dependabot.yml`](.github/dependabot.yml) | Agendado | — | PRs de atualização para `pip` e `github-actions` |
+
+## 7. Publicação e reversão
+
+| Ação | Como |
+|---|---|
+| Publicar | Merge do PR em `main`; `deploy-pages.yml` compila e publica |
+| Reverter | `git revert -m 1 <commit-de-merge>` em um PR; o merge da reversão republica a versão anterior |
+
+Um build `--strict` com falha não publica; a versão anterior continua no ar.
+
+## 8. Manutenção
+
+### Adicionar uma página
+
+1. Criar o arquivo `.md` na pasta da seção em `docs/`.
+2. Adicionar a página ao `nav` do `mkdocs.yml`.
+3. Seguir o [guia de estilo da documentação](docs/governance/documentation-style.md).
+4. Rodar `mkdocs build --strict` antes de abrir o PR.
+
+### ADRs
+
+| Regra | Detalhe |
+|---|---|
+| Numeração | Usar o próximo número livre em `docs/adrs/` (`ADR-NNN-titulo.md`) |
+| Histórico | Nunca editar o conteúdo de uma ADR aceita |
+| Substituição | Criar nova ADR e marcar a antiga como substituída, com link para a nova |
+
+## 9. Governança
+
+| Documento | Link |
+|---|---|
+| Contribuição | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Estilo da documentação | [docs/governance/documentation-style.md](docs/governance/documentation-style.md) |
+| Código de conduta | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) |
+| Política de segurança | [SECURITY.md](SECURITY.md) |
+| Revisores | [.github/CODEOWNERS](.github/CODEOWNERS) |
+| Licença | [MIT](LICENSE) |

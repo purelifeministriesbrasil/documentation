@@ -112,3 +112,9 @@ Valem após o merge de backend#16 e frontend#15.
 Os testes `*.db.test.ts` criam um banco descartável a partir de `TEST_DATABASE_URL` e o removem ao final;
 sem a variável eles são pulados — no CI ela é sempre definida, e um run com testes pulados não conta como
 aprovação.
+
+## Análise contínua e publicação da API
+
+- **CodeQL** (`codeql.yml`) em `backend` e `frontend`: a cada PR, push em `main` e toda segunda-feira.
+- **Dependabot** nos três repositórios; política em [Dependências, Segurança Contínua e Releases](dependency-updates.md).
+- **Deploy API** (`backend/.github/workflows/deploy.yml`): publicação manual do Worker que reutiliza o `ci.yml` (mesma verificação) antes de publicar, no ambiente `production`.

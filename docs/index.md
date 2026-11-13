@@ -20,12 +20,25 @@ hide:
   </p>
 
   <div class="docs-hero-actions">
-    <a href="getting-started/quickstart/" class="md-button md-button--primary">Como Rodar Localmente</a>
+    <a href="operations/maintainer-guide/" class="md-button md-button--primary">Guia do Mantenedor</a>
+    <a href="getting-started/quickstart/" class="md-button">Como Rodar Localmente</a>
     <a href="architecture/system-overview/" class="md-button">Visão Geral da Arquitetura</a>
     <a href="schemas/triage-schema/" class="md-button">Contratos &amp; Schemas</a>
     <a href="security/crypto-architecture/" class="md-button">Segurança &amp; Criptografia</a>
   </div>
 </div>
+
+## Comece por aqui
+
+| Eu preciso… | Página |
+|---|---|
+| Alterar textos, livros, conferência ou contatos do site | [Guia do Mantenedor](operations/maintainer-guide.md) |
+| Rodar o projeto no meu computador | [Guia Rápido de Instalação](getting-started/quickstart.md) |
+| Publicar ou desfazer uma publicação | [Runbook de Implantação](operations/deployment.md) |
+| Colocar o domínio oficial no ar | [Checklist de Go-live](operations/go-live-checklist.md) |
+| Tratar PRs do Dependabot e alertas de segurança | [Dependências, Segurança Contínua e Releases](quality/dependency-updates.md) |
+| Responder a um incidente | [Resposta a Incidentes](operations/incident-response.md) |
+| Escrever ou revisar documentação | [Guia de Estilo da Documentação](governance/documentation-style.md) |
 
 ---
 

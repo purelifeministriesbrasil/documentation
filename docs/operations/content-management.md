@@ -1,5 +1,9 @@
 # Gestão de Conteúdo do Site
 
+!!! abstract "Resumo"
+    Referência detalhada de onde fica cada conteúdo do site. Para o passo a passo do dia a dia (editar pelo
+    navegador, adicionar livro, publicar e desfazer), comece pelo [Guia do Mantenedor](maintainer-guide.md).
+
 O site é estático (Astro): não há painel administrativo. Todo o conteúdo editável fica em poucos arquivos do
 repositório `frontend`, separados do código das páginas. Depois de editar, abra um PR, aguarde o CI e publique
 (ver [Runbook de Implantação](deployment.md#8-site-cloudflare-pages)).
