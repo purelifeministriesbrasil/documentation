@@ -1,0 +1,24 @@
+# Atualizações automáticas semanais, validadas pelo check "mkdocs build --strict".
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: America/Sao_Paulo
+    labels: [dependencies, ci]
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: America/Sao_Paulo
+    labels: [dependencies]
+    groups:
+      mkdocs:
+        patterns: ["*"]

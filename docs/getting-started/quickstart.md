@@ -3,7 +3,7 @@
 Configuração do ambiente local do ecossistema **Pure Life Ministries Brasil**.
 
 !!! info "Versões: declaradas × validadas"
-    Os workflows de CI declaram **Node 22** e **pnpm 12** (`pnpm/action-setup` com `version: 12`). A validação local feita na auditoria desta documentação usou pnpm 10.28.0 e Node 22.x. Use as versões da CI sempre que possível; ver [Testes e CI/CD](../quality/testing-and-cicd.md#4-versoes-declaradas-na-ci-validacao-local).
+    Use **Node 22** (arquivo `.nvmrc`) e o **pnpm** exato do campo `packageManager` de cada `package.json` (hoje `pnpm@12.18.0`); a CI lê a versão desse campo e o verificador `verify-package-manager` recusa divergências; ver [Testes e CI/CD](../quality/testing-and-cicd.md#4-versoes-declaradas-na-ci-validacao-local).
 
 ---
 

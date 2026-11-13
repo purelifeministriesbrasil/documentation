@@ -95,6 +95,27 @@ markdown_extensions:
 
 nav:
   - Início: index.md
+  - Começar:
+      - Guia Rápido de Instalação: getting-started/quickstart.md
+      - Variáveis de Ambiente: getting-started/environment.md
+      - Configuração do Banco (Neon): getting-started/database-setup.md
+  - Manutenção do Site:
+      - Guia do Mantenedor: operations/maintainer-guide.md
+      - Gestão de Conteúdo do Site: operations/content-management.md
+      - CLI Cheatsheet: operations/cli-cheatsheet.md
+  - Operação:
+      - Runbook de Implantação: operations/deployment.md
+      - Checklist de Go-live: operations/go-live-checklist.md
+      - Backup & Recuperação: operations/backup-recovery.md
+      - Rotação de Chaves Criptográficas: operations/key-rotation.md
+      - Resposta a Incidentes: operations/incident-response.md
+      - Observabilidade & Monitoramento: operations/observability.md
+      - Hardening do Banco: operations/database-hardening.md
+      - Migração do Site Antigo: operations/legacy-migration.md
+  - Qualidade & DevOps:
+      - Testes e CI/CD: quality/testing-and-cicd.md
+      - Dependências, Segurança Contínua e Releases: quality/dependency-updates.md
+      - Proteção de Branches: operations/branch-protection.md
   - Arquitetura:
       - Visão Geral do Sistema: architecture/system-overview.md
       - Fronteiras dos Repositórios: architecture/repositories-scope.md
@@ -114,40 +135,26 @@ nav:
           - ADR-007 — Cloudflare Pages & Contas Institucionais: adrs/ADR-007-cloudflare-pages-contas-institucionais.md
           - ADR-008 — Neon Postgres & Hyperdrive: adrs/ADR-008-neon-hyperdrive.md
           - ADR-009 — Performance (Preact, zod/mini, imagens): adrs/ADR-009-performance-ilhas-preact-imagens.md
-  - Segurança & LGPD:
-      - Modelagem de Ameaças (Threat Model): security/threat-model.md
-      - Controles de Privacidade (LGPD): security/lgpd-compliance.md
-      - Arquitetura Criptográfica: security/crypto-architecture.md
-      - Inventário de Retenção: security/data-retention.md
-      - Política de Segurança da Informação: governance/security-policy.md
-  - Contratos:
+  - Contratos de Dados:
       - Contratos Comuns: schemas/common-schema.md
       - Formulário de Triagem: schemas/triage-schema.md
       - Formulário de Contato: schemas/contact-schema.md
       - Doações & PIX Dinâmico: schemas/donation-schema.md
       - Inscrição em Newsletter: schemas/newsletter-schema.md
-  - Operações:
-      - Guia Rápido de Instalação: getting-started/quickstart.md
-      - Variáveis de Ambiente: getting-started/environment.md
-      - Configuração do Banco (Neon): getting-started/database-setup.md
-      - Runbook de Implantação (Contas Institucionais): operations/deployment.md
-      - Checklist de Go-live: operations/go-live-checklist.md
-      - Proteção de Branches: operations/branch-protection.md
-      - Resposta a Incidentes: operations/incident-response.md
-      - Hardening do Banco: operations/database-hardening.md
-      - Gestão de Conteúdo do Site: operations/content-management.md
-      - Migração do Site Antigo: operations/legacy-migration.md
-      - Backup & Recuperação: operations/backup-recovery.md
-      - Rotação de Chaves Criptográficas: operations/key-rotation.md
-      - CLI Cheatsheet: operations/cli-cheatsheet.md
-      - Observabilidade & Monitoramento: operations/observability.md
-      - Testes e CI/CD: quality/testing-and-cicd.md
-  - Governança:
+  - Segurança & LGPD:
+      - Modelagem de Ameaças: security/threat-model.md
+      - Controles de Privacidade (LGPD): security/lgpd-compliance.md
+      - Arquitetura Criptográfica: security/crypto-architecture.md
+      - Inventário de Retenção: security/data-retention.md
+  - Requisitos:
       - Visão Geral (SRS): requirements/index.md
       - Requisitos Funcionais: requirements/functional.md
       - Regras de Negócio: requirements/business-rules.md
       - Requisitos Não-Funcionais: requirements/non-functional.md
-      - Glossário Técnico: glossary/glossary.md
-      - Código de Conduta: governance/code-of-conduct.md
+  - Governança:
       - Diretrizes de Contribuição: governance/contributing.md
+      - Guia de Estilo da Documentação: governance/documentation-style.md
+      - Política de Segurança da Informação: governance/security-policy.md
+      - Código de Conduta: governance/code-of-conduct.md
       - Licença e Termos de Uso: governance/license.md
+      - Glossário Técnico: glossary/glossary.md
