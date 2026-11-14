@@ -3,24 +3,28 @@ site_description: Arquitetura de software, especificações de requisitos, contr
 site_author: Pure Life Ministries Brasil
 site_url: https://purelifeministriesbrasil.github.io/documentation/
 
-repo_name: GitHub
+repo_name: purelifeministriesbrasil/documentation
 repo_url: https://github.com/purelifeministriesbrasil/documentation
 edit_uri: edit/main/docs/
 copyright: "© 2026 Pure Life Ministries Brasil — Liderando Cristãos à Pureza desde 1986"
 
 theme:
   name: material
+  custom_dir: overrides
   language: pt-BR
   logo: assets/images/PLM_Logo.png
   favicon: assets/images/favicon.png
   icon:
     repo: fontawesome/brands/github
-    annotation: material/arrow-right-circle
+    annotation: material/plus-circle
+    edit: material/pencil-outline
+    view: material/file-eye-outline
   features:
+    - announce.dismiss
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
+    - navigation.path
     - navigation.top
     - navigation.footer
     - navigation.instant
@@ -34,21 +38,30 @@ theme:
     - content.tabs.link
     - content.code.copy
     - content.code.annotate
+    - content.tooltips
+    - content.action.edit
+    - content.action.view
   palette:
-    - scheme: default
-      primary: custom
-      accent: custom
+    - media: "(prefers-color-scheme)"
       toggle:
-        icon: material/weather-sunny
-        name: Alternar para modo escuro
-    - scheme: slate
+        icon: material/brightness-auto
+        name: Usar o tema do sistema
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: custom
       accent: custom
       toggle:
         icon: material/weather-night
-        name: Alternar para modo claro
+        name: Mudar para o modo escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Mudar para o modo claro
   font:
-    text: Montserrat
+    text: Inter
     code: JetBrains Mono
 
 extra_css:
@@ -56,86 +69,89 @@ extra_css:
 
 extra_javascript:
   - assets/javascripts/mobile-nav.js
-  - assets/javascripts/mathjax.js
-  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/purelifeministriesbrasil
+      name: Organização no GitHub
 
 plugins:
   - search:
       lang: pt
 
 markdown_extensions:
-  - pymdownx.arithmatex:
-      generic: true
+  - abbr
   - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: Link para esta seção
+  - pymdownx.betterem
+  - pymdownx.caret
   - pymdownx.details
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.snippets:
+      check_paths: true
+      auto_append:
+        - includes/abbreviations.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.mark
-  - tables
-  - attr_list
-  - md_in_html
-  - toc:
-      permalink: true
+  - pymdownx.tilde
 
 nav:
   - Início: index.md
   - Começar:
-      - Guia Rápido de Instalação: getting-started/quickstart.md
-      - Variáveis de Ambiente: getting-started/environment.md
-      - Configuração do Banco (Neon): getting-started/database-setup.md
-  - Manutenção do Site:
-      - Guia do Mantenedor: operations/maintainer-guide.md
-      - Gestão de Conteúdo do Site: operations/content-management.md
-      - CLI Cheatsheet: operations/cli-cheatsheet.md
-  - Operação:
-      - Runbook de Implantação: operations/deployment.md
-      - Checklist de Go-live: operations/go-live-checklist.md
-      - Backup & Recuperação: operations/backup-recovery.md
-      - Rotação de Chaves Criptográficas: operations/key-rotation.md
-      - Resposta a Incidentes: operations/incident-response.md
-      - Observabilidade & Monitoramento: operations/observability.md
-      - Hardening do Banco: operations/database-hardening.md
-      - Migração do Site Antigo: operations/legacy-migration.md
-  - Qualidade & DevOps:
-      - Testes e CI/CD: quality/testing-and-cicd.md
-      - Dependências, Segurança Contínua e Releases: quality/dependency-updates.md
-      - Proteção de Branches: operations/branch-protection.md
+      - Primeiros passos:
+          - Guia Rápido de Instalação: getting-started/quickstart.md
+          - Variáveis de Ambiente: getting-started/environment.md
+          - Configuração do Banco (Neon): getting-started/database-setup.md
+      - Manutenção do site:
+          - Guia do Mantenedor: operations/maintainer-guide.md
+          - Gestão de Conteúdo do Site: operations/content-management.md
+          - CLI Cheatsheet: operations/cli-cheatsheet.md
   - Arquitetura:
-      - Visão Geral do Sistema: architecture/system-overview.md
-      - Fronteiras dos Repositórios: architecture/repositories-scope.md
-      - Camadas do Backend: architecture/backend-layers.md
-      - Estrutura do Frontend: architecture/frontend-structure.md
-      - Diagramas de Sequência: architecture/sequence-diagrams.md
-      - Modelo de Dados Relacional: architecture/data-model.md
-      - Design System & Componentes: design-system/design-system.md
-      - Decisões de Arquitetura (ADRs):
+      - Sistema:
+          - Visão Geral do Sistema: architecture/system-overview.md
+          - Fronteiras dos Repositórios: architecture/repositories-scope.md
+          - Camadas do Backend: architecture/backend-layers.md
+          - Estrutura do Frontend: architecture/frontend-structure.md
+          - Diagramas de Sequência: architecture/sequence-diagrams.md
+          - Modelo de Dados Relacional: architecture/data-model.md
+          - Design System & Componentes: design-system/design-system.md
+      - Decisões (ADRs):
           - Índice de Decisões: adrs/index.md
           - ADR-001 — Astro SSG & Tailwind v4: adrs/ADR-001-astro-ssg-tailwind.md
-          - ADR-002 — Supabase como Plataforma de Dados (substituído): adrs/ADR-002-supabase-plataforma-dados.md
-          - ADR-003 — Hospedagem na Vercel (substituído): adrs/ADR-003-vercel-hospedagem-borda.md
-          - ADR-004 — Criptografia AES-256-GCM com AAD: adrs/ADR-004-criptografia-aes-gcm-aad.md
-          - ADR-005 — Modelo de Lease e Idempotência: adrs/ADR-005-modelo-lease-idempotencia.md
-          - ADR-006 — Modernização Workers, Hono & Supabase: adrs/ADR-006-modernizacao-workers-hono-supabase.md
+          - ADR-002 — Supabase (substituído): adrs/ADR-002-supabase-plataforma-dados.md
+          - ADR-003 — Vercel (substituído): adrs/ADR-003-vercel-hospedagem-borda.md
+          - ADR-004 — AES-256-GCM com AAD: adrs/ADR-004-criptografia-aes-gcm-aad.md
+          - ADR-005 — Lease e Idempotência: adrs/ADR-005-modelo-lease-idempotencia.md
+          - ADR-006 — Workers, Hono & Supabase: adrs/ADR-006-modernizacao-workers-hono-supabase.md
           - ADR-007 — Cloudflare Pages & Contas Institucionais: adrs/ADR-007-cloudflare-pages-contas-institucionais.md
           - ADR-008 — Neon Postgres & Hyperdrive: adrs/ADR-008-neon-hyperdrive.md
           - ADR-009 — Performance (Preact, zod/mini, imagens): adrs/ADR-009-performance-ilhas-preact-imagens.md
-  - Contratos de Dados:
+  - Contratos:
       - Contratos Comuns: schemas/common-schema.md
       - Formulário de Triagem: schemas/triage-schema.md
       - Formulário de Contato: schemas/contact-schema.md
@@ -146,15 +162,32 @@ nav:
       - Controles de Privacidade (LGPD): security/lgpd-compliance.md
       - Arquitetura Criptográfica: security/crypto-architecture.md
       - Inventário de Retenção: security/data-retention.md
-  - Requisitos:
-      - Visão Geral (SRS): requirements/index.md
-      - Requisitos Funcionais: requirements/functional.md
-      - Regras de Negócio: requirements/business-rules.md
-      - Requisitos Não-Funcionais: requirements/non-functional.md
-  - Governança:
-      - Diretrizes de Contribuição: governance/contributing.md
-      - Guia de Estilo da Documentação: governance/documentation-style.md
-      - Política de Segurança da Informação: governance/security-policy.md
-      - Código de Conduta: governance/code-of-conduct.md
-      - Licença e Termos de Uso: governance/license.md
-      - Glossário Técnico: glossary/glossary.md
+  - Operação:
+      - Publicação:
+          - Runbook de Implantação: operations/deployment.md
+          - Checklist de Go-live: operations/go-live-checklist.md
+          - Migração do Site Antigo: operations/legacy-migration.md
+      - Continuidade:
+          - Resposta a Incidentes: operations/incident-response.md
+          - Backup & Recuperação: operations/backup-recovery.md
+          - Rotação de Chaves Criptográficas: operations/key-rotation.md
+      - Monitoramento & banco:
+          - Observabilidade & Monitoramento: operations/observability.md
+          - Hardening do Banco: operations/database-hardening.md
+      - Qualidade & DevOps:
+          - Testes e CI/CD: quality/testing-and-cicd.md
+          - Dependências, Segurança Contínua e Releases: quality/dependency-updates.md
+          - Proteção de Branches: operations/branch-protection.md
+  - Projeto:
+      - Requisitos:
+          - Visão Geral (SRS): requirements/index.md
+          - Requisitos Funcionais: requirements/functional.md
+          - Regras de Negócio: requirements/business-rules.md
+          - Requisitos Não-Funcionais: requirements/non-functional.md
+      - Governança:
+          - Diretrizes de Contribuição: governance/contributing.md
+          - Guia de Estilo da Documentação: governance/documentation-style.md
+          - Política de Segurança da Informação: governance/security-policy.md
+          - Código de Conduta: governance/code-of-conduct.md
+          - Licença e Termos de Uso: governance/license.md
+          - Glossário Técnico: glossary/glossary.md

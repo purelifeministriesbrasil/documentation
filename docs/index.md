@@ -5,209 +5,153 @@ hide:
   - toc
 ---
 
-<div class="docs-hero">
-  <div class="docs-hero-badge">
-    DOCUMENTAÇÃO DE ENGENHARIA
-  </div>
-  
-  <h1 class="docs-hero-title">
-    Pure Life Ministries Brasil<br>
-    <span>Plataforma Digital &amp; Guia do Desenvolvedor</span>
-  </h1>
-  
-  <p class="docs-hero-subtitle">
-    O ecossistema digital da Pure Life Ministries Brasil apoia a missão de restauração espiritual e aconselhamento bíblico de homens, esposas e famílias. Esta documentação foi feita por e para desenvolvedores: reúne a arquitetura, contratos de dados, runbooks operacionais e decisões técnicas do portal institucional, do sistema confidencial de triagem pastoral (com controles de privacidade sob a LGPD) e da emissão de doações PIX.
+<div class="plm-hero">
+  <span class="plm-eyebrow plm-rv">Documentação de engenharia</span>
+  <h1 class="plm-title plm-rv" style="animation-delay: 0.06s">Tecnologia a serviço da <em>restauração</em>.</h1>
+  <p class="plm-lead plm-rv" style="animation-delay: 0.12s">
+    Arquitetura, contratos de dados, runbooks e decisões técnicas do portal institucional, da triagem pastoral confidencial (com controles de privacidade sob a LGPD) e das doações via PIX da Pure Life Ministries Brasil.
   </p>
-
-  <div class="docs-hero-actions">
-    <a href="operations/maintainer-guide/" class="md-button md-button--primary">Guia do Mantenedor</a>
-    <a href="getting-started/quickstart/" class="md-button">Como Rodar Localmente</a>
-    <a href="architecture/system-overview/" class="md-button">Visão Geral da Arquitetura</a>
-    <a href="schemas/triage-schema/" class="md-button">Contratos &amp; Schemas</a>
-    <a href="security/crypto-architecture/" class="md-button">Segurança &amp; Criptografia</a>
+  <div class="plm-actions plm-rv" style="animation-delay: 0.18s">
+    <a href="operations/maintainer-guide/" class="plm-btn plm-btn--primary">Guia do Mantenedor <span class="plm-arrow">→</span></a>
+    <a href="getting-started/quickstart/" class="plm-btn plm-btn--ghost">Rodar localmente</a>
+    <a href="architecture/system-overview/" class="plm-btn plm-btn--ghost">Ver a arquitetura</a>
+  </div>
+  <div class="plm-stats plm-rv" style="animation-delay: 0.24s">
+    <div class="plm-stat"><div class="plm-stat-num plm-count plm-count--3" data-value="3" aria-label="3"></div><div class="plm-stat-label">repositórios independentes</div></div>
+    <div class="plm-stat"><div class="plm-stat-num plm-count plm-count--9" data-value="9" aria-label="9"></div><div class="plm-stat-label">decisões de arquitetura (ADRs)</div></div>
+    <div class="plm-stat"><div class="plm-stat-num plm-count plm-count--5" data-value="5" aria-label="5"></div><div class="plm-stat-label">páginas de contratos de dados</div></div>
+    <div class="plm-stat"><div class="plm-stat-num plm-count plm-count--180" data-value="180" aria-label="180"></div><div class="plm-stat-label">dias até o expurgo de triagens e contatos</div></div>
   </div>
 </div>
 
 ## Comece por aqui
 
-| Eu preciso… | Página |
-|---|---|
-| Alterar textos, livros, conferência ou contatos do site | [Guia do Mantenedor](operations/maintainer-guide.md) |
-| Rodar o projeto no meu computador | [Guia Rápido de Instalação](getting-started/quickstart.md) |
-| Publicar ou desfazer uma publicação | [Runbook de Implantação](operations/deployment.md) |
-| Colocar o domínio oficial no ar | [Checklist de Go-live](operations/go-live-checklist.md) |
-| Tratar PRs do Dependabot e alertas de segurança | [Dependências, Segurança Contínua e Releases](quality/dependency-updates.md) |
-| Responder a um incidente | [Resposta a Incidentes](operations/incident-response.md) |
-| Escrever ou revisar documentação | [Guia de Estilo da Documentação](governance/documentation-style.md) |
+<div class="grid cards plm-reveal" markdown>
 
----
+-   :material-pencil-box-outline: **Alterar textos, livros, conferência ou contatos**
 
-## Início Rápido para Desenvolvedores
+    ---
 
-O ecossistema opera sob três repositórios independentes. Cada projeto possui seu próprio ciclo de desenvolvimento, testes e esteira de CI:
+    [:octicons-arrow-right-24: Guia do Mantenedor](operations/maintainer-guide.md)
 
-| Repositório | Papel no Ecossistema | Stack Principal | Porta Local | Como Iniciar |
-| :--- | :--- | :--- | :--- | :--- |
-| **[`frontend`](https://github.com/purelifeministriesbrasil/frontend)** | Portal público, páginas institucionais e ilhas de formulários | Astro 5 SSG, Tailwind v4, ilhas Preact, Zod (`zod/mini`) | `localhost:4321` | `pnpm dev` |
-| **[`backend`](https://github.com/purelifeministriesbrasil/backend)** | Webhooks PIX, rotinas de expurgo LGPD e API de borda | Cloudflare Worker (Hono), Clean Architecture, Neon Postgres via Hyperdrive | `localhost:8787` | `pnpm dev` |
-| **[`documentation`](https://github.com/purelifeministriesbrasil/documentation)** | Especificações técnicas, contratos, ADRs e runbooks | Material for MkDocs, PyMdown Extensions, Mermaid | `localhost:8000` | `uv run --with-requirements requirements.txt mkdocs serve` |
+-   :material-laptop: **Rodar o projeto no meu computador**
 
-> Para o passo a passo detalhado de variáveis de ambiente, dependências e setup de banco, consulte o [Guia de Início Rápido (Quickstart)](getting-started/quickstart.md).
+    ---
 
----
+    [:octicons-arrow-right-24: Guia Rápido de Instalação](getting-started/quickstart.md)
 
-## Recursos Técnicos Essenciais
+-   :material-rocket-launch-outline: **Publicar ou desfazer uma publicação**
 
-<div class="four-columns-grid">
-  <div class="four-card">
-    <div>
-      <div class="four-card-header">
-        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-        <span>Decisões Técnicas (ADRs)</span>
-      </div>
-      <p class="four-card-desc">
-        Fundamentação e trade-offs das escolhas de engenharia: Astro SSG, Cloudflare Pages e Workers, Neon Postgres com Hyperdrive, criptografia AES-GCM, idempotência e performance.
-      </p>
-    </div>
-    <a href="adrs/" class="four-card-link">
-      Consultar ADRs &rarr;
-    </a>
-  </div>
+    ---
 
-  <div class="four-card">
-    <div>
-      <div class="four-card-header">
-        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
-        <span>Sigilo Pastoral &amp; LGPD</span>
-      </div>
-      <p class="four-card-desc">
-        Criptografia AES-256-GCM com AAD para relatos confidenciais, controle de acesso RLS, proteção Turnstile e testes sentinela de vazamento.
-      </p>
-    </div>
-    <a href="security/threat-model/" class="four-card-link">
-      Acessar Segurança &rarr;
-    </a>
-  </div>
+    [:octicons-arrow-right-24: Runbook de Implantação](operations/deployment.md)
 
-  <div class="four-card">
-    <div>
-      <div class="four-card-header">
-        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-        <span>Contratos de Dados (Zod)</span>
-      </div>
-      <p class="four-card-desc">
-        Esquemas TypeScript com `zod/mini`, idênticos no frontend e no backend, para validação rigorosa de formulários de triagem, contato institucional, intenções PIX e payloads de webhook.
-      </p>
-    </div>
-    <a href="schemas/triage-schema/" class="four-card-link">
-      Ver Contratos &rarr;
-    </a>
-  </div>
+-   :material-web-check: **Colocar o domínio oficial no ar**
 
-  <div class="four-card">
-    <div>
-      <div class="four-card-header">
-        <svg class="tech-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
-        <span>Operações &amp; Runbooks</span>
-      </div>
-      <p class="four-card-desc">
-        Runbook de implantação nas contas institucionais (Cloudflare e Neon), gestão de conteúdo, migração do site antigo, monitoramento de liveness e métricas, rotação de chaves e cheatsheet de comandos úteis.
-      </p>
-    </div>
-    <a href="operations/observability/" class="four-card-link">
-      Ver Runbooks &rarr;
-    </a>
-  </div>
+    ---
+
+    [:octicons-arrow-right-24: Checklist de Go-live](operations/go-live-checklist.md)
+
+-   :material-shield-alert-outline: **Responder a um incidente**
+
+    ---
+
+    [:octicons-arrow-right-24: Resposta a Incidentes](operations/incident-response.md)
+
+-   :material-package-up: **Tratar PRs do Dependabot e alertas**
+
+    ---
+
+    [:octicons-arrow-right-24: Dependências e Releases](quality/dependency-updates.md)
+
 </div>
 
----
+## Três repositórios, uma regra
 
-## Separação Canônica dos Três Repositórios
-
-A regra de ouro da arquitetura do ecossistema é simples e categórica:
 > **"Front com Front, Back com Back e Docs com Docs."**
 
-<div class="pillars-container">
-
-<div class="pillar-card">
-  <div>
-    <div class="pillar-top">
-      <span class="pillar-badge">repositório: frontend</span>
-    </div>
-    <h3 class="pillar-title">Interface Pública &amp; Borda</h3>
-    <p class="pillar-desc">
-      Portal institucional focado em máxima performance de carregamento, acessibilidade e envio seguro de dados do usuário.
-    </p>
-    <ul class="pillar-list">
-      <li>18 páginas institucionais pré-renderizadas com Astro 5 SSG</li>
-      <li>Ilhas Preact restritas aos formulários com estado (até ~30 KB de JavaScript por página)</li>
-      <li>Estilização moderna e sóbria com Tailwind CSS v4</li>
-      <li>Nenhuma credencial no navegador: os dados trafegam apenas pela API</li>
-      <li>Zero estilos inline e conformidade rígida com Content Security Policy</li>
-    </ul>
-  </div>
-  <div class="pillar-action">
-    <a href="architecture/repositories-scope/#a-repositorio-frontend-front-com-front" class="md-button md-button--primary">
-      Escopo Frontend &rarr;
-    </a>
-  </div>
+<div class="plm-repos plm-reveal">
+  <a class="plm-repo" href="architecture/repositories-scope/#a-repositorio-frontend-front-com-front" style="text-decoration: none">
+    <span class="plm-repo-name">frontend</span>
+    <h3>Portal público</h3>
+    <p>Páginas institucionais pré-renderizadas e ilhas de formulário. Nenhuma credencial no navegador.</p>
+    <div class="plm-stack"><span class="plm-chip">Astro 5 SSG</span><span class="plm-chip">Tailwind v4</span><span class="plm-chip">Preact</span><span class="plm-chip">localhost:4321</span></div>
+  </a>
+  <a class="plm-repo" href="architecture/repositories-scope/#b-repositorio-backend-back-com-back" style="text-decoration: none">
+    <span class="plm-repo-name">backend</span>
+    <h3>API de borda e pagamentos</h3>
+    <p>Turnstile, criptografia AES-256-GCM com AAD, webhooks PIX idempotentes e expurgo diário.</p>
+    <div class="plm-stack"><span class="plm-chip">Cloudflare Worker</span><span class="plm-chip">Hono</span><span class="plm-chip">Neon + Hyperdrive</span><span class="plm-chip">localhost:8787</span></div>
+  </a>
+  <a class="plm-repo" href="architecture/repositories-scope/#c-repositorio-documentation-docs-com-docs" style="text-decoration: none">
+    <span class="plm-repo-name">documentation</span>
+    <h3>Engenharia e governança</h3>
+    <p>ADRs, requisitos, modelagem de ameaças e runbooks. Este portal.</p>
+    <div class="plm-stack"><span class="plm-chip">Material for MkDocs</span><span class="plm-chip">Mermaid</span><span class="plm-chip">localhost:8000</span></div>
+  </a>
 </div>
 
-<div class="pillar-card">
-  <div>
-    <div class="pillar-top">
-      <span class="pillar-badge">repositório: backend</span>
-    </div>
-    <h3 class="pillar-title">Serviços de Borda &amp; Pagamentos</h3>
-    <p class="pillar-desc">
-      Cloudflare Worker em Clean Architecture responsável por fluxos assíncronos, proteção anti-bot e manutenção segura de dados.
-    </p>
-    <ul class="pillar-list">
-      <li>Validação server-side de tokens Cloudflare Turnstile</li>
-      <li>Emissão e webhooks de PIX dinâmico com idempotência (gateway Asaas)</li>
-      <li>Criptografia de campo AES-256-GCM + AAD para dados sensíveis</li>
-      <li>Leases atômicos para impedir liquidação financeira concorrente</li>
-      <li>Cron diário às 03:00 UTC para expurgo e anonimização de dados LGPD</li>
-    </ul>
-  </div>
-  <div class="pillar-action">
-    <a href="architecture/repositories-scope/#b-repositorio-backend-back-com-back" class="md-button md-button--primary">
-      Escopo Backend &rarr;
-    </a>
-  </div>
+Comandos para iniciar cada repositório:
+
+=== "frontend"
+
+    ```bash
+    pnpm dev
+    ```
+
+=== "backend"
+
+    ```bash
+    pnpm dev
+    ```
+
+=== "documentation"
+
+    ```bash
+    uv run --with-requirements requirements.txt mkdocs serve
+    ```
+
+O passo a passo completo de variáveis, dependências e banco está no [Guia Rápido de Instalação](getting-started/quickstart.md).
+
+## Explore por área
+
+<div class="grid cards plm-reveal" markdown>
+
+-   :material-sitemap-outline: **Arquitetura**
+
+    ---
+
+    Visão do sistema, camadas, diagramas de sequência, modelo de dados e as ADRs 001 a 009.
+
+    [:octicons-arrow-right-24: Visão Geral do Sistema](architecture/system-overview.md)
+
+-   :material-code-json: **Contratos de dados**
+
+    ---
+
+    Esquemas `zod/mini` idênticos no frontend e no backend para triagem, contato, doação e newsletter.
+
+    [:octicons-arrow-right-24: Contratos Comuns](schemas/common-schema.md)
+
+-   :material-shield-lock-outline: **Segurança & LGPD**
+
+    ---
+
+    Modelagem de ameaças, criptografia de campo, RLS sem políticas e inventário de retenção.
+
+    [:octicons-arrow-right-24: Modelagem de Ameaças](security/threat-model.md)
+
+-   :material-clipboard-text-outline: **Requisitos & governança**
+
+    ---
+
+    Requisitos funcionais, regras de negócio, guia de estilo e glossário.
+
+    [:octicons-arrow-right-24: Visão Geral (SRS)](requirements/index.md)
+
 </div>
 
-<div class="pillar-card">
-  <div>
-    <div class="pillar-top">
-      <span class="pillar-badge">repositório: documentation</span>
-    </div>
-    <h3 class="pillar-title">Engenharia, ADRs &amp; Governança</h3>
-    <p class="pillar-desc">
-      Base de conhecimento canônica e central de referência para desenvolvedores, mantenedores e auditores do projeto.
-    </p>
-    <ul class="pillar-list">
-      <li>Portal técnico compilado com Material for MkDocs no GitHub Pages</li>
-      <li>Decisões de Arquitetura (ADRs 001 a 009) com motivação e trade-offs</li>
-      <li>Especificação formal de requisitos funcionais e não-funcionais (SRS)</li>
-      <li>Modelagem de ameaças STRIDE e requisitos de sigilo pastoral</li>
-      <li>Runbooks operacionais, guias de deploy e políticas de contingência</li>
-    </ul>
-  </div>
-  <div class="pillar-action">
-    <a href="architecture/repositories-scope/#c-repositorio-documentation-docs-com-docs" class="md-button md-button--primary">
-      Escopo Docs &rarr;
-    </a>
-  </div>
-</div>
-
-</div>
-
----
-
-## Topologia Geral e Fluxo de Dados
-
-O diagrama abaixo ilustra como o fluxo de navegação e as requisições de formulários trafegam entre as camadas do sistema:
+## Topologia e fluxo de dados
 
 ```mermaid
 flowchart TB

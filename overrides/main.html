@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block announce %}
+  <span class="plm-announce">
+    Antes de publicar, siga o <a href="{{ 'operations/go-live-checklist/' | url }}">Checklist de Go-live</a>.
+    Em caso de problema, use o roteiro de <a href="{{ 'operations/incident-response/' | url }}">Resposta a Incidentes</a>.
+  </span>
+{% endblock %}
