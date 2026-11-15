@@ -1,10 +1,10 @@
 # Proteção de Branches e Checks Obrigatórios
 
-!!! warning "Situação em 2026-11-12"
-    A branch `main` **não tem proteção** nos três repositórios (a API do GitHub responde
-    `Branch not protected`). Um merge em `main` do `frontend` publica o site e um merge em `documentation`
-    publica esta documentação, sem revisão obrigatória. Aplicar a proteção é decisão do responsável pelos
-    repositórios; o script abaixo foi preparado e **ainda não foi executado**.
+!!! info "Situação em 13/11/2026"
+    Proteção **aplicada e conferida** nos três repositórios com o script abaixo: PR e checks obrigatórios,
+    sem force push nem exclusão da `main`, secret scanning com bloqueio de push, alertas do Dependabot e
+    ambiente `production` restrito à `main`. Lembre: um merge em `main` do `frontend` publica o site e um
+    merge em `documentation` publica esta documentação.
 
 ## Checks reais de cada repositório
 

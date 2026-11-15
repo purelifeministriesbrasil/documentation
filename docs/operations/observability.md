@@ -111,7 +111,7 @@ Qualquer serviço de uptime com alerta por e-mail serve (Cloudflare Health Check
 | `config.invalid` | Alta | Segredo ausente ou inválido (aparecem só os nomes); corrigir o segredo |
 | `request.unhandled_error` | Alta | Abrir o log do período e identificar o `code` |
 | `webhook.dead_letter` | Média | Só relevante se um gateway for adotado |
-| `rate_limit.would_block` / `rate_limit.blocked` | Informativa | Avaliar volume antes de trocar `RATE_LIMIT_MODE` para `enforce` |
+| `rate_limit.would_block` / `rate_limit.blocked` | Informativa | `blocked` em volume alto e constante: revisar limites ou investigar abuso (modo `enforce` ativo) |
 | `email.send_failed` | Média | Verificar domínio e chave no Resend |
 
 Consulta manual, sem painel: `cd backend && pnpm exec wrangler tail --format json` (somente leitura) e filtre por `event`. No painel: *Workers e Pages → purelife-api → Observabilidade*, filtro por `event`.
