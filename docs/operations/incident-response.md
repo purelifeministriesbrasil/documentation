@@ -19,8 +19,8 @@
 
 - **Chave ou credencial exposta:** revogar/rotacionar imediatamente no provedor e seguir
   [Rotação de Chaves](key-rotation.md). Nunca colar o valor em chat, issue ou commit.
-- **Abuso:** com o operador, trocar `RATE_LIMIT_MODE` para `"enforce"` em `backend/wrangler.toml` e
-  implantar; regra de WAF na zona, se necessário. Lembre que em `"log"` nada é bloqueado.
+- **Abuso:** o bloqueio por IP já está ativo (`RATE_LIMIT_MODE = "enforce"`). Para reduzir os limites,
+  ajuste `[[ratelimits]]` em `backend/wrangler.toml` e publique pelo Deploy API; regra de WAF na zona, se necessário.
 - **Comprometimento do Worker:** `pnpm exec wrangler rollback <deployment-id>` para a última versão íntegra
   (`pnpm exec wrangler deployments list`).
 - **Gateway de pagamento:** desativar o webhook no painel do provedor e manter `PUBLIC_ENABLE_PIX_GATEWAY=false`.

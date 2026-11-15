@@ -145,7 +145,7 @@ binding presente, a API usa a conexão do Hyperdrive; sem ele, usa o segredo `DA
 3. Remetente (`EMAIL_FROM`) e destinatário dos avisos (`STAFF_NOTIFICATION_EMAIL`) ficam em `backend/wrangler.toml`.
 
 !!! note "Proteção contra abuso (R5)"
-    `RATE_LIMIT_MODE` em `backend/wrangler.toml` está em `"log"`: o Worker só registra `rate_limit.would_block` e não bloqueia. Trocar para `"enforce"` (429 com `Retry-After: 60`) é decisão deliberada, depois de avaliar os logs. Os quatro bindings `[[unsafe.bindings]]` do tipo `ratelimit` (`RL_CONTACT`, `RL_TRIAGE`, `RL_NEWSLETTER`, `RL_DONATION`, `namespace_id` 1001 a 1004) precisam de conferência na conta Cloudflare para não colidir com outros. Desde o primeiro deploy após o merge, as rotas de formulário e de criação de doação exigem `Origin` ou `Sec-Fetch-Site` válidos (403 sem nenhum); webhooks não são afetados.
+    `RATE_LIMIT_MODE = "enforce"` em `backend/wrangler.toml` (desde 14/11/2026): acima do limite a API responde 429 com `Retry-After: 60`. Os bindings usam a configuração nativa `[[ratelimits]]` (`RL_CONTACT`, `RL_TRIAGE`, `RL_NEWSLETTER`, `RL_DONATION`, `namespace_id` 1001 a 1004); a versão anterior, `[[unsafe.bindings]]`, era aceita pelo Wrangler mas **não limitava** — confirmado em produção (40+ requisições sem 429 antes; 429 e `rate_limit.blocked` depois). Os limites são aproximados e contados por localidade da Cloudflare (ex.: Rio e São Paulo contam separadamente), então rajadas podem passar um pouco do valor. As rotas de formulário e de criação de doação exigem `Origin` ou `Sec-Fetch-Site` válidos (403 sem nenhum); webhooks não são afetados.
 4. A verificação do domínio só conclui depois que a zona ficar **Active** (etapa 9).
 
 ---

@@ -4,18 +4,19 @@ Ordem obrigatória. Cada etapa de produção é uma operação **separada e iden
 operador com a autorização correspondente. O script `go-live-final.sh` fica na pasta de trabalho que reúne
 os três repositórios (fora deles); sem argumentos ele roda só `preflight`, que não altera nada.
 
-!!! danger "Nada aqui foi executado em produção"
-    Em 2026-11-12: migrations não aplicadas em produção, Worker não implantado a partir das branches de
-    fechamento, nenhum merge em `main`. Build e testes locais **não** equivalem a deploy; health check **não**
-    equivale a teste ponta a ponta.
+!!! info "Situação em 14/11/2026"
+    Feito: correções mescladas em `main`; migration `0003` aplicada no Neon (com backup antes); API publicada
+    em workers.dev pelo workflow Deploy API; site publicado em `purelife-site.pages.dev`; bloqueio de abuso
+    ativo; proteção de branches aplicada. **Pendente:** troca dos nameservers na eNom (domínio oficial),
+    Política de Privacidade e decisões de retenção. Health check **não** equivale a teste ponta a ponta.
 
 ## 1. Pré-condições (não técnicas)
 
 - [ ] Política de Privacidade preenchida e aprovada (frontend#14 sem `[PREENCHER`; ver
       [Inventário de Retenção](../security/data-retention.md)).
 - [ ] Decisões de retenção R-RET-1 a R-RET-5.
-- [ ] Decisão sobre `RATE_LIMIT_MODE` (`log` = **sem proteção efetiva**; `enforce` = 429).
-- [ ] [Proteção de branches](branch-protection.md) aplicada.
+- [x] `RATE_LIMIT_MODE = "enforce"` (bloqueio de abuso ativo desde 14/11/2026).
+- [x] [Proteção de branches](branch-protection.md) aplicada (13/11/2026).
 - [ ] Registrador: nameservers da Cloudflare ativos; DNSSEC desligado durante a troca.
 
 ## 2. Validação local

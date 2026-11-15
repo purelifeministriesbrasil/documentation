@@ -78,7 +78,7 @@ Mais detalhes: [Gestão de Conteúdo do Site](content-management.md).
 | Aplicar uma migration | 1) criar branch de backup no Neon; 2) `pnpm db:migrate:dry-run`; 3) `pnpm db:migrate` | [Banco](../getting-started/database-setup.md) |
 | Ler triagens e contatos | `node --env-file=.env scripts/pastoral-inbox.mjs list` (cada leitura fica auditada) | [CLI](cli-cheatsheet.md) |
 | Trocar uma chave | Siga o runbook; nunca cole chaves em chat, issue ou commit | [Rotação de Chaves](key-rotation.md) |
-| Ligar o bloqueio de abuso | `RATE_LIMIT_MODE = "enforce"` em `backend/wrangler.toml`, PR e Deploy API | [Modelo de Ameaças](../security/threat-model.md) |
+| Ajustar o bloqueio de abuso (já ativo) | Limites em `[[ratelimits]]` de `backend/wrangler.toml`; PR e Deploy API. `RATE_LIMIT_MODE = "log"` desliga o bloqueio sem desligar o registro | [Modelo de Ameaças](../security/threat-model.md) |
 
 ## Rotina de manutenção
 
