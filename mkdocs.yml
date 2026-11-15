@@ -11,7 +11,7 @@ copyright: "© 2026 Pure Life Ministries Brasil — Liderando Cristãos à Purez
 theme:
   name: material
   language: pt-BR
-  logo: assets/images/PLM_Logo.png
+  logo: assets/images/PLM_Logo-header.png
   favicon: assets/images/favicon.png
   icon:
     repo: fontawesome/brands/github
@@ -20,6 +20,8 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
+    - navigation.indexes
+    - navigation.path
     - navigation.expand
     - navigation.top
     - navigation.footer
@@ -34,6 +36,7 @@ theme:
     - content.tabs.link
     - content.code.copy
     - content.code.annotate
+    - content.tooltips
   palette:
     - scheme: default
       primary: custom
@@ -51,17 +54,42 @@ theme:
     text: Montserrat
     code: JetBrains Mono
 
+extra:
+  analytics:
+    feedback:
+      title: Esta página foi útil?
+      ratings:
+        - icon: material/thumb-up-outline
+          name: Sim, foi útil
+          data: 1
+          note: Obrigado pelo retorno!
+        - icon: material/thumb-down-outline
+          name: Pode melhorar
+          data: 0
+          note: >-
+            Obrigado! Conte o que faltou abrindo uma
+            <a href="https://github.com/purelifeministriesbrasil/documentation/issues/new" target="_blank" rel="noopener">issue no GitHub</a>.
+
 extra_css:
   - assets/stylesheets/extra.css
 
 extra_javascript:
-  - assets/javascripts/mobile-nav.js
   - assets/javascripts/mathjax.js
-  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - assets/javascripts/interactions.js
 
 plugins:
   - search:
       lang: pt
+  - git-revision-date-localized:
+      type: date
+      locale: pt
+      timezone: America/Sao_Paulo
+      fallback_to_build_date: true
+      enable_creation_date: false
+  - glightbox:
+      touchNavigation: true
+      skip_classes:
+        - no-lightbox
 
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -78,7 +106,10 @@ markdown_extensions:
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - abbr
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.emoji:

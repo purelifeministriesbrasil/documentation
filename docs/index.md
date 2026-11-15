@@ -30,15 +30,31 @@ hide:
 
 ## Comece por aqui
 
-| Eu preciso… | Página |
-|---|---|
-| Alterar textos, livros, conferência ou contatos do site | [Guia do Mantenedor](operations/maintainer-guide.md) |
-| Rodar o projeto no meu computador | [Guia Rápido de Instalação](getting-started/quickstart.md) |
-| Publicar ou desfazer uma publicação | [Runbook de Implantação](operations/deployment.md) |
-| Colocar o domínio oficial no ar | [Checklist de Go-live](operations/go-live-checklist.md) |
-| Tratar PRs do Dependabot e alertas de segurança | [Dependências, Segurança Contínua e Releases](quality/dependency-updates.md) |
-| Responder a um incidente | [Resposta a Incidentes](operations/incident-response.md) |
-| Escrever ou revisar documentação | [Guia de Estilo da Documentação](governance/documentation-style.md) |
+Escolha o seu perfil para ver os caminhos mais usados.
+
+=== "Mantenedor do site"
+
+    | Eu preciso… | Página |
+    |---|---|
+    | Alterar textos, livros, conferência ou contatos do site | [Guia do Mantenedor](operations/maintainer-guide.md) |
+    | Publicar ou desfazer uma publicação | [Runbook de Implantação](operations/deployment.md) |
+    | Escrever ou revisar documentação | [Guia de Estilo da Documentação](governance/documentation-style.md) |
+
+=== "Desenvolvedor"
+
+    | Eu preciso… | Página |
+    |---|---|
+    | Rodar o projeto no meu computador | [Guia Rápido de Instalação](getting-started/quickstart.md) |
+    | Entender como as peças se conectam | [Visão Geral do Sistema](architecture/system-overview.md) |
+    | Tratar PRs do Dependabot e alertas de segurança | [Dependências, Segurança Contínua e Releases](quality/dependency-updates.md) |
+
+=== "Operação e segurança"
+
+    | Eu preciso… | Página |
+    |---|---|
+    | Colocar o domínio oficial no ar | [Checklist de Go-live](operations/go-live-checklist.md) |
+    | Responder a um incidente | [Resposta a Incidentes](operations/incident-response.md) |
+    | Revisar os controles de privacidade | [Controles de Privacidade (LGPD)](security/lgpd-compliance.md) |
 
 ---
 
