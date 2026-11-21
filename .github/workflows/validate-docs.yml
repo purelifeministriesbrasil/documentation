@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
+        with:
+          # O plugin git-revision-date-localized lê o histórico do Git; com checkout raso ele emite
+          # aviso e o `--strict` falha. Mesmo valor do deploy-pages.yml.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v7
