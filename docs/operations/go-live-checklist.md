@@ -15,7 +15,7 @@ os três repositórios (fora deles); sem argumentos ele roda só `preflight`, qu
 
 - [ ] Política de Privacidade preenchida e aprovada (frontend#14 sem `[PREENCHER`; ver
       [Inventário de Retenção](../security/data-retention.md)).
-- [x] Decisões de retenção R-RET-1, 3, 4 e 5 adotadas e implementadas em 21/11/2026 (R-RET-2 só se o gateway for ligado). **Falta aplicar a migration `0004` e publicar a API** ([como](../security/data-retention.md#colocar-em-vigor)).
+- [x] Decisões de retenção R-RET-1, 3, 4 e 5 adotadas e implementadas em 21/11/2026 (R-RET-2 só se o gateway for ligado). Migration `0004` aplicada e API publicada em 21/11/2026 ([detalhes](../security/data-retention.md#colocar-em-vigor)).
 - [x] `RATE_LIMIT_MODE = "enforce"` (bloqueio de abuso ativo desde 14/11/2026).
 - [x] [Proteção de branches](branch-protection.md) aplicada (13/11/2026).
 - [x] Registrador: nameservers da Cloudflare ativos (21/11/2026); DNSSEC desligado durante a troca.
@@ -84,6 +84,7 @@ Mostra e valida o procedimento (rollback do Worker, do Pages, restauração do b
 - [ ] Transferir o registro do domínio para a Cloudflare (código de autorização na Locaweb; DNSSEC depois).
 - [ ] Desligar o WordPress/OVH, remover a conta Cloudflare antiga e rotacionar credenciais
       ([passo 12](deployment.md#12-desativacao-do-legado)).
-- [ ] Migration `0004` aplicada e API publicada (retenção em vigor); Política de Privacidade publicada (item 1).
+- [x] Migration `0004` aplicada e API publicada (retenção em vigor).
+- [ ] Política de Privacidade publicada (item 1).
 - [ ] Conferir o site em celulares reais (a auditoria automática em 12 resoluções já passou; ver
       [Testes e CI/CD](../quality/testing-and-cicd.md)).
