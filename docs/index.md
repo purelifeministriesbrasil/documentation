@@ -53,6 +53,7 @@ Escolha o seu perfil para ver os caminhos mais usados.
     | Eu preciso… | Página |
     |---|---|
     | Colocar o domínio oficial no ar | [Checklist de Go-live](operations/go-live-checklist.md) |
+    | Entender DNS, e-mails do site e regras da Cloudflare | [DNS, E-mail e Borda](operations/dns-and-email.md) |
     | Responder a um incidente | [Resposta a Incidentes](operations/incident-response.md) |
     | Revisar os controles de privacidade | [Controles de Privacidade (LGPD)](security/lgpd-compliance.md) |
 

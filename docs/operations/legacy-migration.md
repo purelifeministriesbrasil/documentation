@@ -1,6 +1,6 @@
 # Migração do Site Antigo (WordPress)
 
-Até a virada do domínio, `purelifeministriesbrasil.org` é servido por um **WordPress** (tema Salient, WPBakery,
+Até **21/11/2026**, `purelifeministriesbrasil.org` era servido por um **WordPress** (tema Salient, WPBakery,
 WooCommerce, GiveWP e WPForms) hospedado em servidor cloud gerenciado pela agência que construiu o site. Esta
 página registra o que foi aproveitado, o que foi descartado e como fazer a transição sem quebrar links.
 
@@ -59,10 +59,10 @@ compartilhados e a posição nos buscadores. Cada caminho vale com e sem barra f
 
 | Item | Valor |
 |---|---|
-| Registrador | eNom (provavelmente via revendedor); vencimento em 16/08/2027; DNSSEC desligado |
+| Registrador | Consta como eNom (RDAP); administrado pelo painel de domínios da Locaweb; vencimento em 16/08/2027; DNSSEC desligado. Transferência para a Cloudflare planejada após o go-live |
 | Nameservers antigos | `jaxson.ns.cloudflare.com`, `selah.ns.cloudflare.com` (conta Cloudflare da agência) |
 | Nameservers novos | `ivy.ns.cloudflare.com`, `tanner.ns.cloudflare.com` (conta Cloudflare do ministério) |
-| Origem do WordPress | `158.69.199.156` (registro `A @`, com proxy, na zona nova) |
+| Origem do WordPress | `158.69.199.156` (VPS da OVH). Desde 21/11/2026 **nenhum registro da zona aponta para ela**; segue ligada até o desligamento |
 | E-mail do domínio | Zoho Mail (MX, SPF e DKIM preservados na zona nova) |
 
 Sequência completa: [Runbook de Implantação, etapas 9 a 12](deployment.md#9-zona-dns-e-troca-de-nameservers).

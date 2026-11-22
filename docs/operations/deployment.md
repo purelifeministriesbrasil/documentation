@@ -11,25 +11,25 @@ Pure Life Ministries Brasil**, com o site no **Cloudflare Pages**, a API no **Cl
 
 ---
 
-## Situação atual (28/10/2026)
-
-!!! warning "Registro histórico"
-    A tabela abaixo é o **registro de 28/10/2026**, preservado como histórico. Ela **não** representa uma verificação do ambiente de produção feita em 07/11/2026 (data desta auditoria da documentação), que não teve acesso às contas Cloudflare, Neon, Resend nem ao registrador. Confirme o estado atual no painel de cada serviço antes de agir com base nela.
+## Situação atual (21/11/2026)
 
 | Etapa | Situação | Observação |
 |---|---|---|
 | 1. Chaves criptográficas | ✅ Concluída | `TRIAGE_KEY_V1` e `HASH_PEPPER` no cofre |
-| 2. Banco Neon + migrations | ✅ Concluída | 10 tabelas com RLS, região `aws-sa-east-1` |
+| 2. Banco Neon + migrations | ✅ Concluída | Migrations `0001`–`0003` aplicadas; backup de segurança já removido |
 | 3. Hyperdrive | ✅ Concluída | Configuração `purelife-db` ligada ao binding `HYPERDRIVE` |
 | 4. Turnstile | ✅ Concluída | Widget com os hostnames do domínio oficial |
-| 5. Resend | ⏳ Aguardando DNS | Registros criados na zona nova; a verificação ocorre quando a zona ficar ativa |
+| 5. Resend | ✅ Concluída | Domínio **Verified**; e-mails com a identidade visual ([DNS, E-mail e Borda](dns-and-email.md)) |
 | 6. Gateway PIX | ⏸️ Em decisão | Site exibe a chave PIX do CNPJ (`PUBLIC_ENABLE_PIX_GATEWAY=false`) |
-| 7. API (Worker) | ✅ Publicada em endereço provisório | `https://purelife-api.purelifeministriesbrasil1986.workers.dev` |
-| 8. Site (Pages) | ✅ Publicado em endereço provisório | `https://purelife-site.pages.dev` |
-| 9. Zona DNS e troca de nameservers | ⏳ Aguardando registrador | Registro A de origem criado; falta trocar os nameservers na eNom |
-| 10. Domínio no site e na API | ⏳ Depende da etapa 9 | Ver [Virada do domínio](#10-virada-do-dominio) |
-| 11. Testes de fumaça | ⏳ Depende da etapa 10 | — |
-| 12. Desativação do legado | ⏳ Após a virada | WordPress, Supabase e contas pessoais (a Vercel já não faz parte do projeto) |
+| 7. API (Worker) | ✅ Publicada no domínio | `https://api.purelifeministriesbrasil.org` (workflow Deploy API, destino `domain`) |
+| 8. Site (Pages) | ✅ Publicado no domínio | `https://purelifeministriesbrasil.org` e `www` |
+| 9. Zona DNS e troca de nameservers | ✅ Concluída em 21/11/2026 | Nameservers `ivy`/`tanner` ativos |
+| 10. Domínio no site e na API | ✅ Concluída em 21/11/2026 | Ver [Virada do domínio](#10-virada-do-dominio) |
+| 11. Testes de fumaça | ✅ Concluída em 21/11/2026 | Contato, triagem, newsletter e e-mails; registros de teste apagados |
+| 12. Desativação do legado | ⏳ Pendente | WordPress/OVH, conta Cloudflare antiga e credenciais; ver [passo 12](#12-desativacao-do-legado) |
+
+Pendências fora do técnico: Política de Privacidade (13 campos), decisões de retenção R-RET-1 a R-RET-5 e a
+transferência do registro do domínio para a Cloudflare.
 
 ---
 
@@ -286,8 +286,8 @@ Abra o site com o DevTools e confirme **zero** violações de CSP no console.
     - crie `A`, nome `@`, valor `158.69.199.156` (servidor do WordPress antigo), **com proxy**;
     - mantenha o `CNAME www`, os 3 `MX` e os `TXT` do Zoho e os registros do Resend.
 3. **DNSSEC**: confirme que está desligado no registrador (consulta RDAP: `delegationSigned: false`).
-4. **Trocar os nameservers** no registrador (**eNom**, provavelmente via revendedor; domínio vence em
-   16/08/2027) para os indicados pela Cloudflare: `ivy.ns.cloudflare.com` e `tanner.ns.cloudflare.com`.
+4. **Trocar os nameservers** no registrador (consta como **eNom** na consulta RDAP, mas é administrado pelo painel
+   de domínios da **Locaweb**, que é lento: aguarde a resposta sem repetir o envio; vence em 16/08/2027) para os indicados pela Cloudflare: `ivy.ns.cloudflare.com` e `tanner.ns.cloudflare.com`.
 5. Clique em **“Atualizei meus nameservers”** e aguarde o status **Active** (de minutos a 24 h).
 
 **Verificação**: `nslookup -type=NS purelifeministriesbrasil.org 1.1.1.1` mostra `ivy` e `tanner`; o site
@@ -297,14 +297,16 @@ antigo continua abrindo e os e-mails do Zoho continuam chegando.
 
 ## 10. Virada do domínio
 
-Com a zona ativa:
+Executada em **21/11/2026**, com a zona ativa:
 
-1. **API**: `cd backend && pnpm run deploy` associa `api.purelifeministriesbrasil.org`.
-2. **Resend**: clique em *Verify* (ou aguarde a verificação automática).
+1. **API**: *GitHub → backend → Actions → Deploy API → Run workflow*, destino `domain` (associa
+   `api.purelifeministriesbrasil.org`). O teste automático final do workflow pode falhar se o DNS ainda não
+   propagou; rode `./go-live-final.sh verify` e, se passar, a publicação está correta.
+2. **Resend**: o domínio ficou **Verified** sozinho depois da propagação.
 3. **Site**: em *Workers & Pages → purelife-site → Custom domains*, adicione `purelifeministriesbrasil.org` e
-   `www.purelifeministriesbrasil.org`. A Cloudflare substitui o registro A do WordPress. Crie uma *Redirect
-   Rule* `www` → apex (301, preservando a query string).
-4. **Rate limiting**: em *Security → WAF → Rate limiting rules*, limite por IP as rotas `/api/` do host `api.`.
+   `www.purelifeministriesbrasil.org` (a Cloudflare troca o registro A do WordPress por `CNAME` para o Pages).
+   Crie a *Redirect Rule* `www` → raiz (301, preservando a query string).
+4. **Rate limiting**: regra por IP no host `api.`, 30 pedidos por 10 s ([DNS, E-mail e Borda](dns-and-email.md#3-regras-na-borda)).
 
 ---
 
@@ -318,7 +320,7 @@ Com a zona ativa:
 | 4 | Inscrever e-mail na newsletter | E-mail de confirmação; link abre `/newsletter/confirmar/` e confirma |
 | 5 | Doação | Chave PIX exibida e copiada; com gateway ligado, PIX de R$ 5,00 confirmado em `payment_charges` |
 | 6 | Endereços antigos | `/sobre-nos/`, `/residencial/` e `/doacao/` redirecionam (301) para as páginas novas |
-| 7 | Remover os registros de teste | Apague manualmente pelo SQL Editor do Neon |
+| 7 | Remover os registros de teste | Apague por SQL, em transação e por código de referência; apague antes `triage_consents`/`contact_consents` (chave estrangeira `RESTRICT`) |
 
 ---
 

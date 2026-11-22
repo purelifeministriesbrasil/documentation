@@ -19,7 +19,7 @@ flowchart LR
 | Camada | Pasta | Conteúdo real | Observação |
 |---|---|---|---|
 | Domínio | `domains/` | Apenas [`donations/state-machine.ts`](https://github.com/purelifeministriesbrasil/backend/blob/ca9737fb48cdcad70b7bfddfd9cb76ea65fd1e7d/src/domains/donations/state-machine.ts) | Hoje é uma única regra de transição, não uma coleção de domínios |
-| Aplicação | `application/` | `usecases/` (triagem, contato, newsletter, PIX, evento de pagamento, expurgo de triagens e de contatos), `ports/` (interfaces) e `reference-code.ts` | Não conhece SDKs nem banco |
+| Aplicação | `application/` | `usecases/` (triagem, contato, newsletter, PIX, evento de pagamento, expurgo de triagens e de contatos), `ports/` (interfaces) `emails/templates.ts` (modelos de e-mail com a identidade visual; funções puras) e `reference-code.ts` | Não conhece SDKs nem banco |
 | Infraestrutura | `infrastructure/` | `config`, `crypto`, `db`, `email`, `http`, `observability`, `payments`, `security` | Implementa as portas |
 | Apresentação | `presentation/` | Handlers HTTP em `forms/`, `donations/`, `webhooks/`, `health.ts`, `http.ts` e `cron/purge.ts` | Usa casos de uso por injeção |
 | Contratos | `schemas/` | `common`, `triage`, `contact`, `newsletter`, `donations` (schema + tipos) | Só depende de Zod; ver [Schemas comuns](../schemas/common-schema.md) |

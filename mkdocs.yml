@@ -125,7 +125,6 @@ markdown_extensions:
       permalink: true
 
 nav:
-nav:
   - Início: index.md
   - Arquitetura:
       - Visão Geral do Sistema: architecture/system-overview.md
@@ -170,6 +169,7 @@ nav:
       - Implantação e Produção:
           - Runbook de Implantação: operations/deployment.md
           - Checklist de Go-live: operations/go-live-checklist.md
+          - DNS, E-mail e Borda: operations/dns-and-email.md
           - Backup & Recuperação: operations/backup-recovery.md
           - Rotação de Chaves Criptográficas: operations/key-rotation.md
           - Resposta a Incidentes: operations/incident-response.md
