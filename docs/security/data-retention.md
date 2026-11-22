@@ -1,13 +1,12 @@
 # Inventário de Retenção de Dados
 
-!!! info "Situação em 21/11/2026"
-    Os prazos abaixo foram **adotados pela coordenação do projeto** (sugestões técnicas) e **implementados no
-    código** (`backend`, PR #34, mesclado em `main`). Eles **só passam a valer em produção** depois de aplicar a
-    migration `0004` e publicar a API (ver [Colocar em vigor](#colocar-em-vigor)). A validação final dos prazos
+!!! success "Em vigor desde 21/11/2026"
+    Os prazos abaixo foram **adotados pela coordenação do projeto** (sugestões técnicas), **implementados** (`backend`,
+    PR #34) e **colocados em produção em 21/11/2026**: migration `0004` aplicada (com backup antes) e API publicada.
+    A primeira execução automática é a das 03:00 UTC de 22/11/2026 (ver [Colocar em vigor](#colocar-em-vigor)). A validação final dos prazos
     cabe ao ministério e ao encarregado de dados; se algum mudar, altere
     [`retention-policy.ts`](https://github.com/purelifeministriesbrasil/backend/blob/main/src/application/retention-policy.ts),
-    os testes e esta página. A Política de Privacidade só deve afirmar estes prazos depois que a migration estiver
-    aplicada.
+    os testes e esta página. A Política de Privacidade já pode afirmar estes prazos.
 
 Levantamento feito no código (`backend` `drizzle/0001`–`0004`, `src/infrastructure/db/schema.ts`,
 `purge-repository.ts` e `retention-repository.ts`).
@@ -34,15 +33,15 @@ ter o e-mail guardado cifrado, como em uma inscrição nova.
 
 | ID | Conjunto | Dado pessoal | Decisão | Estado |
 |---|---|---|---|---|
-| R-RET-1 | `newsletter_subscriptions` | `email_cipher`, `email_hash`, hashes de token | Pendentes 7 dias; canceladas 30 dias, mantendo só o hash | Implementado; **vale após a migration `0004`** |
+| R-RET-1 | `newsletter_subscriptions` | `email_cipher`, `email_hash`, hashes de token | Pendentes 7 dias; canceladas 30 dias, mantendo só o hash | **Em vigor** (migration `0004` aplicada em 21/11/2026) |
 | R-RET-2 | `donation_intents.donor_email_cipher` | E-mail cifrado do doador | **Sem decisão**: só existe se o gateway de pagamento for ligado (`PUBLIC_ENABLE_PIX_GATEWAY=false` hoje); decidir com o contador antes de ligar | Não aplicável hoje |
-| R-RET-3 | `payment_webhook_events` | Não diretamente (sem payload) | 1 ano para eventos concluídos | Implementado; vale após a `0004` (índice) |
-| R-RET-4 | `audit_events` | `actor`, `reason` (texto livre), `ip_hash`, `metadata` | 1 ano | Implementado; vale após a `0004` (índice) |
+| R-RET-3 | `payment_webhook_events` | Não diretamente (sem payload) | 1 ano para eventos concluídos | **Em vigor** |
+| R-RET-4 | `audit_events` | `actor`, `reason` (texto livre), `ip_hash`, `metadata` | 1 ano | **Em vigor** |
 | R-RET-5 | `contact_submissions.subject` | Texto livre em claro (2–100 caracteres) | Apagar junto com o restante (valor neutro `[removido]`) | Implementado (não exige migration) |
 
 ## Colocar em vigor
 
-Ordem obrigatória (a API nova usa a coluna `purged_at`):
+Ordem seguida em produção (a API nova usa a coluna `purged_at`), registrada para futuras mudanças de prazo:
 
 1. **Backup** do banco (`./go-live-final.sh production backup`; exige as autorizações do operador).
 2. **Migration `0004`** (`./go-live-final.sh production migrate`): aditiva; relaxa `NOT NULL` do e-mail cifrado,
@@ -63,6 +62,5 @@ jurídicas), e a trava de placeholders impede a publicação enquanto houver lac
 
 ## Próxima ação
 
-1. Aplicar a `0004` e publicar a API (autorização do operador).
+1. Conferir, depois das 03:00 UTC de 22/11/2026, o evento `cron.purge_completed` com `failedSteps` vazio nos logs do Worker.
 2. Diretoria e encarregado validam os prazos e preenchem os campos da política.
-3. Atualizar esta página com a data em que a retenção entrou em vigor.
