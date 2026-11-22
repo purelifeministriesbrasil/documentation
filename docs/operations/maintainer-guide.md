@@ -42,6 +42,7 @@ exceção conhecida é o PR da Política de Privacidade, que fica vermelho de pr
 | Adicionar ou alterar um livro | `src/pages/editora.astro` (lista `books`) e, se for destaque na home, `src/components/home/BooksPreview.astro` | Veja [Adicionar um livro](#adicionar-um-livro) |
 | Perguntas frequentes | `src/pages/perguntas-frequentes.astro` e `src/components/home/FAQPreview.astro` | |
 | WhatsApp, e-mail, chave PIX, redes sociais | `src/lib/site-config.ts` | Um único lugar para os dados de contato |
+| Aparência e texto dos e-mails enviados pela API | `backend/src/application/emails/templates.ts` | Ver [DNS, E-mail e Borda](dns-and-email.md#2-e-mail-transacional-resend); publicar pelo Deploy API |
 | Fotos do campus | `src/data/campus-photos.ts` + imagens em `src/assets/images/campus/` | |
 | Depoimentos | `src/data/testimonials.ts` | |
 | Viagem aos EUA | `src/data/usa-trip.ts` | |

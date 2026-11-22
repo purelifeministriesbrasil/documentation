@@ -94,6 +94,20 @@ Método, repetível: `pnpm build` no frontend; servir `dist/` com um servidor es
 **Pendente (R6):** repetir Lighthouse (PageSpeed Insights) e axe contra o domínio publicado, e testar leitor de tela (NVDA ou VoiceOver) nos formulários de contato, triagem e newsletter.
 
 
+### Auditoria de responsividade (21/11/2026)
+
+Repetível sem ferramentas extras: sirva `dist/` (`pnpm build` com as quatro variáveis `PUBLIC_*` explícitas) e carregue
+cada página em um `iframe` com o tamanho de cada resolução. Em cada uma, meça o **texto real** (`Range.getClientRects`)
+em vez de `scrollWidth`, porque o site usa `overflow-x: hidden`, que esconde o transbordo; procure também texto cortado
+por contêineres e elementos de texto sobrepostos. Faça sempre um **teste de controle** (injete um texto largo e confirme
+que o detector o acusa) e desative as animações de entrada.
+
+Resoluções cobertas: 320×568, 360×800, 390×844, 430×932, 640×360, 768×1024, 1024×768, 1280×720, 1366×768,
+1440×900, 1920×1080 e 2560×1440, em 15 páginas. Resultado depois das correções (frontend: título do hero, contador da
+triagem, e-mail do contato, botões da editora e dos programas): **sem texto fora da tela, cortado ou sobreposto**; o
+conteúdo fica centralizado com no máximo 1440 px. O detector mede geometria: não substitui olhar em aparelhos
+reais nem teste com leitor de tela.
+
 ## Verificações acrescentadas no fechamento técnico (2026-11-12)
 
 Valem após o merge de backend#16 e frontend#15.

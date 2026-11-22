@@ -33,7 +33,9 @@ As 18 saídas são exigidas por [`verify-topology.mjs`](https://github.com/purel
 | `components/forms/` | `TriageForm.tsx`, `ContactForm.tsx`, `Turnstile.tsx` (ilhas Preact), `NewsletterForm.astro` e `newsletter-enhance.ts` |
 | `components/donations/` | `DonationForm.tsx` (PIX dinâmico) e `ManualPixDonation.tsx` (chave PIX do CNPJ) |
 | `components/ui/` | `Button`, `Container`, `SectionHeading`, `SkipLink` (Astro) e `Checkbox.tsx` |
+| `components/conference/` | `ConferenceHero` (cabeçalho de `/conferencia/`) e `ConferenceThemeCard` (cartão do tema, também usado na Home) |
 | `components/about`, `course`, `programs` | Blocos específicos de página |
+| `public/email/` | Logotipos **PNG** usados pelos e-mails da API (ver [DNS, E-mail e Borda](../operations/dns-and-email.md)) |
 | `layouts/` | `BaseLayout.astro` (head, SEO, JSON-LD) e `ContentLayout.astro` |
 
 **Ilha × componente Astro**: componentes `.astro` são renderizados no build e não enviam JavaScript; arquivos `.tsx` com diretiva `client:*` são hidratados no navegador.
